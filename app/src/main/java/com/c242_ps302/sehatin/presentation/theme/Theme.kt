@@ -1,6 +1,5 @@
-package com.c242_ps302.sehatin.ui.theme
+package com.c242_ps302.sehatin.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

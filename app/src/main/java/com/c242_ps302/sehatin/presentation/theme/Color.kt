@@ -1,4 +1,4 @@
-package com.c242_ps302.sehatin.ui.theme
+package com.c242_ps302.sehatin.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
