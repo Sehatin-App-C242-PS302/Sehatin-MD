@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
 import com.c242_ps302.sehatin.presentation.screen.home.HomeScreen
+import com.c242_ps302.sehatin.presentation.screen.settings.SettingsScreen
 
 @Composable
 fun NavGraphSetup(
@@ -30,6 +31,12 @@ fun NavGraphSetup(
             HomeScreen(
                 onLoginClick = { navController.navigate(Routes.LoginScreen) },
                 onRegisterClick = { navController.navigate(Routes.RegisterScreen) },
+                onSettingsClick = { navController.navigate(Routes.SettingsScreen) },
+            )
+        }
+        composable<Routes.SettingsScreen> {
+            SettingsScreen(
+                onBackClick = { navController.navigateUp() },
             )
         }
     }
