@@ -6,8 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
-import com.c242_ps302.sehatin.presentation.screen.home.HomeScreen
-import com.c242_ps302.sehatin.presentation.screen.settings.SettingsScreen
 
 @Composable
 fun NavGraphSetup(
@@ -19,25 +17,28 @@ fun NavGraphSetup(
     ) {
         composable<Routes.LoginScreen> {
             LoginScreen(
-                onLoginClick = { navController.navigate(Routes.HomeScreen) },
+                onLoginClick = {
+                    navController.navigate(Routes.MainScreen) {
+                        popUpTo(Routes.LoginScreen) { inclusive = true }
+                    }
+                },
+                onRegisterClick = {
+                    navController.navigate(Routes.RegisterScreen)
+                }
             )
         }
         composable<Routes.RegisterScreen> {
             RegisterScreen(
-                onRegisterClick = { navController.navigate(Routes.HomeScreen) },
+                onRegisterClick = {
+                    navController.navigate(Routes.MainScreen) {
+                        popUpTo(Routes.RegisterScreen) { inclusive = true }
+                    }
+                }
             )
         }
-        composable<Routes.HomeScreen> {
-            HomeScreen(
-                onLoginClick = { navController.navigate(Routes.LoginScreen) },
-                onRegisterClick = { navController.navigate(Routes.RegisterScreen) },
-                onSettingsClick = { navController.navigate(Routes.SettingsScreen) },
-            )
-        }
-        composable<Routes.SettingsScreen> {
-            SettingsScreen(
-                onBackClick = { navController.navigateUp() },
-            )
+
+        composable<Routes.MainScreen> {
+            MainScreen(navController = navController)
         }
     }
 }

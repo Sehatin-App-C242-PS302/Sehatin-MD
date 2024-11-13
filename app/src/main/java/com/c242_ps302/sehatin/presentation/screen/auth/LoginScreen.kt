@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 fun LoginScreen(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -24,6 +25,11 @@ fun LoginScreen(
             onClick = { onLoginClick() }
         ) {
             Text(text = "Login")
+        }
+        Button(
+            onClick = { onRegisterClick() }
+        ) {
+            Text(text = "Register")
         }
     }
 }
