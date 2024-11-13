@@ -18,7 +18,7 @@ import com.c242_ps302.sehatin.presentation.screen.settings.SettingsScreen
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     val mainNavController = rememberNavController()
 
@@ -57,4 +57,5 @@ fun MainScreen(
             }
         }
     }
+
 }
