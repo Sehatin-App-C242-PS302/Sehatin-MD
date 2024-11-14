@@ -1,32 +1,31 @@
 package com.c242_ps302.sehatin.presentation.screen.news
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.c242_ps302.sehatin.presentation.components.AppBar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.card.NewsCard
+import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 
 @Composable
 fun NewsScreen(
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.fillMaxSize()
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxWidth()
     ) {
         SehatinAppBar(
-            modifier = Modifier.align(Alignment.TopCenter)
+            modifier = modifier.fillMaxWidth()
         )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = modifier.fillMaxSize()
-        ) {
-            Text(text = "News Screen")
+        LazyColumn {
+            items(20) {
+                NewsCard()
+            }
         }
     }
-
 }
+

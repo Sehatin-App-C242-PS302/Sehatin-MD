@@ -1,4 +1,4 @@
-package com.c242_ps302.sehatin.presentation.components.AppBar
+package com.c242_ps302.sehatin.presentation.components.sehatin_appbar
 
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api

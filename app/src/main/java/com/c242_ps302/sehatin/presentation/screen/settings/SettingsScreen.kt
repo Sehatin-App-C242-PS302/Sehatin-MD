@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.c242_ps302.sehatin.presentation.components.AppBar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 
 @Composable
 fun SettingsScreen(
