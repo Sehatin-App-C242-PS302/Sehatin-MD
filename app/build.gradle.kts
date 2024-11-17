@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -19,6 +21,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "NEWS_API_KEY", properties.getProperty("NEWS_API_KEY"))
     }
 
     buildTypes {
@@ -93,6 +99,7 @@ dependencies {
     implementation(libs.converter.scalars)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.okhttp)
+    implementation(libs.jakewharton.retrofit2.kotlin.coroutines.adapter)
 
     //Dagger-Hilt
     implementation(libs.hilt.android)

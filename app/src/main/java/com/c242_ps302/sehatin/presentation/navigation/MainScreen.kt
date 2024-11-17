@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +14,7 @@ import com.c242_ps302.sehatin.presentation.screen.health.HealthScreen
 import com.c242_ps302.sehatin.presentation.screen.history.HistoryScreen
 import com.c242_ps302.sehatin.presentation.screen.home.HomeScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsScreen
+import com.c242_ps302.sehatin.presentation.screen.news.NewsViewModel
 import com.c242_ps302.sehatin.presentation.screen.settings.SettingsScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -50,7 +52,9 @@ fun MainScreen(
                 HistoryScreen()
             }
             composable<Routes.NewsScreen> {
-                NewsScreen()
+                val newsViewModel: NewsViewModel = hiltViewModel()
+                val newsList = newsViewModel.news
+                NewsScreen(newsList = newsList)
             }
             composable<Routes.SettingsScreen> {
                 SettingsScreen()

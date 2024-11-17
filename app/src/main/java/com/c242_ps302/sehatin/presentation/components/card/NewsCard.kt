@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,20 +24,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
+import com.c242_ps302.sehatin.domain.model.News
 
 @Composable
 fun NewsCard(
+    news: News,
     modifier: Modifier = Modifier,
 ) {
-    val imageRequest = ImageRequest.Builder(LocalContext.current)
-        .data("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNoJLByZ9t6RT_e97wYtXHv80MjEjW0LEO8A&s")
+    val newsImageRequest = ImageRequest.Builder(LocalContext.current)
+        .data(news.imageUrl)
         .crossfade(true)
         .build()
+
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -52,7 +55,7 @@ fun NewsCard(
                 .padding(8.dp)
         ) {
             AsyncImage(
-                model = imageRequest,
+                model = newsImageRequest,
                 contentDescription = "News Thumbnail",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -67,13 +70,13 @@ fun NewsCard(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Sports",
+                    text = news.title,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
-                    text = "What Training Do Volleyball Players Need?",
+                    text = news.description,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -86,22 +89,14 @@ fun NewsCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = modifier.padding(top = 4.dp)
                 ) {
-                    AsyncImage(
-                        model = imageRequest,
-                        contentDescription = "Author Avatar",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(CircleShape)
-                    )
-
+                    Icon(imageVector = Icons.Default.Person, contentDescription = "Author Icon")
                     Text(
-                        text = "McKensley",
+                        text = news.author,
                         style = MaterialTheme.typography.labelMedium
                     )
 
                     Text(
-                        text = "Feb 27, 2023",
+                        text = news.publishedAt,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -111,11 +106,3 @@ fun NewsCard(
     }
 }
 
-
-@PreviewLightDark
-@Composable
-fun PreviewNewsCard() {
-    SehatinTheme {
-        NewsCard()
-    }
-}
