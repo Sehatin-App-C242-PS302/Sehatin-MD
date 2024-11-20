@@ -2,7 +2,6 @@ package com.c242_ps302.sehatin.presentation.navigation
 
 import kotlinx.serialization.Serializable
 
-@Serializable
 sealed class Routes {
 
     // Auth Routes

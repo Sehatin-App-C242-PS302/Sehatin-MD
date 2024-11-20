@@ -1,40 +1,49 @@
 package com.c242_ps302.sehatin.presentation.screen.news
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.c242_ps302.sehatin.data.repository.NewsRepository
+import com.c242_ps302.sehatin.data.repository.Result
 import com.c242_ps302.sehatin.domain.model.News
-import com.c242_ps302.sehatin.domain.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(
-    private val repository: NewsRepository
+    private val newsRepository: NewsRepository,
 ) : ViewModel() {
 
-    var news: List<News> by mutableStateOf(emptyList())
+    private val _uiState = MutableStateFlow(NewsScreenUiState())
+    val uiState = _uiState.asStateFlow()
 
-    init {
-        getNews()
-    }
+    private val _newsList = MutableStateFlow<List<News>>(emptyList())
+    val newsList = _newsList.asStateFlow()
 
-    private fun getNews() {
-        viewModelScope.launch {
-            try {
-                val result = repository.getHeadlineNews("health")
-                news = result
-            } catch (e: Exception) {
-                Log.e(TAG, "getNews: ${e.message}", )
+    fun getHeadlineNews() {
+        newsRepository.getAllNews().observeForever { result ->
+            when(result) {
+                is Result.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = result.error,
+                        news = null
+                    )
+                }
+                Result.Loading -> _uiState.value = _uiState.value.copy(isLoading = true)
+                is Result.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        news = result.data
+                    )
+                }
             }
         }
     }
-
-    companion object {
-        private const val TAG = "NewsViewModel"
-    }
 }
+
+data class NewsScreenUiState(
+    val isLoading: Boolean = true,
+    val news: List<News>? = null,
+    val error: String? = null,
+)

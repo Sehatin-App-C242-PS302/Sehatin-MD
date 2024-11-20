@@ -3,9 +3,7 @@ package com.c242_ps302.sehatin.presentation.components.card
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,10 +33,9 @@ fun NewsCard(
     modifier: Modifier = Modifier,
 ) {
     val newsImageRequest = ImageRequest.Builder(LocalContext.current)
-        .data(news.imageUrl)
+        .data(news.urlToImage)
         .crossfade(true)
         .build()
-
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -47,11 +44,10 @@ fun NewsCard(
         modifier = modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .height(100.dp)
     ) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(8.dp)
         ) {
             AsyncImage(
@@ -66,13 +62,15 @@ fun NewsCard(
             Column(
                 modifier = Modifier
                     .padding(start = 12.dp)
-                    .weight(1f),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = news.title,
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Text(
@@ -80,19 +78,23 @@ fun NewsCard(
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = modifier.weight(1f)
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = modifier.padding(top = 4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Person, contentDescription = "Author Icon")
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Author Icon",
+                        modifier = Modifier.size(16.dp)
+                    )
                     Text(
                         text = news.author,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     Text(
@@ -105,4 +107,3 @@ fun NewsCard(
         }
     }
 }
-

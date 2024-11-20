@@ -21,10 +21,9 @@ fun NewsVerticalColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(count = newsList.size) { index ->
-            val news = newsList[index]
+        items(newsList.size) { index ->
             NewsCard(
-                news = news,
+                news = newsList[index], // No null check needed
                 modifier = Modifier.fillParentMaxWidth()
             )
         }

@@ -1,23 +1,19 @@
 package com.c242_ps302.sehatin.data.mapper
 
-import com.c242_ps302.sehatin.data.remote.dto.news_dto.ArticleDto
-import com.c242_ps302.sehatin.data.remote.dto.news_dto.NewsDto
+import com.c242_ps302.sehatin.data.remote.response.ArticlesItem
 import com.c242_ps302.sehatin.domain.model.News
 
-fun NewsDto.toDomainModelList(): List<News> {
-    return this.articles.map { it.toDomainModel() }
-}
-
-fun ArticleDto.toDomainModel(): News {
+fun ArticlesItem.toNews(): News {
     return News(
-        title = title,
-        description = description,
-        content = content,
-        source = source.name,
-        url = url,
-        imageUrl = urlToImage,
-        author = author,
-        publishedAt = publishedAt
+        source = this.source?.name ?: "Unknown Source",
+        author = this.author ?: "Unknown Author",
+        title = this.title ?: "No Title",
+        description = this.description ?: "No Description",
+        url = this.url ?: "",
+        urlToImage = this.urlToImage ?: "",
+        publishedAt = this.publishedAt ?: "Unknown Date",
+        content = this.content ?: "No Content"
     )
 }
+
 

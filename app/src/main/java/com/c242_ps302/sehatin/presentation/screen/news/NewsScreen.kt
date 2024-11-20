@@ -16,7 +16,6 @@ fun NewsScreen(
     modifier: Modifier = Modifier,
     newsList: List<News>
 ) {
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth()

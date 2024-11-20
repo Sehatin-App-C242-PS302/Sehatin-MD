@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -53,8 +55,13 @@ fun MainScreen(
             }
             composable<Routes.NewsScreen> {
                 val newsViewModel: NewsViewModel = hiltViewModel()
-                val newsList = newsViewModel.news
-                NewsScreen(newsList = newsList)
+                val newsState by newsViewModel.uiState.collectAsStateWithLifecycle()
+
+                newsViewModel.getHeadlineNews()
+
+                NewsScreen(
+                    newsList = newsState.news ?: emptyList()
+                )
             }
             composable<Routes.SettingsScreen> {
                 SettingsScreen()

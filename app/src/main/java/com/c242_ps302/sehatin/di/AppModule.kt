@@ -1,59 +1,55 @@
 package com.c242_ps302.sehatin.di
 
+import android.app.Application
+import android.content.Context
+import com.c242_ps302.sehatin.BuildConfig
 import com.c242_ps302.sehatin.data.remote.NewsApiService
-import com.c242_ps302.sehatin.data.repository.NewsRepositoryImpl
+import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.utils.Constants
-import com.c242_ps302.sehatin.domain.repository.NewsRepository
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val original = chain.request()
-                val request = original.newBuilder()
-                    .header("X-Api-Key", Constants.NEWS_API_KEY)
-                    .method(original.method, original.body)
-                    .build()
-                chain.proceed(request)
-            }
-            .build()
+    fun provideContext(application: Application): Context {
+        return application.applicationContext
     }
 
     @Provides
     @Singleton
-    fun provideJson(): Json {
-        return Json {
-            ignoreUnknownKeys = true
+    fun provideNewsApiService(): NewsApiService {
+        val authInterceptor = Interceptor { chain ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer ${Constants.NEWS_API_KEY}")
+                .build()
+            chain.proceed(newRequest)
         }
-    }
-
-    @Provides
-    @Singleton
-    fun provideNewsApiService(okHttpClient: OkHttpClient, json: Json): NewsApiService {
-        val contentType = "application/json".toMediaType()
-        val newsRetrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .baseUrl(Constants.NEWS_BASE_URL)
+        val loggingInterceptor = HttpLoggingInterceptor().setLevel(
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+            else HttpLoggingInterceptor.Level.NONE
+        )
+        val client = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
-        return newsRetrofit.create(NewsApiService::class.java)
+
+        return Retrofit.Builder()
+            .baseUrl(Constants.NEWS_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(NewsApiService::class.java)
     }
 
     @Provides
@@ -61,6 +57,6 @@ object AppModule {
     fun provideNewsRepository(
         newsApiService: NewsApiService,
     ): NewsRepository {
-        return NewsRepositoryImpl(newsApiService)
+        return NewsRepository(newsApiService)
     }
 }

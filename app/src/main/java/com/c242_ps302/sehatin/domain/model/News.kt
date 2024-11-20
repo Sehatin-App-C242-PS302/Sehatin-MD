@@ -1,12 +1,12 @@
 package com.c242_ps302.sehatin.domain.model
 
 data class News(
+    val source: String,
+    val author: String,
     val title: String,
     val description: String,
-    val content: String,
-    val source: String,
     val url: String,
-    val imageUrl: String,
-    val author: String,
+    val urlToImage: String,
     val publishedAt: String,
+    val content: String,
 )
