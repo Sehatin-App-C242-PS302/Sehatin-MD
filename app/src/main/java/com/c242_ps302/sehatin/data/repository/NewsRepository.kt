@@ -1,17 +1,17 @@
 package com.c242_ps302.sehatin.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import com.c242_ps302.sehatin.data.mapper.toNews
 import com.c242_ps302.sehatin.data.remote.NewsApiService
 import com.c242_ps302.sehatin.data.remote.response.ArticlesItem
 import com.c242_ps302.sehatin.domain.model.News
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 
 class NewsRepository(
     private val newsApiService: NewsApiService,
 ) {
-    fun getAllNews(): LiveData<Result<List<News>>> = liveData {
+    fun getAllNews(): Flow<Result<List<News>>> = flow {
         emit(Result.Loading)
         try {
             val response = newsApiService.getHeadlineNews("health")
