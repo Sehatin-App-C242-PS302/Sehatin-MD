@@ -77,7 +77,6 @@ fun NewsScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        // SearchBar
         SearchBar(
             query = searchQuery,
             onQueryChange = {
@@ -121,7 +120,6 @@ fun NewsScreen(
             content = {}
         )
         Spacer(modifier = Modifier.height(8.dp))
-        // Suggestion Chips
         AnimatedVisibility(
             visible = isSuggestionChipVisible
         ) {
@@ -145,8 +143,6 @@ fun NewsScreen(
                 }
             }
         }
-
-        // Main Content
         Box(
             modifier = Modifier
                 .fillMaxSize()
