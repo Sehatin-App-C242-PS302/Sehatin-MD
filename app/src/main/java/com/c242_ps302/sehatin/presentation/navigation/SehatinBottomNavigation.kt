@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 
 @Composable
@@ -33,14 +34,14 @@ fun SehatinBottomNavigation(
                     }
                 },
                 label = {
-                    Text(text = item.title)
+                    Text(text = stringResource(id = item.titleResId))
                 },
                 icon = {
                     Icon(
                         imageVector = if (selectedItemIndex == index) {
                             item.selectedIcon
                         } else item.unselectedIcon,
-                        contentDescription = item.title,
+                        contentDescription = stringResource(id = item.titleResId),
                     )
                 }
             )

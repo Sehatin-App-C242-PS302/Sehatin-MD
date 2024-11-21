@@ -12,9 +12,10 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Newspaper
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.c242_ps302.sehatin.R
 
 data class BottomNavigationItem(
-    val title: String,
+    val titleResId: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     val route: Routes
@@ -22,31 +23,31 @@ data class BottomNavigationItem(
 
 val bottomNavigationItems = listOf(
     BottomNavigationItem(
-        title = "Home",
+        titleResId = R.string.home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
         route = Routes.HomeScreen
     ),
     BottomNavigationItem(
-        title = "Food",
+        titleResId = R.string.food,
         selectedIcon = Icons.Filled.Fastfood,
         unselectedIcon = Icons.Outlined.Fastfood,
         route = Routes.HealthScreen
     ),
     BottomNavigationItem(
-        title = "History",
+        titleResId = R.string.history,
         selectedIcon = Icons.Filled.History,
         unselectedIcon = Icons.Outlined.History,
         route = Routes.HistoryScreen
     ),
     BottomNavigationItem(
-        title = "News",
+        titleResId = R.string.news,
         selectedIcon = Icons.Filled.Newspaper,
         unselectedIcon = Icons.Outlined.Newspaper,
         route = Routes.NewsScreen
     ),
     BottomNavigationItem(
-        title = "Settings",
+        titleResId = R.string.settings,
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
         route = Routes.SettingsScreen
