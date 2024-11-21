@@ -14,17 +14,27 @@ class NewsRepository(
     fun getAllNews(): Flow<Result<List<News>>> = flow {
         emit(Result.Loading)
         try {
-            val response = newsApiService.getHeadlineNews("health")
+            val response = newsApiService.getHeadlineNews("health", "title")
             val news = response.articles
 
             if (news.isNullOrEmpty()) {
                 emit(Result.Error("No data found"))
             } else {
                 try {
-                    val newsList = news.mapNotNull { article: ArticlesItem? ->
-                        article?.toNews()
+                    val newsList = news
+                        .filterNot { article ->
+                            article?.title == "[Removed]" ||
+                                    article?.description == "[Removed]" ||
+                                    article?.content == "[Removed]"
+                        }
+                        .mapNotNull { article: ArticlesItem? ->
+                            article?.toNews()
+                        }
+                    if (newsList.isEmpty()) {
+                        emit(Result.Error("No valid news found"))
+                    } else {
+                        emit(Result.Success(newsList))
                     }
-                    emit(Result.Success(newsList))
                 } catch (e: Exception) {
                     emit(Result.Error("Error: ${e.message}"))
                 }

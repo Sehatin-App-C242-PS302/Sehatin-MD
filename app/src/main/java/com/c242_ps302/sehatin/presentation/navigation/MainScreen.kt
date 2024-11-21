@@ -1,6 +1,5 @@
 package com.c242_ps302.sehatin.presentation.navigation
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,7 +18,6 @@ import com.c242_ps302.sehatin.presentation.screen.news.NewsScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsViewModel
 import com.c242_ps302.sehatin.presentation.screen.settings.SettingsScreen
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
     navController: NavHostController,
@@ -32,11 +30,11 @@ fun MainScreen(
                 navController = mainNavController
             )
         }
-    ) {
+    ) { innerPadding ->
         NavHost(
             navController = mainNavController,
             startDestination = Routes.HomeScreen,
-            modifier = Modifier.padding()
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             composable<Routes.HomeScreen> {
                 HomeScreen(

@@ -67,7 +67,7 @@ fun NewsCard(
             ) {
                 Text(
                     text = news.title,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -75,7 +75,7 @@ fun NewsCard(
 
                 Text(
                     text = news.description,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -96,13 +96,12 @@ fun NewsCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-
-                    Text(
-                        text = news.publishedAt,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
                 }
+                Text(
+                    text = news.publishedAt,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
