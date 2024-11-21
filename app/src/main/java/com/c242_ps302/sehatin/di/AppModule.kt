@@ -6,6 +6,7 @@ import com.c242_ps302.sehatin.BuildConfig
 import com.c242_ps302.sehatin.data.remote.NewsApiService
 import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.utils.Constants
+import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +25,12 @@ object AppModule {
     @Singleton
     fun provideContext(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun provideLanguageChangeHelper(): LanguageChangeHelper {
+        return LanguageChangeHelper()
     }
 
     @Provides
