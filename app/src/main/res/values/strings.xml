@@ -15,4 +15,6 @@
     <string name="register_now">Register now</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="name">Name</string>
+    <string name="searchbar_text">Search...</string>
+    <string name="search">Search</string>
 </resources>

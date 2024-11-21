@@ -22,13 +22,16 @@ class NewsViewModel @Inject constructor(
     private val _newsList = MutableStateFlow<List<News>>(emptyList())
     val newsList = _newsList.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    var searchQuery = _searchQuery.asStateFlow()
+
     init {
         getHeadlineNews()
     }
 
-    private fun getHeadlineNews() {
+    private fun getHeadlineNews(query: String? = null) {
         viewModelScope.launch {
-            newsRepository.getAllNews().collect { result ->
+            newsRepository.getSearhedNews(query ?: "health").collect { result ->
                 when (result) {
                     Result.Loading -> {
                         _uiState.value = _uiState.value.copy(isLoading = true)
@@ -52,6 +55,11 @@ class NewsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+        getHeadlineNews(query.ifBlank { "health" })
     }
 
     fun refreshNews() {

@@ -8,8 +8,10 @@ interface NewsApiService {
 
     @GET("everything")
     suspend fun getHeadlineNews(
+        @Query("language") language: String = "en",
+        @Query("sortBy") sortBy: String = "relevancy",
+        @Query("searchIn") searchIn: String = "title",
         @Query("q") query: String,
-        @Query("searchIn") searchIn: String,
     ): NewsResponse
 
 }

@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.flow
 class NewsRepository(
     private val newsApiService: NewsApiService,
 ) {
-    fun getAllNews(): Flow<Result<List<News>>> = flow {
+    fun getSearhedNews(query: String = "health"): Flow<Result<List<News>>> = flow {
         emit(Result.Loading)
         try {
-            val response = newsApiService.getHeadlineNews("health", "title")
+            val response = newsApiService.getHeadlineNews(query = query)
             val news = response.articles
 
             if (news.isNullOrEmpty()) {
