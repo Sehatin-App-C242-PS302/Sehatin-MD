@@ -44,6 +44,9 @@ fun NavGraphSetup(
                     navController.navigate(Routes.MainScreen) {
                         popUpTo(Routes.RegisterScreen) { inclusive = true }
                     }
+                },
+                onLoginClick = {
+                    navController.navigate(Routes.LoginScreen)
                 }
             )
         }
