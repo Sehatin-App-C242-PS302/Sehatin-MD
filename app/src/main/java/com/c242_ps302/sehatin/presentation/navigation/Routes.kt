@@ -6,6 +6,8 @@ sealed class Routes {
 
     // Auth Routes
     @Serializable
+    data object OnboardingScreen : Routes()
+    @Serializable
     data object RegisterScreen : Routes()
     @Serializable
     data object LoginScreen : Routes()

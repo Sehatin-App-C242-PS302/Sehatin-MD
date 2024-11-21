@@ -5,4 +5,12 @@
     <string name="history">History</string>
     <string name="news">News</string>
     <string name="settings">Settings</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="onboarding_image">Onboarding Image</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="register_now">Register now</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
+import com.c242_ps302.sehatin.presentation.screen.onboarding.OnboardingScreen
 
 @Composable
 fun NavGraphSetup(
@@ -13,8 +14,18 @@ fun NavGraphSetup(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.LoginScreen
+        startDestination = Routes.OnboardingScreen
     ) {
+        composable<Routes.OnboardingScreen> {
+            OnboardingScreen(
+                onLoginClick = {
+                    navController.navigate(Routes.LoginScreen)
+                },
+                onRegisterClick = {
+                    navController.navigate(Routes.RegisterScreen)
+                }
+            )
+        }
         composable<Routes.LoginScreen> {
             LoginScreen(
                 onLoginClick = {
