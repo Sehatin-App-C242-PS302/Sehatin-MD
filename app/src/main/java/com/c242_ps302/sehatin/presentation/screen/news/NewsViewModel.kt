@@ -22,41 +22,50 @@ class NewsViewModel @Inject constructor(
     private val _newsList = MutableStateFlow<List<News>>(emptyList())
     val newsList = _newsList.asStateFlow()
 
-    private var isDataFetched = false
+    init {
+        getHeadlineNews()
+    }
 
-    fun getHeadlineNews() {
-        if (!isDataFetched) {
-            viewModelScope.launch {
-                newsRepository.getAllNews().collect { result ->
-                    when (result) {
-                        is Result.Error -> {
-                            _uiState.value = _uiState.value.copy(
-                                isLoading = false,
-                                error = result.error,
-                            )
-                            isDataFetched = false
-                        }
+    private fun getHeadlineNews() {
+        viewModelScope.launch {
+            newsRepository.getAllNews().collect { result ->
+                when (result) {
+                    Result.Loading -> {
+                        _uiState.value = _uiState.value.copy(isLoading = true)
+                    }
 
-                        Result.Loading -> {
-                            _uiState.value = _uiState.value.copy(isLoading = true)
-                        }
+                    is Result.Error -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = result.error,
+                        )
+                    }
 
-                        is Result.Success -> {
-                            _uiState.value = _uiState.value.copy(
-                                isLoading = false,
-                            )
-                            _newsList.value = result.data
-                            isDataFetched = true
-                        }
+                    is Result.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = null,
+                            success = true,
+                        )
+                        _newsList.value = result.data
                     }
                 }
             }
         }
     }
+
+    fun refreshNews() {
+        getHeadlineNews()
+    }
+
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(error = null)
+    }
 }
 
 data class NewsScreenUiState(
     val isLoading: Boolean = true,
+    val success: Boolean = false,
     val news: News? = null,
     val error: String? = null,
 )

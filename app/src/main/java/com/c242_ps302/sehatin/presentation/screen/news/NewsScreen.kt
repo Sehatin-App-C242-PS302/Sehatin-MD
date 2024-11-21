@@ -17,22 +17,35 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.c242_ps302.sehatin.domain.model.News
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.c242_ps302.sehatin.presentation.components.NewsVerticalColumn
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 
 @Composable
 fun NewsScreen(
     modifier: Modifier = Modifier,
-    newsList: List<News>,
-    newsViewModel: NewsViewModel
+    viewModel: NewsViewModel = hiltViewModel()
 ) {
-    val uiState by newsViewModel.uiState.collectAsStateWithLifecycle()
+    val newsList by viewModel.newsList.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        when {
+            uiState.error != null -> {
+
+            }
+
+            uiState.success -> {
+                viewModel.clearError()
+            }
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
