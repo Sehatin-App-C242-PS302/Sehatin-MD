@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
@@ -43,7 +43,7 @@ import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     languageChangeHelper: LanguageChangeHelper = hiltViewModel(),
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
@@ -61,7 +61,9 @@ fun SettingsScreen(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
         SehatinAppBar()
         Spacer(modifier = Modifier.height(40.dp))
@@ -91,13 +93,11 @@ fun SettingsScreen(
         SettingsItem(
             leadingIcon = Icons.Default.Person,
             text = stringResource(R.string.account),
-            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         SettingsItem(
             leadingIcon = Icons.Default.Security,
             text = stringResource(R.string.privacy_security),
-            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         SwitchSettingsItem(
@@ -120,6 +120,12 @@ fun SettingsScreen(
             text = stringResource(R.string.language),
             onCurrentLanguageChange = onCurrentLanguageChange,
             languageChangeHelper = languageChangeHelper
+        )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+        SettingsItem(
+            leadingIcon = Icons.AutoMirrored.Filled.Logout,
+            text = stringResource(R.string.logout),
+            onClick = { }
         )
     }
 }

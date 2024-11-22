@@ -23,4 +23,7 @@
     <string name="dark_theme">Tema Gelap</string>
     <string name="notification">Notifikasi</string>
     <string name="privacy_security"><![CDATA[Privasi & Keamanan]]></string>
+    <string name="logout">Keluar dari Akun</string>
+    <string name="daily_indicator">Indikator Harian</string>
+    <string name="daily_step_recommendation">Rekomendasi Langkah Harian</string>
 </resources>

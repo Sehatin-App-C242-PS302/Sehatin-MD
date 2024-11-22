@@ -22,4 +22,9 @@
     <string name="dark_theme">Dark Theme</string>
     <string name="notification">Notification</string>
     <string name="privacy_security"><![CDATA[Privacy & Security]]></string>
+    <string name="logout">Logout</string>
+    <string name="daily_indicator">Daily Indicator</string>
+    <string name="daily_step_recommendation">Daily Step Recommendation</string>
+    <string name="current_data">Current Data</string>
+    <string name="current_bmi">Current BMI</string>
 </resources>

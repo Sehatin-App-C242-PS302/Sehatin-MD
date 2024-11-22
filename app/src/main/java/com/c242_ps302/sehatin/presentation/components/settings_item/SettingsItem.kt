@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,16 +35,16 @@ import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 data class Language(
     val code: String,
     val name: String,
-    @DrawableRes val flag: Int
+    @DrawableRes val flag: Int,
 )
 
 
 @Composable
 fun SettingsItem(
+    modifier: Modifier = Modifier,
     leadingIcon: ImageVector,
     text: String,
-    trailingIcon: ImageVector,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -69,13 +68,6 @@ fun SettingsItem(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
-        IconButton(onClick = onClick) {
-            Icon(
-                imageVector = trailingIcon,
-                contentDescription = text,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
     }
 }
 
@@ -110,7 +102,7 @@ fun LanguageSettingsItem(
     languagesList: List<Language>,
     text: String,
     onCurrentLanguageChange: (String) -> Unit,
-    languageChangeHelper: LanguageChangeHelper
+    languageChangeHelper: LanguageChangeHelper,
 ) {
     val context = LocalContext.current
     val currentLanguageCode: String = languageChangeHelper.getLanguageCode(context)
@@ -144,7 +136,9 @@ fun LanguageSettingsItem(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.background(MaterialTheme.colorScheme.background).padding(horizontal = 10.dp)
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = 10.dp)
         ) {
             languagesList.forEach { item ->
                 DropdownMenuItem(

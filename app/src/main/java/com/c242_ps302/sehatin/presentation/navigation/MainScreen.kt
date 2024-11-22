@@ -34,11 +34,7 @@ fun MainScreen(
         ) {
             composable<Routes.HomeScreen> {
                 HomeScreen(
-                    onLogoutClick = {
-                        navController.navigate(Routes.LoginScreen) {
-                            popUpTo(Routes.MainScreen) { inclusive = true }
-                        }
-                    },
+
                 )
             }
             composable<Routes.FoodScreen> {

@@ -25,7 +25,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         installSplashScreen()
-
         setContent {
             val isDarkTheme by preferences.getDarkThemeFlow().collectAsState(initial = false)
 
@@ -33,6 +32,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavGraphSetup(
                     navController = navController
+
                 )
             }
         }
