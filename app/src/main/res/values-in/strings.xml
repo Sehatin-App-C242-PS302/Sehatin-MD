@@ -20,4 +20,6 @@
     <string name="search">Cari</string>
     <string name="account">Akun</string>
     <string name="language">Bahasa</string>
+    <string name="dark_theme">Tema Gelap</string>
+    <string name="notification">Notifikasi</string>
 </resources>

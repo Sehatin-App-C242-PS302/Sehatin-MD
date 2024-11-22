@@ -20,7 +20,8 @@ import androidx.compose.ui.unit.dp
 fun SwitchSettingsItem(
     leadingIcon: ImageVector,
     text: String,
-    onClick: () -> Unit = {}
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -28,7 +29,7 @@ fun SwitchSettingsItem(
             .background(MaterialTheme.colorScheme.surface)
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
-            .clickable(onClick = onClick),
+            .clickable { onCheckedChange(!checked) },
     ) {
         Icon(
             imageVector = leadingIcon,
@@ -45,8 +46,8 @@ fun SwitchSettingsItem(
             modifier = Modifier.weight(1f)
         )
         Switch(
-            checked = TODO(),
-            onCheckedChange = TODO()
+            checked = checked,
+            onCheckedChange = onCheckedChange
         )
     }
 }

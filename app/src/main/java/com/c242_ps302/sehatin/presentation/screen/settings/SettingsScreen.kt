@@ -10,13 +10,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,15 +35,20 @@ import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppB
 import com.c242_ps302.sehatin.presentation.components.settings_item.Language
 import com.c242_ps302.sehatin.presentation.components.settings_item.LanguageSettingsItem
 import com.c242_ps302.sehatin.presentation.components.settings_item.SettingsItem
+import com.c242_ps302.sehatin.presentation.components.settings_item.SwitchSettingsItem
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    languageChangeHelper: LanguageChangeHelper = hiltViewModel()
+    languageChangeHelper: LanguageChangeHelper = hiltViewModel(),
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+    val isNotificationEnabled by viewModel.isNotificationEnabled.collectAsState()
+
 
     val languagesList = listOf(
         Language("en", "English", R.drawable.uk_flag),
@@ -85,9 +95,23 @@ fun SettingsScreen(
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         SettingsItem(
-            leadingIcon = Icons.Default.Person,
-            text = stringResource(R.string.privacy_security),
+            leadingIcon = Icons.Default.Security,
+            text = "Privacy & Security",
             trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight
+        )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+        SwitchSettingsItem(
+            leadingIcon = Icons.Default.DarkMode,
+            text = stringResource(R.string.dark_theme),
+            checked = isDarkTheme,
+            onCheckedChange = { viewModel.toggleDarkTheme() }
+        )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+        SwitchSettingsItem(
+            leadingIcon = Icons.Default.Notifications,
+            text = stringResource(R.string.notification),
+            checked = isNotificationEnabled,
+            onCheckedChange = { viewModel.toggleNotification() }
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         LanguageSettingsItem(

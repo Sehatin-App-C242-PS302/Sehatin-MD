@@ -19,5 +19,6 @@
     <string name="search">Search</string>
     <string name="account">Account</string>
     <string name="language">Language</string>
-    <string name="privacy_security"><![CDATA[Privacy & Security]]></string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="notification">Notification</string>
 </resources>

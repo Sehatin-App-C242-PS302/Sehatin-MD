@@ -3,6 +3,7 @@ package com.c242_ps302.sehatin.di
 import android.app.Application
 import android.content.Context
 import com.c242_ps302.sehatin.BuildConfig
+import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.data.remote.NewsApiService
 import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.utils.Constants
@@ -25,6 +26,12 @@ object AppModule {
     @Singleton
     fun provideContext(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun provideSehatinAppPreferences(context: Context): SehatinAppPreferences {
+        return SehatinAppPreferences(context)
     }
 
     @Provides
