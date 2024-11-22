@@ -96,7 +96,7 @@ fun SettingsScreen(
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         SettingsItem(
             leadingIcon = Icons.Default.Security,
-            text = "Privacy & Security",
+            text = stringResource(R.string.privacy_security),
             trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
