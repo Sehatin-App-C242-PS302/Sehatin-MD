@@ -84,6 +84,12 @@ fun SettingsScreen(
             trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+        SettingsItem(
+            leadingIcon = Icons.Default.Person,
+            text = stringResource(R.string.privacy_security),
+            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight
+        )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         LanguageSettingsItem(
             leadingIcon = Icons.Default.Language,
             languagesList = languagesList,

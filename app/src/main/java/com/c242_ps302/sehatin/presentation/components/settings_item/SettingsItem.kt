@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,21 +33,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 
-// Removed the conflicting Language import
 data class Language(
     val code: String,
     val name: String,
     @DrawableRes val flag: Int
 )
 
-// Rest of the code remains the same as in your original file
 
 @Composable
 fun SettingsItem(
     leadingIcon: ImageVector,
     text: String,
     trailingIcon: ImageVector,
-    onClick: () -> Unit = {}  // Added onClick parameter
+    onClick: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -56,7 +53,7 @@ fun SettingsItem(
             .background(MaterialTheme.colorScheme.surface)
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
-            .clickable(onClick = onClick),  // Using onClick parameter
+            .clickable(onClick = onClick),
     ) {
         Icon(
             imageVector = leadingIcon,
@@ -72,7 +69,7 @@ fun SettingsItem(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
-        IconButton(onClick = onClick) {  // Optional: add action to trailing icon
+        IconButton(onClick = onClick) {
             Icon(
                 imageVector = trailingIcon,
                 contentDescription = text,

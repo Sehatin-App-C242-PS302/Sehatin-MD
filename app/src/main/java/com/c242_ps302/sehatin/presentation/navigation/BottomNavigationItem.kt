@@ -32,7 +32,7 @@ val bottomNavigationItems = listOf(
         titleResId = R.string.food,
         selectedIcon = Icons.Filled.Fastfood,
         unselectedIcon = Icons.Outlined.Fastfood,
-        route = Routes.HealthScreen
+        route = Routes.FoodScreen
     ),
     BottomNavigationItem(
         titleResId = R.string.history,
