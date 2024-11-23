@@ -17,61 +17,61 @@ class AuthViewmodel @Inject constructor(
     private val _token = MutableStateFlow<String?>(null)
     val token = _token.asStateFlow()
 
-    init {
-        getToken()
-    }
+//    init {
+//        getToken()
+//    }
 
-    fun login(email: String, password: String) {
-        authRepository.login(email, password).observeForever { result ->
-            when (result) {
-                Result.Loading -> {
-                    _uiState.value = _uiState.value.copy(isLoading = true)
-                }
-
-                is Result.Success -> {
-                    _uiState.value =
-                        _uiState.value.copy(isLoading = false, error = null, success = true)
-                }
-
-                is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = result.error,
-                        success = false
-                    )
-                }
-            }
-        }
-    }
-
-    fun register(name: String, email: String, password: String, birthday: String) {
-        authRepository.register(name, email, password, birthday).observeForever { result ->
-            when (result) {
-                Result.Loading -> {
-                    _uiState.value = _uiState.value.copy(isLoading = true)
-                }
-
-                is Result.Success -> {
-                    _uiState.value =
-                        _uiState.value.copy(isLoading = false, error = null, success = true)
-                }
-
-                is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = result.error,
-                        success = false
-                    )
-                }
-            }
-        }
-    }
-
-    private fun getToken() {
-        authRepository.getToken().observeForever {
-            _token.value = it
-        }
-    }
+//    fun login(email: String, password: String) {
+//        authRepository.login(email, password).observeForever { result ->
+//            when (result) {
+//                Result.Loading -> {
+//                    _uiState.value = _uiState.value.copy(isLoading = true)
+//                }
+//
+//                is Result.Success -> {
+//                    _uiState.value =
+//                        _uiState.value.copy(isLoading = false, error = null, success = true)
+//                }
+//
+//                is Result.Error -> {
+//                    _uiState.value = _uiState.value.copy(
+//                        isLoading = false,
+//                        error = result.error,
+//                        success = false
+//                    )
+//                }
+//            }
+//        }
+//    }
+//
+//    fun register(name: String, email: String, password: String, birthday: String) {
+//        authRepository.register(name, email, password, birthday).observeForever { result ->
+//            when (result) {
+//                Result.Loading -> {
+//                    _uiState.value = _uiState.value.copy(isLoading = true)
+//                }
+//
+//                is Result.Success -> {
+//                    _uiState.value =
+//                        _uiState.value.copy(isLoading = false, error = null, success = true)
+//                }
+//
+//                is Result.Error -> {
+//                    _uiState.value = _uiState.value.copy(
+//                        isLoading = false,
+//                        error = result.error,
+//                        success = false
+//                    )
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun getToken() {
+//        authRepository.getToken().observeForever {
+//            _token.value = it
+//        }
+//    }
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
