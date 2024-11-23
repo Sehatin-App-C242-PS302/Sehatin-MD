@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.c242_ps302.sehatin.BuildConfig
 import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
+import com.c242_ps302.sehatin.data.remote.AuthApiService
 import com.c242_ps302.sehatin.data.remote.NewsApiService
 import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.utils.Constants
@@ -39,6 +40,27 @@ object AppModule {
     fun provideLanguageChangeHelper(): LanguageChangeHelper {
         return LanguageChangeHelper()
     }
+
+    @Provides
+    @Singleton
+    fun provideAuthApiService(): AuthApiService {
+        val loggingInterceptor = HttpLoggingInterceptor().setLevel(
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+            else HttpLoggingInterceptor.Level.NONE
+        )
+
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl("")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(AuthApiService::class.java)
+    }
+
 
     @Provides
     @Singleton

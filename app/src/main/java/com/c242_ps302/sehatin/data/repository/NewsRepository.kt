@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 class NewsRepository(
     private val newsApiService: NewsApiService,
 ) {
-    fun getSearhedNews(query: String = "health"): Flow<Result<List<News>>> = flow {
+    fun getSearchedNews(query: String = "health"): Flow<Result<List<News>>> = flow {
         emit(Result.Loading)
         try {
             val response = newsApiService.getHeadlineNews(query = query)

@@ -31,7 +31,7 @@ class NewsViewModel @Inject constructor(
 
     private fun getHeadlineNews(query: String? = null) {
         viewModelScope.launch {
-            newsRepository.getSearhedNews(query ?: "health").collect { result ->
+            newsRepository.getSearchedNews(query ?: "health").collect { result ->
                 when (result) {
                     Result.Loading -> {
                         _uiState.value = _uiState.value.copy(isLoading = true)
