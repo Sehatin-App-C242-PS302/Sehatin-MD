@@ -1,5 +1,10 @@
 package com.c242_ps302.sehatin.presentation.screen.settings
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
@@ -57,6 +63,39 @@ fun SettingsScreen(
 
     val onCurrentLanguageChange: (String) -> Unit = { languageCode ->
         languageChangeHelper.changeLanguage(context, languageCode)
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            viewModel.toggleNotification(true)
+        } else {
+            viewModel.toggleNotification(false)
+        }
+    }
+
+    fun handleNotificationPermission(enable: Boolean) {
+        if (!enable) {
+            viewModel.toggleNotification(false)
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when (PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) -> {
+                    viewModel.toggleNotification(true)
+                }
+                else -> {
+                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        } else {
+            viewModel.toggleNotification(true)
+        }
     }
 
     Column(
@@ -111,7 +150,7 @@ fun SettingsScreen(
             leadingIcon = Icons.Default.Notifications,
             text = stringResource(R.string.notification),
             checked = isNotificationEnabled,
-            onCheckedChange = { viewModel.toggleNotification() }
+            onCheckedChange = { enabled -> handleNotificationPermission(enabled) }
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         LanguageSettingsItem(

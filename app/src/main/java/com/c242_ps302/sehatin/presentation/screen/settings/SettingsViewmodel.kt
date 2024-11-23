@@ -34,11 +34,10 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun toggleNotification() {
+    fun toggleNotification(isNotificationEnabled: Boolean) {
         viewModelScope.launch {
-            val newValue = !_isNotificationEnabled.value
-            preferences.setNotificationEnable(newValue)
-            _isNotificationEnabled.value = newValue
+            preferences.setNotificationEnable(isNotificationEnabled)
+            _isNotificationEnabled.value = isNotificationEnabled
         }
     }
 }
