@@ -31,7 +31,9 @@ import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppB
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onFabClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -209,7 +211,7 @@ fun HomeScreen() {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
-            onClick = {  }
+            onClick = { onFabClick() }
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
@@ -225,6 +227,8 @@ fun HomeScreen() {
 @Composable
 private fun HomeScreenPreview() {
     SehatinTheme {
-        HomeScreen()
+        HomeScreen(
+            onFabClick = {}
+        )
     }
 }

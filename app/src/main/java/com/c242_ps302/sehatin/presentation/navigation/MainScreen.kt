@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.c242_ps302.sehatin.presentation.screen.food.FoodScreen
+import com.c242_ps302.sehatin.presentation.screen.health_input.HealthInputScreen
 import com.c242_ps302.sehatin.presentation.screen.history.HistoryScreen
 import com.c242_ps302.sehatin.presentation.screen.home.HomeScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsScreen
@@ -34,7 +35,9 @@ fun MainScreen(
         ) {
             composable<Routes.HomeScreen> {
                 HomeScreen(
-
+                    onFabClick = {
+                        mainNavController.navigate(Routes.HealthInputScreen)
+                    }
                 )
             }
             composable<Routes.FoodScreen> {
@@ -48,6 +51,9 @@ fun MainScreen(
             }
             composable<Routes.SettingsScreen> {
                 SettingsScreen()
+            }
+            composable<Routes.HealthInputScreen> {
+                HealthInputScreen()
             }
         }
     }

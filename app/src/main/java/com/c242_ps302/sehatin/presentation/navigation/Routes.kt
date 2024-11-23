@@ -25,4 +25,8 @@ sealed class Routes {
     data object NewsScreen : Routes()
     @Serializable
     data object SettingsScreen : Routes()
+
+    // Child Routes
+    @Serializable
+    data object HealthInputScreen : Routes()
 }
