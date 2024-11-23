@@ -1,5 +1,6 @@
 package com.c242_ps302.sehatin.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import com.c242_ps302.sehatin.presentation.components.card.NewsCard
 fun NewsVerticalColumn(
     modifier: Modifier = Modifier,
     newsList: List<News>,
+    onNewsClick: (String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -21,10 +23,13 @@ fun NewsVerticalColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(newsList.size) { index ->
+        items(count = newsList.size) { index ->
+            val news = newsList[index]
             NewsCard(
-                news = newsList[index], // No null check needed
-                modifier = Modifier.fillParentMaxWidth()
+                news = news,
+                modifier = Modifier
+                    .fillParentMaxWidth()
+                    .clickable { news?.url?.let { onNewsClick(it) } }
             )
         }
     }

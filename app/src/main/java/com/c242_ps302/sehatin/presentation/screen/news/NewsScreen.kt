@@ -53,6 +53,7 @@ import com.c242_ps302.sehatin.presentation.utils.searchKeywords
 fun NewsScreen(
     modifier: Modifier = Modifier,
     viewModel: NewsViewModel = hiltViewModel(),
+    onNewsClick: (String) -> Unit,
 ) {
     val newsList by viewModel.newsList.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -170,7 +171,8 @@ fun NewsScreen(
 
                 else -> NewsVerticalColumn(
                     modifier = Modifier.fillMaxSize(),
-                    newsList = newsList
+                    newsList = newsList,
+                    onNewsClick = onNewsClick
                 )
             }
         }

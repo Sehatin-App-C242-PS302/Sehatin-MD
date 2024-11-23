@@ -13,5 +13,4 @@ interface NewsApiService {
         @Query("searchIn") searchIn: String = "title",
         @Query("q") query: String,
     ): NewsResponse
-
 }

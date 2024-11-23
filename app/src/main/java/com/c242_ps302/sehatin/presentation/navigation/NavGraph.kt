@@ -55,6 +55,5 @@ fun NavGraphSetup(
             MainScreen(navController = navController)
         }
 
-
     }
 }

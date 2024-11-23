@@ -25,6 +25,7 @@ class NewsViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     var searchQuery = _searchQuery.asStateFlow()
 
+
     init {
         getHeadlineNews()
     }
@@ -56,6 +57,8 @@ class NewsViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
