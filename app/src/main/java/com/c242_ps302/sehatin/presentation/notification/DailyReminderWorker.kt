@@ -47,7 +47,7 @@ class DailyReminderWorker(
 
         private fun calculateInitialDelay(): Long {
             val calendar = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 8)
+                set(Calendar.HOUR_OF_DAY, 7)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
             }
