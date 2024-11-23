@@ -26,4 +26,10 @@
     <string name="logout">Keluar dari Akun</string>
     <string name="daily_indicator">Indikator Harian</string>
     <string name="daily_step_recommendation">Rekomendasi Langkah Harian</string>
+    <string name="current_data">Data Saat Ini</string>
+    <string name="current_bmi">BMI Saat Ini</string>
+    <string name="gender">Jenis Kelamin</string>
+    <string name="masukkan_data_kamu_yuk">Masukkan Data Kamu, Yuk!</string>
+    <string name="male">Laki-Laki</string>
+    <string name="female">Perempuan</string>
 </resources>

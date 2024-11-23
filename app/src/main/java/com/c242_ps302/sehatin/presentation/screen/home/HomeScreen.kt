@@ -32,7 +32,7 @@ import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
 fun HomeScreen(
-    onFabClick: () -> Unit
+    onFabClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -54,7 +54,8 @@ fun HomeScreen(
             Column(
                 modifier = Modifier
                     .padding(top = 20.dp, bottom = 10.dp)
-                    .fillMaxWidth(0.95f),
+                    .fillMaxWidth(0.95f)
+                    .align(Alignment.CenterHorizontally),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ElevatedCard(
@@ -91,6 +92,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
+                    .align(Alignment.CenterHorizontally)
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -193,6 +195,7 @@ fun HomeScreen(
                             text = "26",
                             style = MaterialTheme.typography.displaySmall,
                             fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(bottom = 5.dp)
                         )
@@ -200,6 +203,7 @@ fun HomeScreen(
                             text = "Overweight",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(5.dp)
                         )
