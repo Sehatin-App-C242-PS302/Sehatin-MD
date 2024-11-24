@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.presentation.navigation.NavGraphSetup
@@ -24,7 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        installSplashScreen()
+//        installSplashScreen()
         setContent {
             val isDarkTheme by preferences.getDarkThemeFlow().collectAsState(initial = false)
 
