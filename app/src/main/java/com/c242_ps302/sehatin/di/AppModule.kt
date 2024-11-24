@@ -2,7 +2,11 @@ package com.c242_ps302.sehatin.di
 
 import android.app.Application
 import android.content.Context
+import androidx.room.Room
 import com.c242_ps302.sehatin.BuildConfig
+import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
+import com.c242_ps302.sehatin.data.local.dao.UserDao
+import com.c242_ps302.sehatin.data.local.room.SehatinDatabase
 import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.data.remote.AuthApiService
 import com.c242_ps302.sehatin.data.remote.HealthApiService
@@ -152,6 +156,28 @@ object AppModule {
             .client(client)
             .build()
             .create(NewsApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSehatinDatabase(application: Application): SehatinDatabase {
+        return Room.databaseBuilder(
+            application,
+            SehatinDatabase::class.java,
+            Constants.SEHATIN_DATABASE_NAME
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecommendationDao(sehatinDatabase: SehatinDatabase): RecommendationDao {
+        return sehatinDatabase.recommendationDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(sehatinDatabase: SehatinDatabase): UserDao {
+        return sehatinDatabase.userDao()
     }
 
     @Provides

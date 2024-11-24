@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class RegisterResponse(
     @field:SerializedName("message")
-    val message: String?,
+    val message: String? = null,
     @field:SerializedName("user")
-    val user: User?
+    val user: User? = null
 )
 
 data class LoginResponse(
@@ -22,24 +22,25 @@ data class LoginResponse(
     val user: User? = null,
 )
 
+
 data class User(
-    @SerializedName("id")
-    val id: Int?,
+    @field:SerializedName("id")
+    val id: Int,
 
-    @SerializedName("name")
-    val name: String?,
+    @field:SerializedName("name")
+    val name: String,
 
-    @SerializedName("email")
-    val email: String?,
+    @field:SerializedName("email")
+    val email: String,
 
-    @SerializedName("password")
-    val password: String?,
+    @field:SerializedName("password")
+    val password: String,
 
-    @SerializedName("createdAt")
-    val createdAt: String?,
+    @field:SerializedName("createdAt")
+    val createdAt: String,
 
-    @SerializedName("updatedAt")
-    val updatedAt: String?
+    @field:SerializedName("updatedAt")
+    val updatedAt: String
 )
 
 

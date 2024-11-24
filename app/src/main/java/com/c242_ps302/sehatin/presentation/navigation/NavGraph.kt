@@ -23,6 +23,11 @@ fun NavGraphSetup(
                 },
                 onRegisterClick = {
                     navController.navigate(Routes.RegisterScreen)
+                },
+                onAuthenticated = {
+                    navController.navigate(Routes.MainScreen) {
+                        popUpTo(Routes.OnboardingScreen) { inclusive = true }
+                    }
                 }
             )
         }

@@ -14,6 +14,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,15 +23,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.display_text.SehatinDisplayText
+import com.c242_ps302.sehatin.presentation.screen.auth.AuthViewModel
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
 fun OnboardingScreen(
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
+    onAuthenticated: () -> Unit
 ) {
+    val viewModel: AuthViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val token by viewModel.token.collectAsStateWithLifecycle()
+
+    LaunchedEffect(token) {
+        if (!token.isNullOrEmpty()) {
+            onAuthenticated()
+        }
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -83,7 +99,8 @@ fun OnboardingScreenPreview() {
     SehatinTheme {
         OnboardingScreen(
             onLoginClick = {},
-            onRegisterClick = {}
+            onRegisterClick = {},
+            onAuthenticated = {}
         )
     }
 }
