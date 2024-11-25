@@ -57,7 +57,13 @@ fun MainScreen(
                 )
             }
             composable<Routes.SettingsScreen> {
-                SettingsScreen()
+                SettingsScreen(
+                    onLogoutSuccess = {
+                        navController.navigate(Routes.OnboardingScreen) {
+                            popUpTo(Routes.MainScreen) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable<Routes.HealthInputScreen> {
                 HealthInputScreen(

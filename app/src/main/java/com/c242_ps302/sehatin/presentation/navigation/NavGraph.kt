@@ -46,9 +46,7 @@ fun NavGraphSetup(
         composable<Routes.RegisterScreen> {
             RegisterScreen(
                 onRegisterClick = {
-                    navController.navigate(Routes.MainScreen) {
-                        popUpTo(Routes.RegisterScreen) { inclusive = true }
-                    }
+                    navController.navigate(Routes.LoginScreen)
                 },
                 onLoginClick = {
                     navController.navigate(Routes.LoginScreen)

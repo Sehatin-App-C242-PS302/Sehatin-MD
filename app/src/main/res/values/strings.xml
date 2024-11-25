@@ -31,4 +31,10 @@
     <string name="masukkan_data_kamu_yuk">Masukkan Data Kamu Yuk</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="user_not_found">User not found</string>
+    <string name="name_field_is_required">Name field is required</string>
+    <string name="email_field_is_required">Email field is required</string>
+    <string name="password_field_is_required">Password field is required</string>
+    <string name="email_format_is_invalid">Email format is invalid</string>
+    <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters</string>
 </resources>

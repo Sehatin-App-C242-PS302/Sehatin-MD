@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.c242_ps302.sehatin.R
+import com.c242_ps302.sehatin.data.local.entity.UserEntity
+import com.c242_ps302.sehatin.data.repository.Result
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.components.settings_item.Language
 import com.c242_ps302.sehatin.presentation.components.settings_item.LanguageSettingsItem
@@ -50,10 +53,12 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     languageChangeHelper: LanguageChangeHelper = hiltViewModel(),
     viewModel: SettingsViewModel = hiltViewModel(),
+    onLogoutSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val isNotificationEnabled by viewModel.isNotificationEnabled.collectAsState()
+    val userState by viewModel.userState.collectAsState()
 
 
     val languagesList = listOf(
@@ -116,17 +121,32 @@ fun SettingsScreen(
                 .background(MaterialTheme.colorScheme.inversePrimary)
         )
         Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "User Name",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = "userpertama@gmail.com",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
+        when (userState) {
+            is Result.Loading -> {
+                CircularProgressIndicator()
+            }
+            is Result.Success -> {
+                val user = (userState as Result.Success<UserEntity>).data
+                Text(
+                    text = user.name,
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = user.email,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            is Result.Error -> {
+                Text(
+                    text = (userState as Result.Error).error,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(20.dp))
 
         SettingsItem(
@@ -164,7 +184,7 @@ fun SettingsScreen(
         SettingsItem(
             leadingIcon = Icons.AutoMirrored.Filled.Logout,
             text = stringResource(R.string.logout),
-            onClick = { }
+            onClick = { viewModel.logout(onLogoutSuccess) }
         )
     }
 }
@@ -173,6 +193,8 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenPreview() {
     SehatinTheme {
-        SettingsScreen()
+        SettingsScreen(
+            onLogoutSuccess = {}
+        )
     }
 }

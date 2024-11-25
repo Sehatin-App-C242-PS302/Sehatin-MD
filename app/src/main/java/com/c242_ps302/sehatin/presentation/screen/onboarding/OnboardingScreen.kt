@@ -27,7 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.display_text.SehatinDisplayText
-import com.c242_ps302.sehatin.presentation.screen.auth.AuthViewModel
+import com.c242_ps302.sehatin.presentation.screen.auth.LoginViewModel
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
@@ -36,8 +36,7 @@ fun OnboardingScreen(
     onRegisterClick: () -> Unit,
     onAuthenticated: () -> Unit
 ) {
-    val viewModel: AuthViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val viewModel: LoginViewModel = hiltViewModel()
     val token by viewModel.token.collectAsStateWithLifecycle()
 
     LaunchedEffect(token) {
