@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
@@ -47,7 +48,10 @@ import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 fun HealthInputScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    onSuccess: () -> Unit,
+    onRecommendationClick: () -> Unit,
 ) {
+    val recommendationViewModel: RecommendationViewModel = hiltViewModel()
     var expanded by remember { mutableStateOf(false) }
     var selectedGender by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -66,13 +70,8 @@ fun HealthInputScreen(
     ) {
         SehatinAppBar(
             navigationIcon = {
-                IconButton(
-                    onClick = { onBackClick() }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = ""
-                    )
+                IconButton(onClick = { onBackClick() }) {
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
                 }
             }
         )
@@ -95,10 +94,10 @@ fun HealthInputScreen(
                     .onGloballyPositioned { coordinates ->
                         dropdownMenuHeight = with(localDensity) { coordinates.size.height.toDp() }
                     },
-                color = if (selectedGender.isEmpty())
-                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                else
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (selectedGender.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                    alpha = 0.6f
+                )
+                else MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             DropdownMenu(
@@ -121,10 +120,7 @@ fun HealthInputScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = Icons.Default.CalendarToday,
                 contentDescription = "Age",
@@ -143,10 +139,7 @@ fun HealthInputScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = Icons.Default.Height,
                 contentDescription = "Height",
@@ -165,10 +158,7 @@ fun HealthInputScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = Icons.Default.Scale,
                 contentDescription = "Weight",
@@ -188,14 +178,29 @@ fun HealthInputScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = {  },
+            onClick = {
+                if (selectedGender.isNotEmpty() && age.isNotEmpty() && height.isNotEmpty() && weight.isNotEmpty()) {
+                    val genderApi = if (selectedGender.lowercase() == "male") "male" else "female"
+                    recommendationViewModel.getRecommendation(
+                        gender = genderApi,
+                        age = age.toInt(),
+                        height = height.toDouble(),
+                        weight = weight.toDouble()
+                    )
+                    onSuccess()
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth(0.95f)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text(
-                text = "Count BMI"
-            )
+            Text(text = "Count BMI")
+        }
+
+        Button(
+            onClick = { onRecommendationClick() }
+        ) {
+            Text("Recommendation Screen")
         }
     }
 }
@@ -205,7 +210,8 @@ fun HealthInputScreen(
 fun HealthInputScreenPreview() {
     SehatinTheme {
         HealthInputScreen(
-            onBackClick = {}
-        )
+            onBackClick = {},
+            onSuccess = {},
+            onRecommendationClick = {})
     }
 }

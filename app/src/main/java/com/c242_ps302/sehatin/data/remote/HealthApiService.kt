@@ -1,6 +1,7 @@
 package com.c242_ps302.sehatin.data.remote
 
-import com.c242_ps302.sehatin.data.remote.response.RecommendationResponse
+import com.c242_ps302.sehatin.data.remote.response.GetHealthResponse
+import com.c242_ps302.sehatin.data.remote.response.HealthResponseItem
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -11,12 +12,7 @@ interface HealthApiService {
     @GET("health/user/{id}")
     suspend fun getUserHealthData(
         @Path("id") userId: Int
-    ): RecommendationResponse
-
-    @GET("health/{id}")
-    suspend fun getSingleHealthData(
-        @Path("id") healthId: Int
-    ): RecommendationResponse
+    ): GetHealthResponse
 
     @FormUrlEncoded
     @POST
@@ -26,5 +22,5 @@ interface HealthApiService {
         @Field("height") height: Double,
         @Field("weight") weight: Double,
         @Field("userId") userId: Int
-    )
+    ): HealthResponseItem
 }

@@ -40,4 +40,7 @@ sealed class Routes {
 
     @Serializable
     data class NewsDetailScreen(val newsLink: String) : Routes()
+
+    @Serializable
+    data object RecommendationScreen : Routes()
 }

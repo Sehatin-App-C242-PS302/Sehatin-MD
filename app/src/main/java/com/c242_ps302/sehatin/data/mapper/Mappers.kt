@@ -23,13 +23,13 @@ fun ArticlesItem.toNews(): News {
 
 fun RecommendationResponse.toEntity(): RecommendationEntity {
     return RecommendationEntity(
-        gender = this.gender,
-        weightKg = this.weightKg,
-        heightCm = this.heightCm,
-        category = this.category,
-        age = this.age,
-        bmi = this.bmi,
-        dailyStepRecommendation = this.dailyStepRecommendation,
+        gender = this.gender.orEmpty(),
+        weightKg = this.weightKg ?: 0.0,
+        heightCm = this.heightCm ?: 0.0,
+        category = this.category.orEmpty(),
+        age = this.age ?: 0,
+        bmi = this.bmi ?: 0.0,
+        dailyStepRecommendation = this.dailyStepRecommendation.orEmpty(),
         createdAt = System.currentTimeMillis().toString()
     )
 }

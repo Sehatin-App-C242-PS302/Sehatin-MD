@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.c242_ps302.sehatin.presentation.screen.food.FoodScreen
 import com.c242_ps302.sehatin.presentation.screen.health.HealthInputScreen
+import com.c242_ps302.sehatin.presentation.screen.health.RecommendationScreen
 import com.c242_ps302.sehatin.presentation.screen.history.HistoryScreen
 import com.c242_ps302.sehatin.presentation.screen.home.HomeScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsDetailScreen
@@ -59,7 +60,7 @@ fun MainScreen(
             composable<Routes.SettingsScreen> {
                 SettingsScreen(
                     onLogoutSuccess = {
-                        navController.navigate(Routes.LoginScreen) {
+                        mainNavController.navigate(Routes.LoginScreen) {
                             popUpTo(Routes.MainScreen) { inclusive = true }
                         }
                     }
@@ -67,7 +68,9 @@ fun MainScreen(
             }
             composable<Routes.HealthInputScreen> {
                 HealthInputScreen(
-                    onBackClick = { navController.navigateUp() }
+                    onBackClick = { navController.navigateUp() },
+                    onSuccess = { mainNavController.navigate(Routes.RecommendationScreen) },
+                    onRecommendationClick = { mainNavController.navigate(Routes.RecommendationScreen) }
                 )
             }
             composable<Routes.NewsDetailScreen> { backStackEntry ->
@@ -75,6 +78,12 @@ fun MainScreen(
                 NewsDetailScreen(
                     newsLink = newsLink,
                     onBackClick = { navController.navigateUp() }
+                )
+            }
+            composable<Routes.RecommendationScreen> {
+                RecommendationScreen(
+                    onRecountClick = { mainNavController.navigate(Routes.HealthInputScreen) },
+                    onBackClick = { mainNavController.navigate(Routes.HomeScreen) }
                 )
             }
         }
