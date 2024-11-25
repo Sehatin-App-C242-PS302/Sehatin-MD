@@ -23,16 +23,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-//        installSplashScreen()
+
         setContent {
+            val navController = rememberNavController()
             val isDarkTheme by preferences.getDarkThemeFlow().collectAsState(initial = false)
 
             SehatinTheme(darkTheme = isDarkTheme) {
-                val navController = rememberNavController()
-                NavGraphSetup(
-                    navController = navController
-
-                )
+               NavGraphSetup(
+                     navController = navController,
+               )
             }
         }
     }

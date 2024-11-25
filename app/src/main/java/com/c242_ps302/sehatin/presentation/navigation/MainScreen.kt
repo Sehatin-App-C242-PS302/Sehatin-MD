@@ -59,7 +59,7 @@ fun MainScreen(
             composable<Routes.SettingsScreen> {
                 SettingsScreen(
                     onLogoutSuccess = {
-                        navController.navigate(Routes.OnboardingScreen) {
+                        navController.navigate(Routes.LoginScreen) {
                             popUpTo(Routes.MainScreen) { inclusive = true }
                         }
                     }

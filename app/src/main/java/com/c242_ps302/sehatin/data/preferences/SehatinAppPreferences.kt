@@ -17,7 +17,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Se
 
 @Singleton
 class SehatinAppPreferences @Inject constructor(
-    private val context: Context
+    private val context: Context,
 ) {
     companion object {
         private val IS_DARK_THEME = booleanPreferencesKey("is_dark_theme")

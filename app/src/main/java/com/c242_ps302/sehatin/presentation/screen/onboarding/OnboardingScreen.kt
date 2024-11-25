@@ -34,7 +34,7 @@ import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 fun OnboardingScreen(
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
-    onAuthenticated: () -> Unit
+    onAuthenticated: () -> Unit,
 ) {
     val viewModel: LoginViewModel = hiltViewModel()
     val token by viewModel.token.collectAsStateWithLifecycle()
@@ -99,7 +99,7 @@ fun OnboardingScreenPreview() {
         OnboardingScreen(
             onLoginClick = {},
             onRegisterClick = {},
-            onAuthenticated = {}
+            onAuthenticated = {},
         )
     }
 }
