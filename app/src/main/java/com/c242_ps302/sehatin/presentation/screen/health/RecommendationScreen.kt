@@ -116,8 +116,10 @@ fun RecommendationScreen(
                     brush = Brush.horizontalGradient(
                         listOf(
                             Color(0xFFFF6B6B), // Red
+                            Color(0xFFFFD43B),  // Yellow
                             Color(0xFF51CF66), // Green
-                            Color(0xFFFFD43B)  // Yellow
+                            Color(0xFFFFD43B),  // Yellow
+                            Color(0xFFFF6B6B) // Red
                         )
                     )
                 )
