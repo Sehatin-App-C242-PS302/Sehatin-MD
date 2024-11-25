@@ -12,11 +12,11 @@ class RecommendationRepository @Inject constructor(
     private val recommendationDao: RecommendationDao,
     private val recommendationApiService: RecommendationApiService,
 ) {
-    fun getRecommendationFromApiAndSave(
+    fun postRecommendationAndSave(
         gender: String,
         age: Int,
         height: Double,
-        weight: Double
+        weight: Double,
     ): Flow<Result<RecommendationEntity>> = flow {
         emit(Result.Loading)
         try {
@@ -31,6 +31,16 @@ class RecommendationRepository @Inject constructor(
 
             recommendationDao.insertRecommendation(recommendationEntity)
 
+            emit(Result.Success(recommendationEntity))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun getRecommendation(): Flow<Result<RecommendationEntity>> = flow {
+        emit(Result.Loading)
+        try {
+            val recommendationEntity = recommendationDao.getCurrentRecommendation()
             emit(Result.Success(recommendationEntity))
         } catch (e: Exception) {
             emit(Result.Error(e.message ?: "An error occurred"))

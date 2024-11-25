@@ -8,6 +8,7 @@ import com.c242_ps302.sehatin.data.repository.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,9 +23,9 @@ class RecommendationViewModel @Inject constructor(
     private val _recommendation = MutableStateFlow<RecommendationEntity?>(null)
     val recommendation = _recommendation.asStateFlow()
 
-    fun getRecommendation(gender: String, age: Int, height: Double, weight: Double) {
+    fun postRecommendation(gender: String, age: Int, height: Double, weight: Double) {
         viewModelScope.launch {
-            recommendationRepository.getRecommendationFromApiAndSave(gender, age, height, weight).collect { result ->
+            recommendationRepository.postRecommendationAndSave(gender, age, height, weight).collect { result ->
                 when (result) {
                     Result.Loading -> {
                         _uiState.value = _uiState.value.copy(isLoading = true)
@@ -34,6 +35,7 @@ class RecommendationViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             error = null,
+                            success = true,
                         )
                         _recommendation.value = result.data
                     }
@@ -46,6 +48,39 @@ class RecommendationViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    fun getCurrentRecommendation() {
+        viewModelScope.launch {
+            recommendationRepository.getRecommendation()
+                .catch { e ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = e.message ?: "An error occurred"
+                    )
+                }
+                .collect { result ->
+                    when (result) {
+                        Result.Loading -> {
+                            _uiState.value = _uiState.value.copy(isLoading = true)
+                        }
+                        is Result.Success -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                error = null,
+                                success = true,
+                            )
+                            _recommendation.value = result.data
+                        }
+                        is Result.Error -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                error = result.error,
+                            )
+                        }
+                    }
+                }
         }
     }
 

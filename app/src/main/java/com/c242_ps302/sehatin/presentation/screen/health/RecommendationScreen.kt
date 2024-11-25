@@ -14,13 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Female
 import androidx.compose.material.icons.filled.Male
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,15 +33,96 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 
 @Composable
 fun RecommendationScreen(
-    bmiResult: Double = 22.0, // Ganti dengan nilai BMI yang sebenarnya
     onRecountClick: () -> Unit,
     onBackClick: () -> Unit,
+    viewModel: RecommendationViewModel = hiltViewModel()
+) {
+    LaunchedEffect(key1 = true) {
+        viewModel.getCurrentRecommendation()
+    }
+
+    val uiState by viewModel.uiState.collectAsState()
+    val recommendation by viewModel.recommendation.collectAsState()
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        when {
+            uiState.isLoading -> {
+                LoadingContent()
+            }
+            uiState.error != null -> {
+                ErrorContent(
+                    error = uiState.error!!,
+                    onRetry = { viewModel.getCurrentRecommendation() },
+                    onBack = onBackClick
+                )
+            }
+            recommendation != null -> {
+                MainContent(
+                    recommendation = recommendation,
+                    onRecountClick = onRecountClick,
+                    onBackClick = onBackClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingContent() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(48.dp),
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+private fun ErrorContent(
+    error: String,
+    onRetry: () -> Unit,
+    onBack: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Error: $error",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onRetry) {
+            Text(text = "Coba Lagi")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedButton(onClick = onBack) {
+            Text(text = "Kembali")
+        }
+    }
+}
+
+
+@Composable
+private fun MainContent(
+    recommendation: RecommendationEntity?,
+    onRecountClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -44,7 +130,6 @@ fun RecommendationScreen(
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Title Section
         Text(
             text = "Sehatin",
             style = MaterialTheme.typography.headlineMedium.copy(
@@ -55,124 +140,152 @@ fun RecommendationScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // BMI Result Section
-        Text(
-            text = "BMI Kamu Healthy",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold
-            )
-        )
-        Text(
-            text = "Dengan Point",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold
-            )
-        )
-        Text(
-            text = bmiResult.toString(),
-            style = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Bold
-            )
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Gender Icon and Info
-        Text(text = "Gender", style = MaterialTheme.typography.bodyLarge)
-        Icon(
-            imageVector = Icons.Default.Male,
-            contentDescription = "Male Gender",
-            modifier = Modifier.size(48.dp)
-        )
-        Text(text = "Male", style = MaterialTheme.typography.bodyLarge)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // User Info Row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "Age : 20")
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "Height (cm)² : 176")
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "Weight (kg)² : 78")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // BMI Indicator
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(24.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    brush = Brush.horizontalGradient(
-                        listOf(
-                            Color(0xFFFF6B6B), // Red
-                            Color(0xFFFFD43B),  // Yellow
-                            Color(0xFF51CF66), // Green
-                            Color(0xFFFFD43B),  // Yellow
-                            Color(0xFFFF6B6B) // Red
-                        )
+        recommendation?.let { rec ->
+            // BMI Result Section
+            rec.bmi?.let { bmi ->
+                Text(
+                    text = "BMI Kamu ${getBMICategory(bmi)}",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold
                     )
                 )
-        ) {
-            // Indicator
-            Box(
+                Text(
+                    text = "Dengan Point",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+
+                Text(
+                    text = String.format("%.1f", bmi),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Gender section
+            rec.gender?.let { gender ->
+                Text(text = "Gender", style = MaterialTheme.typography.bodyLarge)
+                Icon(
+                    imageVector = if (gender.lowercase() == "male")
+                        Icons.Default.Male else Icons.Default.Female,
+                    contentDescription = "$gender Gender",
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = gender,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // User Info Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Age: ${rec.age ?: "-"}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Height: ${rec.heightCm?.let { String.format("%.1f cm", it) } ?: "-"}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Weight: ${rec.weightKg?.let { String.format("%.1f kg", it) } ?: "-"}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // BMI Indicator
+            rec.bmi?.let { bmi ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color(0xFFFF6B6B), // Underweight
+                                    Color(0xFFFFD43B), // Normal low
+                                    Color(0xFF51CF66), // Normal
+                                    Color(0xFFFFD43B), // Overweight
+                                    Color(0xFFFF6B6B)  // Obese
+                                )
+                            )
+                        )
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp) // Sedikit lebih besar untuk lebih terlihat
+                            .offset(x = (bmi * 10).coerceIn(0.0, 400.0).dp) // Membatasi pergerakan indicator
+                            .background(Color.Black, RoundedCornerShape(4.dp)) // Tambahkan rounded corner
+                            .align(Alignment.CenterStart)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            rec.category?.let { category ->
+                Text(
+                    text = when (category.lowercase()) {
+                        "underweight" -> "Prioritaskan Asupan Nutrisi yang Seimbang"
+                        "overweight", "obese" -> "Prioritaskan Olahraga dan Diet Sehat"
+                        else -> "Pertahankan Pola Hidup Sehat"
+                    },
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Buttons
+            Button(
+                onClick = onRecountClick,
                 modifier = Modifier
-                    .size(4.dp)
-                    .offset(x = (bmiResult * 10).dp) // Adjust based on BMI value
-                    .background(Color.Black)
-                    .align(Alignment.CenterStart)
-            )
-        }
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text(text = "Hitung Ulang BMI")
+            }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Recommendation Text
-        Text(
-            text = "Prioritaskan Makan Sehat dan Olahraga",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Buttons
-        Button(
-            onClick = { onRecountClick() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Text(text = "Recount BMI")
-        }
-
-        OutlinedButton (
-            onClick = { onBackClick() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-        ) {
-            Text(text = "Kembali Ke Beranda")
+            OutlinedButton(
+                onClick = onBackClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+            ) {
+                Text(text = "Kembali Ke Beranda")
+            }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun BMIResultScreenPreview() {
-    SehatinTheme {
-        RecommendationScreen(
-            onRecountClick = {},
-            onBackClick = {}
-        )
+private fun getBMICategory(bmi: Double): String {
+    return when {
+        bmi < 18.5 -> "Underweight"
+        bmi < 25.0 -> "Normal"
+        bmi < 30.0 -> "Overweight"
+        else -> "Obese"
     }
 }
+
+
+

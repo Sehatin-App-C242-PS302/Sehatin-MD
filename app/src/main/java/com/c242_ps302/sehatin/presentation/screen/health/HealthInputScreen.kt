@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.Scale
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +54,7 @@ fun HealthInputScreen(
     onRecommendationClick: () -> Unit,
 ) {
     val recommendationViewModel: RecommendationViewModel = hiltViewModel()
+    val uiState by recommendationViewModel.uiState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     var selectedGender by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -177,17 +180,26 @@ fun HealthInputScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Displaying loading state
+        if (uiState.isLoading) {
+            CircularProgressIndicator()
+        }
+
         Button(
             onClick = {
-                if (selectedGender.isNotEmpty() && age.isNotEmpty() && height.isNotEmpty() && weight.isNotEmpty()) {
+                // Convert only when submitting
+                val ageInt = age.toIntOrNull() ?: 0
+                val heightDouble = height.toDoubleOrNull() ?: 0.0
+                val weightDouble = weight.toDoubleOrNull() ?: 0.0
+
+                if (selectedGender.isNotEmpty() && ageInt > 0 && heightDouble > 0.0 && weightDouble > 0.0) {
                     val genderApi = if (selectedGender.lowercase() == "male") "male" else "female"
-                    recommendationViewModel.getRecommendation(
+                    recommendationViewModel.postRecommendation(
                         gender = genderApi,
-                        age = age.toInt(),
-                        height = height.toDouble(),
-                        weight = weight.toDouble()
+                        age = ageInt,
+                        height = heightDouble,
+                        weight = weightDouble
                     )
-                    onSuccess()
                 }
             },
             modifier = Modifier
@@ -202,6 +214,11 @@ fun HealthInputScreen(
         ) {
             Text("Recommendation Screen")
         }
+
+        // Show success message after successful API response
+        if (uiState.success) {
+            onSuccess()
+        }
     }
 }
 
@@ -212,6 +229,7 @@ fun HealthInputScreenPreview() {
         HealthInputScreen(
             onBackClick = {},
             onSuccess = {},
-            onRecommendationClick = {})
+            onRecommendationClick = {}
+        )
     }
 }
