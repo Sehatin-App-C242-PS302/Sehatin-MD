@@ -6,9 +6,10 @@ import com.c242_ps302.sehatin.data.remote.response.ArticlesItem
 import com.c242_ps302.sehatin.domain.model.News
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 
-class NewsRepository(
+class NewsRepository @Inject constructor(
     private val newsApiService: NewsApiService,
 ) {
     fun getSearchedNews(query: String = "health"): Flow<Result<List<News>>> = flow {

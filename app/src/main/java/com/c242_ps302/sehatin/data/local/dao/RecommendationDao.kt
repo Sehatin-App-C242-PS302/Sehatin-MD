@@ -9,6 +9,8 @@ import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 
 @Dao
 interface RecommendationDao {
+    @Query("SELECT * FROM recommendation_data")
+    suspend fun getAllRecommendations(): List<RecommendationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllRecommendations(recommendations: List<RecommendationEntity>)
