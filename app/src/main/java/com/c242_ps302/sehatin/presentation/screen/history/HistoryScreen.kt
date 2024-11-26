@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.c242_ps302.sehatin.presentation.components.card.HistoryCard
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 
@@ -19,6 +22,10 @@ import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppB
 fun HistoryScreen(
     modifier: Modifier = Modifier,
 ) {
+    val viewModel: HistoryViewModel = hiltViewModel()
+    val uiState = viewModel.uiState.collectAsState()
+    val historyList = viewModel.historyList.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -38,14 +45,12 @@ fun HistoryScreen(
                         style = MaterialTheme.typography.headlineLarge
                     )
                 }
-                items(20) { index ->
+                items(historyList.value) { recommendation ->
                     HistoryCard(
-                        question = "Question ${index + 1} : What is Jetpack Compose?",
-                        answer = "Answer ${index + 1} : Jetpack Compose is Android's modern toolkit for building native UI. It simplifies and accelerates UI development on Android. Quickly bring your app to life with less code, powerful tools, and intuitive Kotlin APIs.",
+                        recommendation = recommendation
                     )
                 }
             }
         }
     }
-
 }

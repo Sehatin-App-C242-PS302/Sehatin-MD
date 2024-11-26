@@ -21,6 +21,10 @@ class HistoryViewModel @Inject constructor(
     private val _historyList = MutableStateFlow<List<RecommendationEntity>>(emptyList())
     val historyList = _historyList.asStateFlow()
 
+    init {
+        getAllHistory()
+    }
+
     fun getAllHistory() {
         viewModelScope.launch {
             historyRepository.getAllRecommendation().collect { result ->

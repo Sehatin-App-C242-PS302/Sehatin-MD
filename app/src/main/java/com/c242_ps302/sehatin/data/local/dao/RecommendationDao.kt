@@ -9,7 +9,7 @@ import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 
 @Dao
 interface RecommendationDao {
-    @Query("SELECT * FROM recommendation_data")
+    @Query("SELECT * FROM recommendation_data ORDER BY createdAt DESC")
     suspend fun getAllRecommendations(): List<RecommendationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
