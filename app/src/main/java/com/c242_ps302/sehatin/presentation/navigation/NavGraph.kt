@@ -1,5 +1,7 @@
 package com.c242_ps302.sehatin.presentation.navigation
 
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -14,48 +16,64 @@ fun NavGraphSetup(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.OnboardingScreen
+        startDestination = Routes.ONBOARDING
     ) {
-        composable<Routes.OnboardingScreen> {
+        composable(
+            route = Routes.ONBOARDING,
+            enterTransition = { slideInVertically() },
+            exitTransition = { slideOutVertically() }
+        ) {
             OnboardingScreen(
                 onLoginClick = {
-                    navController.navigate(Routes.LoginScreen)
+                    navController.navigate(Routes.LOGIN)
                 },
                 onRegisterClick = {
-                    navController.navigate(Routes.RegisterScreen)
+                    navController.navigate(Routes.REGISTER)
                 },
                 onAuthenticated = {
-                    navController.navigate(Routes.MainScreen) {
-                        popUpTo(Routes.OnboardingScreen) { inclusive = true }
+                    navController.navigate(Routes.MAIN_SCREEN) {
+                        popUpTo(Routes.ONBOARDING) { inclusive = true }
                     }
                 }
             )
         }
-        composable<Routes.LoginScreen> {
+        composable(
+            Routes.LOGIN,
+            enterTransition = { slideInVertically() },
+            exitTransition = { slideOutVertically() }
+        ) {
             LoginScreen(
                 onLoginClick = {
-                    navController.navigate(Routes.MainScreen) {
-                        popUpTo(Routes.LoginScreen) { inclusive = true }
+                    navController.navigate(Routes.MAIN_SCREEN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
                     }
                 },
                 onRegisterClick = {
-                    navController.navigate(Routes.RegisterScreen)
+                    navController.navigate(Routes.REGISTER)
                 }
             )
         }
-        composable<Routes.RegisterScreen> {
+        composable(
+            Routes.REGISTER,
+            enterTransition = { slideInVertically() },
+            exitTransition = { slideOutVertically() }
+        ) {
             RegisterScreen(
                 onRegisterClick = {
-                    navController.navigate(Routes.LoginScreen)
+                    navController.navigate(Routes.LOGIN)
                 },
                 onLoginClick = {
-                    navController.navigate(Routes.LoginScreen)
+                    navController.navigate(Routes.LOGIN)
                 }
             )
         }
 
-        composable<Routes.MainScreen> {
-            MainScreen(navController = navController)
+        composable(
+            Routes.MAIN_SCREEN,
+            enterTransition = { slideInVertically() },
+            exitTransition = { slideOutVertically() }
+        ) {
+            MainScreen()
         }
 
     }

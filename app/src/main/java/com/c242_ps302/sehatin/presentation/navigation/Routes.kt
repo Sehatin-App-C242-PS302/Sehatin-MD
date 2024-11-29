@@ -1,46 +1,17 @@
 package com.c242_ps302.sehatin.presentation.navigation
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-sealed class Routes {
-
-    // Auth Routes
-    @Serializable
-    data object OnboardingScreen : Routes()
-
-    @Serializable
-    data object RegisterScreen : Routes()
-
-    @Serializable
-    data object LoginScreen : Routes()
-
-    // Main Routes
-    @Serializable
-    data object MainScreen : Routes()
-
-    @Serializable
-    data object HomeScreen : Routes()
-
-    @Serializable
-    data object FoodScreen : Routes()
-
-    @Serializable
-    data object HistoryScreen : Routes()
-
-    @Serializable
-    data object NewsScreen : Routes()
-
-    @Serializable
-    data object SettingsScreen : Routes()
-
-    // Child Routes
-    @Serializable
-    data object HealthInputScreen : Routes()
-
-    @Serializable
-    data class NewsDetailScreen(val newsLink: String) : Routes()
-
-    @Serializable
-    data object RecommendationScreen : Routes()
+object Routes {
+    const val ONBOARDING = "onboarding"
+    const val REGISTER = "register"
+    const val LOGIN = "login"
+    const val MAIN_SCREEN = "main_screen"
+    const val HOME_SCREEN = "home_screen"
+    const val FOOD_SCREEN = "food_screen"
+    const val HISTORY_SCREEN = "history_screen"
+    const val NEWS_SCREEN = "news_screen"
+    const val SETTINGS_SCREEN = "settings_screen"
+    const val HEALTH_INPUT_SCREEN = "health_input_screen"
+    const val HEALTH_RESULT_SCREEN = "health_result_screen"
+    const val NEWS_DETAIL_SCREEN = "news_detail_screen"
+    const val RECOMMENDATION_SCREEN = "recommendation_screen"
 }

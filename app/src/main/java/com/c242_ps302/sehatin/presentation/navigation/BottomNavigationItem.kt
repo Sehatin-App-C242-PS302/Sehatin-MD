@@ -18,7 +18,7 @@ data class BottomNavigationItem(
     val titleResId: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val route: Routes
+    val route: String
 )
 
 val bottomNavigationItems = listOf(
@@ -26,30 +26,30 @@ val bottomNavigationItems = listOf(
         titleResId = R.string.home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
-        route = Routes.HomeScreen
+        route = Routes.HOME_SCREEN
     ),
     BottomNavigationItem(
         titleResId = R.string.food,
         selectedIcon = Icons.Filled.Fastfood,
         unselectedIcon = Icons.Outlined.Fastfood,
-        route = Routes.FoodScreen
+        route = Routes.FOOD_SCREEN
     ),
     BottomNavigationItem(
         titleResId = R.string.history,
         selectedIcon = Icons.Filled.History,
         unselectedIcon = Icons.Outlined.History,
-        route = Routes.HistoryScreen
+        route = Routes.HISTORY_SCREEN
     ),
     BottomNavigationItem(
         titleResId = R.string.news,
         selectedIcon = Icons.Filled.Newspaper,
         unselectedIcon = Icons.Outlined.Newspaper,
-        route = Routes.NewsScreen
+        route = Routes.NEWS_SCREEN
     ),
     BottomNavigationItem(
         titleResId = R.string.settings,
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
-        route = Routes.SettingsScreen
+        route = Routes.SETTINGS_SCREEN
     )
 )
