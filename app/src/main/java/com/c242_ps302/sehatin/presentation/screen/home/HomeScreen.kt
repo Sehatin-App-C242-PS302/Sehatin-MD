@@ -1,8 +1,9 @@
 package com.c242_ps302.sehatin.presentation.screen.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,15 +31,19 @@ import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun HomeScreen(
     onFabClick: () -> Unit,
 ) {
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        val fabBottomPadding = 16.dp
+        val fabEndPadding = 16.dp
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -93,7 +98,8 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
                     .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp)
+                    .weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 ElevatedCard(
@@ -214,7 +220,7 @@ fun HomeScreen(
         FloatingActionButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(24.dp),
+                .padding(end = fabEndPadding, bottom = fabBottomPadding),
             onClick = { onFabClick() }
         ) {
             Icon(
@@ -225,7 +231,6 @@ fun HomeScreen(
         }
     }
 }
-
 
 @Preview
 @Composable
