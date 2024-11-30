@@ -1,6 +1,8 @@
 package com.c242_ps302.sehatin.presentation.screen.news
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +29,6 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,8 +56,7 @@ fun NewsScreen(
     viewModel: NewsViewModel = hiltViewModel(),
     onNewsClick: (String) -> Unit,
 ) {
-    val newsList by viewModel.newsList.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.newsState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
     val focusRequester = remember { FocusRequester() }
@@ -64,21 +64,10 @@ fun NewsScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     var isSuggestionChipVisible by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(uiState) {
-        when {
-            uiState.error != null -> {
-                // Handle error
-            }
-
-            uiState.success -> {
-                viewModel.clearError()
-            }
-        }
-    }
-
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues = PaddingValues(0.dp))
             .background(color = MaterialTheme.colorScheme.background)
     ) {
         SearchBar(
@@ -124,6 +113,7 @@ fun NewsScreen(
             content = {}
         )
         Spacer(modifier = Modifier.height(8.dp))
+
         AnimatedVisibility(
             visible = isSuggestionChipVisible
         ) {
@@ -147,34 +137,45 @@ fun NewsScreen(
                 }
             }
         }
+
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .weight(1f),
-            contentAlignment = Alignment.Center
         ) {
-            when {
-                uiState.isLoading -> CircularProgressIndicator(
-                    modifier = Modifier.size(50.dp)
+            androidx.compose.animation.AnimatedVisibility(
+                visible = state.isLoading,
+                enter = fadeIn() + expandVertically()
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(50.dp)
                 )
+            }
 
-                uiState.error != null -> Text(
-                    text = uiState.error ?: "Unknown error",
+            androidx.compose.animation.AnimatedVisibility(visible = state.error != null) {
+                Text(
+                    text = state.error ?: "Unknown error",
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+            }
 
-                newsList.isEmpty() -> Text(
+            androidx.compose.animation.AnimatedVisibility(visible = !state.isLoading && state.error == null && state.news.isNotEmpty()) {
+                NewsVerticalColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    newsList = state.news,
+                    onNewsClick = onNewsClick
+                )
+            }
+
+            androidx.compose.animation.AnimatedVisibility(visible = !state.isLoading && state.error == null && state.news.isEmpty()) {
+                Text(
                     text = "Tidak ada berita ditemukan",
                     modifier = Modifier.padding(16.dp)
-                )
-
-                else -> NewsVerticalColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    newsList = newsList,
-                    onNewsClick = onNewsClick
                 )
             }
         }
     }
 }
+

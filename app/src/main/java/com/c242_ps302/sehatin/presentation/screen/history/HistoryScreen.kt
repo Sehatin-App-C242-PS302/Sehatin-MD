@@ -33,6 +33,7 @@ fun HistoryScreen(
     val state by historyViewModel.historyState.collectAsStateWithLifecycle()
 
     Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
@@ -44,7 +45,6 @@ fun HistoryScreen(
             CircularProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.Center)
             )
         }
         AnimatedVisibility(visible = state.error != null) {

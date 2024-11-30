@@ -1,5 +1,6 @@
 package com.c242_ps302.sehatin.presentation.navigation
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -137,7 +138,10 @@ fun MainScreenContent(
     ) { innerPadding ->
         ContentScreen(
             navController = navController,
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
             selectedIndex,
         )
     }
@@ -146,7 +150,7 @@ fun MainScreenContent(
 @Composable
 fun ContentScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.fillMaxSize(),
     selectedIndex: Int,
 ) {
     when (selectedIndex) {
@@ -156,18 +160,22 @@ fun ContentScreen(
             },
             modifier = modifier
         )
+
         1 -> FoodScreen(
             modifier = modifier
         )
+
         2 -> HistoryScreen(
             modifier = modifier
         )
+
         3 -> NewsScreen(
             onNewsClick = { newsLink ->
                 navController.navigate(NewsDetailScreen(newsLink))
             },
             modifier = modifier
         )
+
         4 -> SettingsScreen(
             onLogoutSuccess = {
                 navController.navigate(LoginScreen) {
