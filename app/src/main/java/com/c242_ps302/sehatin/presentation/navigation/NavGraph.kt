@@ -1,6 +1,5 @@
 package com.c242_ps302.sehatin.presentation.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -94,7 +93,7 @@ fun NavGraphSetup(
                 val newsLink = backStackEntry.toRoute<NewsDetailScreen>().newsLink
                 NewsDetailScreen(
                     newsLink = newsLink,
-                    onBackClick = { navController.navigateUp() }
+                    onBackClick = { navController.navigate(NewsScreen) }
                 )
             }
             composable<RecommendationScreen> {
@@ -154,21 +153,28 @@ fun ContentScreen(
         0 -> HomeScreen(
             onFabClick = {
                 navController.navigate(HealthInputScreen)
-            }
+            },
+            modifier = modifier
         )
-        1 -> FoodScreen()
-        2 -> HistoryScreen()
+        1 -> FoodScreen(
+            modifier = modifier
+        )
+        2 -> HistoryScreen(
+            modifier = modifier
+        )
         3 -> NewsScreen(
             onNewsClick = { newsLink ->
                 navController.navigate(NewsDetailScreen(newsLink))
-            }
+            },
+            modifier = modifier
         )
         4 -> SettingsScreen(
             onLogoutSuccess = {
                 navController.navigate(LoginScreen) {
                     popUpTo(MainScreen) { inclusive = true }
                 }
-            }
+            },
+            modifier = modifier
         )
     }
 }

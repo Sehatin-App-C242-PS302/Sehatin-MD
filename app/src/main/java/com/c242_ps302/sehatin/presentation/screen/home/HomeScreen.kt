@@ -1,9 +1,8 @@
 package com.c242_ps302.sehatin.presentation.screen.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,22 +30,17 @@ import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun HomeScreen(
     onFabClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    BoxWithConstraints(
-        modifier = Modifier
+    Box(
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val fabBottomPadding = 16.dp
-        val fabEndPadding = 16.dp
-
         Column(
-            modifier = Modifier
-                .fillMaxSize()
         ) {
             SehatinAppBar()
             Spacer(modifier = Modifier.height(40.dp))
@@ -218,10 +212,10 @@ fun HomeScreen(
             }
         }
         FloatingActionButton(
+            onClick = { onFabClick() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = fabEndPadding, bottom = fabBottomPadding),
-            onClick = { onFabClick() }
+                .padding(24.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
