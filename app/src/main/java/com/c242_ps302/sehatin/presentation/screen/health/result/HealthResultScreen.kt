@@ -1,5 +1,11 @@
-package com.c242_ps302.sehatin.presentation.screen.health
+package com.c242_ps302.sehatin.presentation.screen.health.result
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,9 +27,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,37 +42,47 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
+import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RecommendationScreen(
+fun HealthResultScreen(
     onRecountClick: () -> Unit,
     onBackClick: () -> Unit,
-    viewModel: RecommendationViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(key1 = true) {
-        viewModel.getCurrentRecommendation()
-    }
+    val viewModel: ResultViewModel = hiltViewModel()
+    val uiState by viewModel.healthResultState.collectAsState()
 
-    val uiState by viewModel.uiState.collectAsState()
-    val recommendation by viewModel.recommendation.collectAsState()
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        when {
-            uiState.isLoading -> {
+    Scaffold {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            AnimatedVisibility(
+                visible = uiState.isLoading,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
+            ) {
                 LoadingContent()
             }
-            uiState.error != null -> {
+
+            AnimatedVisibility(
+                visible = uiState.error != null,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
+            ) {
                 ErrorContent(
-                    error = uiState.error!!,
-                    onRetry = { viewModel.getCurrentRecommendation() },
+                    error = uiState.error ?: "",
                     onBack = onBackClick
                 )
             }
-            recommendation != null -> {
+
+            AnimatedVisibility(
+                visible = uiState.result != null && uiState.error == null && !uiState.isLoading,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
+            ) {
                 MainContent(
-                    recommendation = recommendation,
+                    recommendation = uiState.result,
                     onRecountClick = onRecountClick,
                     onBackClick = onBackClick
                 )
@@ -91,8 +107,7 @@ private fun LoadingContent() {
 @Composable
 private fun ErrorContent(
     error: String,
-    onRetry: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -106,10 +121,6 @@ private fun ErrorContent(
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyLarge
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text(text = "Coba Lagi")
-        }
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedButton(onClick = onBack) {
             Text(text = "Kembali")
@@ -122,7 +133,7 @@ private fun ErrorContent(
 private fun MainContent(
     recommendation: RecommendationEntity?,
     onRecountClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -130,13 +141,7 @@ private fun MainContent(
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Sehatin",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-        )
+        SehatinAppBar()
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -197,13 +202,27 @@ private fun MainContent(
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Height: ${rec.heightCm?.let { String.format("%.1f cm", it) } ?: "-"}",
+                        text = "Height: ${
+                            rec.heightCm?.let {
+                                String.format(
+                                    "%.1f cm",
+                                    it
+                                )
+                            } ?: "-"
+                        }",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Weight: ${rec.weightKg?.let { String.format("%.1f kg", it) } ?: "-"}",
+                        text = "Weight: ${
+                            rec.weightKg?.let {
+                                String.format(
+                                    "%.1f kg",
+                                    it
+                                )
+                            } ?: "-"
+                        }",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -233,8 +252,16 @@ private fun MainContent(
                     Box(
                         modifier = Modifier
                             .size(8.dp) // Sedikit lebih besar untuk lebih terlihat
-                            .offset(x = (bmi * 10).coerceIn(0.0, 400.0).dp) // Membatasi pergerakan indicator
-                            .background(Color.Black, RoundedCornerShape(4.dp)) // Tambahkan rounded corner
+                            .offset(
+                                x = (bmi * 10).coerceIn(
+                                    0.0,
+                                    400.0
+                                ).dp
+                            ) // Membatasi pergerakan indicator
+                            .background(
+                                Color.Black,
+                                RoundedCornerShape(4.dp)
+                            ) // Tambahkan rounded corner
                             .align(Alignment.CenterStart)
                     )
                 }

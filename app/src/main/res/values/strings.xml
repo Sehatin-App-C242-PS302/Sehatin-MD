@@ -28,7 +28,7 @@
     <string name="current_data">Current Data</string>
     <string name="current_bmi">Current BMI</string>
     <string name="gender">Gender</string>
-    <string name="masukkan_data_kamu_yuk">Masukkan Data Kamu Yuk</string>
+    <string name="masukkan_data_kamu_yuk">Let\'s Enter Your Data</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="user_not_found">User not found</string>

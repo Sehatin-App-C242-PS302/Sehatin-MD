@@ -32,4 +32,10 @@
     <string name="masukkan_data_kamu_yuk">Masukkan Data Kamu, Yuk!</string>
     <string name="male">Laki-Laki</string>
     <string name="female">Perempuan</string>
+    <string name="user_not_found">Pengguna tidak ditemukan</string>
+    <string name="name_field_is_required">Kolom nama wajib diisi</string>
+    <string name="email_field_is_required">Kolom email wajib diisi</string>
+    <string name="password_field_is_required">Kolom kata sandi wajib diisi</string>
+    <string name="email_format_is_invalid">Format email tidak valid</string>
+    <string name="password_must_be_at_least_6_characters">Kata sandi harus terdiri dari minimal 6 karakter</string>
 </resources>

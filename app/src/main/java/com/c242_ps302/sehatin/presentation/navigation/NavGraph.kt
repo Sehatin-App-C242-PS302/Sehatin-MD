@@ -23,8 +23,8 @@ import androidx.navigation.toRoute
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
 import com.c242_ps302.sehatin.presentation.screen.food.FoodScreen
-import com.c242_ps302.sehatin.presentation.screen.health.HealthInputScreen
-import com.c242_ps302.sehatin.presentation.screen.health.RecommendationScreen
+import com.c242_ps302.sehatin.presentation.screen.health.input.HealthInputScreen
+import com.c242_ps302.sehatin.presentation.screen.health.result.HealthResultScreen
 import com.c242_ps302.sehatin.presentation.screen.history.HistoryScreen
 import com.c242_ps302.sehatin.presentation.screen.home.HomeScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsDetailScreen
@@ -86,8 +86,7 @@ fun NavGraphSetup(
             composable<HealthInputScreen> {
                 HealthInputScreen(
                     onBackClick = { navController.navigateUp() },
-                    onSuccess = { navController.navigate(RecommendationScreen) },
-                    onRecommendationClick = { navController.navigate(RecommendationScreen) }
+                    onSuccess = { navController.navigate(HealthResultScreen) },
                 )
             }
             composable<NewsDetailScreen> { backStackEntry ->
@@ -97,8 +96,8 @@ fun NavGraphSetup(
                     onBackClick = { navController.navigate(NewsScreen) }
                 )
             }
-            composable<RecommendationScreen> {
-                RecommendationScreen(
+            composable<HealthResultScreen> {
+                HealthResultScreen(
                     onRecountClick = { navController.navigate(HealthInputScreen) },
                     onBackClick = { navController.navigate(HomeScreen) }
                 )

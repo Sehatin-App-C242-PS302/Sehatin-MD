@@ -26,7 +26,7 @@ class AuthRepository @Inject constructor(
         emit(Result.Loading)
         try {
             val response = authApiService.login(email, password)
-            if (response.message == "Login berhasil!") {
+            if (response.success == true) {
                 userDao.clearUserData()
                 response.user?.let { userDao.insertUser(it.toEntity()) }
                 response.token?.let { token ->
@@ -53,7 +53,7 @@ class AuthRepository @Inject constructor(
             emit(Result.Loading)
             try {
                 val response = authApiService.register(name, email, password)
-                if (response.message == "Registrasi berhasil!") {
+                if (response.success == true) {
                     emit(Result.Success(response))
                 } else {
                     emit(Result.Error((response.message.toString())))
