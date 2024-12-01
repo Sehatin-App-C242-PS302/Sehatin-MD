@@ -25,7 +25,7 @@ class ResultViewModel @Inject constructor(
     }
 
     private fun fetchLatestRecommendation() = viewModelScope.launch {
-        repository.getRecommendation().collectAndHandle(
+        repository.getLatestRecommendation().collectAndHandle(
             onError = { error ->
                 _healthResultState.update {
                     it.copy(isLoading = false, error = error)

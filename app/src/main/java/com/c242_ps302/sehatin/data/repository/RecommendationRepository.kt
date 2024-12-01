@@ -37,11 +37,21 @@ class RecommendationRepository @Inject constructor(
         }
     }
 
-    fun getRecommendation(): Flow<Result<RecommendationEntity>> = flow {
+    fun getLatestRecommendation(): Flow<Result<RecommendationEntity>> = flow {
         emit(Result.Loading)
         try {
             val recommendationEntity = recommendationDao.getCurrentRecommendation()
             emit(Result.Success(recommendationEntity))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun getAllRecommendation(): Flow<Result<List<RecommendationEntity>>> = flow {
+        emit(Result.Loading)
+        try {
+            val recommendationsList = recommendationDao.getAllRecommendations()
+            emit(Result.Success(recommendationsList))
         } catch (e: Exception) {
             emit(Result.Error(e.message ?: "An error occurred"))
         }

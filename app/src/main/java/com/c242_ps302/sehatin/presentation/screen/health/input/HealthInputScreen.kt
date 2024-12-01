@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
@@ -58,7 +58,7 @@ fun HealthInputScreen(
     onSuccess: () -> Unit,
 ) {
     val recommendationViewModel: RecommendationViewModel = hiltViewModel()
-    val uiState by recommendationViewModel.healthInputState.collectAsState()
+    val state by recommendationViewModel.healthInputState.collectAsStateWithLifecycle()
     var expanded by remember { mutableStateOf(false) }
     var selectedGender by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -76,25 +76,27 @@ fun HealthInputScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         AnimatedVisibility(
-            visible = uiState.isLoading,
+            visible = state.isLoading,
             enter = fadeIn() + expandVertically()
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(
+                modifier = Modifier.size(48.dp)
+            )
         }
 
         AnimatedVisibility(
-            visible = uiState.error != null,
+            visible = state.error != null,
             enter = fadeIn() + expandVertically()
         ) {
             Text(
-                text = uiState.error ?: "Unknown error occurred",
+                text = state.error ?: "Unknown error occurred",
                 color = MaterialTheme.colorScheme.error,
                 maxLines = 2
             )
         }
 
         AnimatedVisibility(
-            visible = !uiState.isLoading && uiState.error == null,
+            visible = !state.isLoading && state.error == null,
             enter = fadeIn() + expandVertically()
         ) {
             Column(
@@ -190,7 +192,7 @@ fun HealthInputScreen(
 
                 // Success button
                 AnimatedVisibility(
-                    visible = uiState.success,
+                    visible = state.success,
                     enter = fadeIn() + expandVertically()
                 ) {
                     Button(
