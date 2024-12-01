@@ -21,9 +21,11 @@ class HomeViewModel @Inject constructor(
 
     init {
         fetchLatestRecommendation()
+        fetchAllRecommendations()
     }
 
-    fun fetchAllRecommendations() = viewModelScope.launch {
+
+    private fun fetchAllRecommendations() = viewModelScope.launch {
         repository.getAllRecommendation().collectAndHandle(
             onError = { error ->
                 _homeState.update {

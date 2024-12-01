@@ -56,8 +56,8 @@ fun HealthInputScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onSuccess: () -> Unit,
+    recommendationViewModel: RecommendationViewModel = hiltViewModel()
 ) {
-    val recommendationViewModel: RecommendationViewModel = hiltViewModel()
     val state by recommendationViewModel.healthInputState.collectAsStateWithLifecycle()
     var expanded by remember { mutableStateOf(false) }
     var selectedGender by remember { mutableStateOf("") }

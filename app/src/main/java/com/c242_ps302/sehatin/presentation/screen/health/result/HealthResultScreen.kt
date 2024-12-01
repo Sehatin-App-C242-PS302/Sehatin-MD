@@ -49,8 +49,8 @@ import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppB
 fun HealthResultScreen(
     onRecountClick: () -> Unit,
     onBackClick: () -> Unit,
+    viewModel: ResultViewModel = hiltViewModel()
 ) {
-    val viewModel: ResultViewModel = hiltViewModel()
     val state by viewModel.healthResultState.collectAsStateWithLifecycle()
 
     Scaffold {
