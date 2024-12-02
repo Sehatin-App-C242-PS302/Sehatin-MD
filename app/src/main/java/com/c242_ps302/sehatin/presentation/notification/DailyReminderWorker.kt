@@ -1,19 +1,24 @@
 package com.c242_ps302.sehatin.presentation.notification
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-class DailyReminderWorker(
-    context: Context,
-    workerParams: WorkerParameters,
+@HiltWorker
+class DailyReminderWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted workerParams: WorkerParameters,
     private val notificationHelper: NotificationHelper
 ) : CoroutineWorker(context, workerParams) {
 
@@ -57,6 +62,14 @@ class DailyReminderWorker(
             }
 
             return calendar.timeInMillis - System.currentTimeMillis()
+        }
+
+        fun scheduleImmediateReminder(workManager: WorkManager) {
+            val immediateWorkRequest = OneTimeWorkRequestBuilder<DailyReminderWorker>()
+                .setInitialDelay(0, TimeUnit.SECONDS)
+                .build()
+
+            workManager.enqueue(immediateWorkRequest)
         }
     }
 }

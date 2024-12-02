@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.c242_ps302.sehatin.R
@@ -79,12 +80,28 @@ class NotificationHelper @Inject constructor(
     }
 
     suspend fun sendDailyInputReminder() {
-        sendNotification(
-            title = "Waktu Update Data Kesehatan",
-            message = "Jangan lupa update berat badan dan aktivitas hari ini!",
-            channelId = CHANNEL_DAILY_REMINDER,
-            notificationId = DAILY_INPUT_NOTIFICATION_ID
-        )
+        // Pastikan izin dan preferensi dicentang
+        if (!hasNotificationPermission() || !preferences.getNotificationEnable()) {
+            Log.d("NotificationHelper", "Notification not sent - permission or preference disabled")
+            return
+        }
+
+        Log.d("NotificationHelper", "Preparing to send notification")
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_DAILY_REMINDER)
+            .setContentTitle("Waktu Update Data Kesehatan")
+            .setContentText("Jangan lupa update berat badan dan aktivitas hari ini!")
+            .setSmallIcon(R.drawable.ic_notifications) // Pastikan drawable ada
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .build()
+
+        try {
+            notificationManager.notify(DAILY_INPUT_NOTIFICATION_ID, notification)
+            Log.d("NotificationHelper", "Notification sent successfully")
+        } catch (e: Exception) {
+            Log.e("NotificationHelper", "Failed to send notification", e)
+        }
     }
 
     suspend fun sendStepGoalReminder(currentSteps: Int, targetSteps: Int) {

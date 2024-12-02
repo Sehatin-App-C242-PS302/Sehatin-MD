@@ -2,10 +2,12 @@ package com.c242_ps302.sehatin.presentation.screen.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
 import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.data.repository.AuthRepository
 import com.c242_ps302.sehatin.data.repository.Result
+import com.c242_ps302.sehatin.presentation.notification.DailyReminderWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,8 +18,8 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val preferences: SehatinAppPreferences,
     private val authRepository: AuthRepository,
-
-    ) : ViewModel() {
+    private val workManager: WorkManager
+) : ViewModel() {
     private val _isDarkTheme = MutableStateFlow(false)
     val isDarkTheme = _isDarkTheme.asStateFlow()
 
@@ -26,7 +28,6 @@ class SettingsViewModel @Inject constructor(
 
     private val _userState = MutableStateFlow<Result<UserEntity>>(Result.Loading)
     val userState = _userState.asStateFlow()
-
 
     init {
         viewModelScope.launch {
@@ -66,6 +67,13 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             preferences.setNotificationEnable(isNotificationEnabled)
             _isNotificationEnabled.value = isNotificationEnabled
+
+            if (isNotificationEnabled) {
+                DailyReminderWorker.scheduleDaily(workManager)
+                DailyReminderWorker.scheduleImmediateReminder(workManager)
+            } else {
+                workManager.cancelUniqueWork("daily_reminder")
+            }
         }
     }
 }

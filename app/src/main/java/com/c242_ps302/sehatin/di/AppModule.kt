@@ -2,27 +2,26 @@ package com.c242_ps302.sehatin.di
 
 import android.app.Application
 import android.content.Context
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.room.Room
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.c242_ps302.sehatin.BuildConfig
 import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.local.room.SehatinDatabase
 import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.data.remote.AuthApiService
-import com.c242_ps302.sehatin.data.remote.HealthApiService
 import com.c242_ps302.sehatin.data.remote.NewsApiService
 import com.c242_ps302.sehatin.data.remote.RecommendationApiService
 import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.utils.Constants
+import com.c242_ps302.sehatin.presentation.notification.NotificationHelper
 import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -91,46 +90,6 @@ object AppModule {
             .create(RecommendationApiService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideHealthApiService(
-        preferences: SehatinAppPreferences,
-    ): HealthApiService {
-        val authInterceptor = Interceptor { chain ->
-            val originalRequest = chain.request()
-            val newRequest = runBlocking {
-                withContext(Dispatchers.IO) {
-                    val token = preferences.getToken().first()
-
-                    originalRequest.newBuilder()
-                        .apply {
-                            if (token.isNotEmpty()) {
-                                addHeader("Authorization", "Bearer $token")
-                            }
-                        }
-                        .build()
-                }
-            }
-            chain.proceed(newRequest)
-        }
-
-        val loggingInterceptor = HttpLoggingInterceptor().setLevel(
-            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-            else HttpLoggingInterceptor.Level.NONE
-        )
-        val client = OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .build()
-
-        return Retrofit.Builder()
-            .baseUrl(Constants.SEHATIN_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-            .create(HealthApiService::class.java)
-    }
-
 
     @Provides
     @Singleton
@@ -186,5 +145,30 @@ object AppModule {
         newsApiService: NewsApiService,
     ): NewsRepository {
         return NewsRepository(newsApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(application: Application): WorkManager {
+        return WorkManager.getInstance(application)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationHelper(
+        context: Context,
+        preferences: SehatinAppPreferences
+    ): NotificationHelper {
+        return NotificationHelper(context, preferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkManagerConfiguration(
+        workerFactory: HiltWorkerFactory
+    ): Configuration {
+        return Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
     }
 }

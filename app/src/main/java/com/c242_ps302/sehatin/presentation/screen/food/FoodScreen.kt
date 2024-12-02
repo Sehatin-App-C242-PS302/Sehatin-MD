@@ -27,7 +27,7 @@ fun FoodScreen(
             verticalArrangement = Arrangement.Center,
             modifier = modifier.fillMaxSize()
         ) {
-            Text(text = "Health Screen")
+            Text(text = "Food Screen")
         }
     }
 

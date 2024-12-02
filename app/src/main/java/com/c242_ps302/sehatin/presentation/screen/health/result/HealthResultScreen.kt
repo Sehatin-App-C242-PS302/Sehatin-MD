@@ -30,7 +30,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 
@@ -49,16 +49,16 @@ import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppB
 fun HealthResultScreen(
     onRecountClick: () -> Unit,
     onBackClick: () -> Unit,
+    viewModel: ResultViewModel = hiltViewModel()
 ) {
-    val viewModel: ResultViewModel = hiltViewModel()
-    val uiState by viewModel.healthResultState.collectAsState()
+    val state by viewModel.healthResultState.collectAsStateWithLifecycle()
 
     Scaffold {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
             AnimatedVisibility(
-                visible = uiState.isLoading,
+                visible = state.isLoading,
                 enter = fadeIn() + slideInVertically(),
                 exit = fadeOut() + slideOutVertically()
             ) {
@@ -66,23 +66,23 @@ fun HealthResultScreen(
             }
 
             AnimatedVisibility(
-                visible = uiState.error != null,
+                visible = state.error != null,
                 enter = fadeIn() + slideInVertically(),
                 exit = fadeOut() + slideOutVertically()
             ) {
                 ErrorContent(
-                    error = uiState.error ?: "",
+                    error = state.error ?: "",
                     onBack = onBackClick
                 )
             }
 
             AnimatedVisibility(
-                visible = uiState.result != null && uiState.error == null && !uiState.isLoading,
+                visible = state.result != null && state.error == null && !state.isLoading,
                 enter = fadeIn() + slideInVertically(),
                 exit = fadeOut() + slideOutVertically()
             ) {
                 MainContent(
-                    recommendation = uiState.result,
+                    recommendation = state.result,
                     onRecountClick = onRecountClick,
                     onBackClick = onBackClick
                 )
@@ -99,7 +99,6 @@ private fun LoadingContent() {
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(48.dp),
-            color = MaterialTheme.colorScheme.primary
         )
     }
 }

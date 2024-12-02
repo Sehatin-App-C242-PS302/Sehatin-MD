@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.NewsVerticalColumn
 import com.c242_ps302.sehatin.presentation.utils.searchKeywords
@@ -56,7 +57,7 @@ fun NewsScreen(
     viewModel: NewsViewModel = hiltViewModel(),
     onNewsClick: (String) -> Unit,
 ) {
-    val state by viewModel.newsState.collectAsState()
+    val state by viewModel.newsState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
     val focusRequester = remember { FocusRequester() }
@@ -149,7 +150,7 @@ fun NewsScreen(
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(48.dp)
                 )
             }
 
