@@ -16,7 +16,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,6 +28,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.presentation.components.card.HistoryCard
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 
 @Composable
 fun HistoryScreen(
@@ -31,6 +37,22 @@ fun HistoryScreen(
     historyViewModel: HistoryViewModel = hiltViewModel(),
 ) {
     val state by historyViewModel.historyState.collectAsStateWithLifecycle()
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+        } else if (!state.isLoading && state.history.isNotEmpty()) {
+            toastMessage = "History loaded successfully!"
+            toastType = ToastType.SUCCESS
+            showToast = true
+        }
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -43,8 +65,7 @@ fun HistoryScreen(
             enter = fadeIn() + expandVertically()
         ) {
             CircularProgressIndicator(
-                modifier = Modifier
-                    .size(48.dp)
+                modifier = Modifier.size(48.dp)
             )
         }
         AnimatedVisibility(visible = state.error != null) {
@@ -70,12 +91,19 @@ fun HistoryScreen(
                         )
                     }
                     items(state.history) { recommendation ->
-                        HistoryCard(
-                            recommendation = recommendation
-                        )
+                        HistoryCard(recommendation = recommendation)
                     }
                 }
             }
+        }
+
+        if (showToast) {
+            SehatinToast(
+                message = toastMessage,
+                type = toastType,
+                duration = 2000L,
+                onDismiss = { showToast = false }
+            )
         }
     }
 }
