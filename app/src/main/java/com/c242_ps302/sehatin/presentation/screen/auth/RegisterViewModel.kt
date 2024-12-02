@@ -3,54 +3,38 @@ package com.c242_ps302.sehatin.presentation.screen.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.c242_ps302.sehatin.data.repository.AuthRepository
-import com.c242_ps302.sehatin.data.repository.Result
+import com.c242_ps302.sehatin.presentation.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val repository: AuthRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(LoginScreenUIState())
-    val uiState = _uiState.asStateFlow()
+    private val _registerState = MutableStateFlow(RegisterScreenUIState())
+    val registerState = _registerState.asStateFlow()
 
-    private val _token = MutableStateFlow<String?>(null)
-    val token = _token.asStateFlow()
-
-    fun register(name: String, email: String, password: String) {
-        viewModelScope.launch {
-            authRepository.register(name, email, password).collect { result ->
-                when (result) {
-                    Result.Loading -> {
-                        _uiState.value = _uiState.value.copy(isLoading = true)
-                    }
-
-                    is Result.Success -> {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            error = null,
-                            success = true
-                        )
-                    }
-
-                    is Result.Error -> {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            error = result.error,
-                            success = false
-                        )
-                    }
+    fun register(name: String, email: String, password: String) = viewModelScope.launch {
+        repository.register(name, email, password).collectAndHandle(
+            onError = { error ->
+                _registerState.update {
+                    it.copy(isLoading = false, error = error)
+                }
+            },
+            onLoading = {
+                _registerState.update {
+                    it.copy(isLoading = true, error = null)
                 }
             }
+        ) {
+            _registerState.update {
+                it.copy(isLoading = false, success = true, error = null)
+            }
         }
-
-    }
-
-    fun clearError() {
-        _uiState.value = _uiState.value.copy(error = null)
     }
 }
 

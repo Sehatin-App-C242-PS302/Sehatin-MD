@@ -54,10 +54,6 @@ class NewsViewModel @Inject constructor(
     fun refreshNews() {
         fetchHeadlineNews()
     }
-
-    fun clearError() {
-        _newsState.update { it.copy(error = null) }
-    }
 }
 
 data class NewsScreenUiState(

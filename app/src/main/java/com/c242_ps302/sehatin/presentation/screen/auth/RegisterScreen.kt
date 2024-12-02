@@ -35,6 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.display_text.SehatinDisplayText
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
@@ -42,9 +44,9 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
-    val viewModel: RegisterViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.registerState.collectAsStateWithLifecycle()
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -93,6 +95,22 @@ fun RegisterScreen(
         val isEmailValid = validateEmail(email)
         val isPasswordValid = validatePassword(password)
         return isInputNotEmpty && isEmailValid && isPasswordValid
+    }
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+        } else if (!state.isLoading && state.success) {
+            toastMessage = "Register success!"
+            toastType = ToastType.SUCCESS
+            showToast = true
+        }
     }
 
     Surface(
@@ -188,9 +206,9 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (uiState.error != null) {
+            if (state.error != null) {
                 Text(
-                    text = uiState.error ?: "",
+                    text = state.error ?: "",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -204,9 +222,9 @@ fun RegisterScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !state.isLoading
             ) {
-                if (uiState.isLoading) {
+                if (state.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary
@@ -234,10 +252,19 @@ fun RegisterScreen(
         }
     }
 
-    LaunchedEffect(uiState.success) {
-        if (uiState.success) {
+    LaunchedEffect(state.success) {
+        if (state.success) {
             onRegisterClick()
         }
+    }
+
+    if (showToast) {
+        SehatinToast(
+            message = toastMessage,
+            type = toastType,
+            duration = 2000L,
+            onDismiss = { showToast = false }
+        )
     }
 }
 

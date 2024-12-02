@@ -1,6 +1,7 @@
 package com.c242_ps302.sehatin.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
@@ -27,8 +28,6 @@ class AuthRepository @Inject constructor(
         try {
             val response = authApiService.login(email, password)
             if (response.success == true) {
-                userDao.clearUserData()
-                response.user?.let { userDao.insertUser(it.toEntity()) }
                 response.token?.let { token ->
                     withContext(Dispatchers.IO) {
                         preferences.setToken(token)
@@ -39,7 +38,11 @@ class AuthRepository @Inject constructor(
                         }
                     }
                 }
-                emit(Result.Success(response))
+                userDao.clearUserData()
+                response.user?.let { user ->
+                    userDao.insertUser (user.toEntity())
+                    emit(Result.Success(response))
+                } ?: emit(Result.Error("User data is null"))
             } else {
                 emit(Result.Error((response.message.toString())))
             }
