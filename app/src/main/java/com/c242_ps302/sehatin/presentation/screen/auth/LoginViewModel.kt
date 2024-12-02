@@ -3,68 +3,56 @@ package com.c242_ps302.sehatin.presentation.screen.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.c242_ps302.sehatin.data.repository.AuthRepository
-import com.c242_ps302.sehatin.data.repository.Result
+import com.c242_ps302.sehatin.presentation.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val repository: AuthRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(LoginScreenUIState())
-    val uiState = _uiState.asStateFlow()
-
-    private val _token = MutableStateFlow<String?>(null)
-    val token = _token.asStateFlow()
+    private val _loginState = MutableStateFlow(LoginScreenUIState())
+    val loginState = _loginState.asStateFlow()
 
     init {
         getToken()
     }
 
-    fun login(email: String, password: String) {
-        viewModelScope.launch {
-            authRepository.login(email, password).collect { result ->
-                when (result) {
-                    Result.Loading -> {
-                        _uiState.value = _uiState.value.copy(isLoading = true)
-                    }
-                    is Result.Success -> {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            error = null,
-                            success = true
-                        )
-                    }
-                    is Result.Error -> {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            error = result.error,
-                            success = false
-                        )
-                    }
+    fun login(email: String, password: String) = viewModelScope.launch {
+        repository.login(email, password).collectAndHandle(
+            onError = { error ->
+                _loginState.update {
+                    it.copy(isLoading = false, error = error)
+                }
+            },
+            onLoading = {
+                _loginState.update {
+                    it.copy(isLoading = true, error = null)
                 }
             }
-        }
-    }
-
-    private fun getToken() {
-        viewModelScope.launch {
-            authRepository.getToken().collect { token ->
-                _token.value = token
+        ) {
+            _loginState.update {
+                it.copy(isLoading = false, success = true, error = null)
             }
         }
     }
 
-    fun clearError() {
-        _uiState.value = _uiState.value.copy(error = null)
+    private fun getToken() = viewModelScope.launch {
+        repository.getToken().collect { token ->
+            _loginState.update {
+                it.copy(token = token)
+            }
+        }
     }
 }
 
 data class LoginScreenUIState(
+    val token: String? = null,
     val isLoading: Boolean = false,
     val success: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
 )

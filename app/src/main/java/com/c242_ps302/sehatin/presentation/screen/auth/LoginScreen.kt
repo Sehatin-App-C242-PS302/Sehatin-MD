@@ -35,15 +35,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.display_text.SehatinDisplayText
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
 fun LoginScreen(
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val viewModel: LoginViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.loginState.collectAsStateWithLifecycle()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -88,6 +90,22 @@ fun LoginScreen(
         val isEmailValid = validateEmail(email)
         val isPasswordValid = validatePassword(password)
         return isInputNotEmpty && isEmailValid && isPasswordValid
+    }
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+        } else if (!state.isLoading && state.success) {
+            toastMessage = "Login success!"
+            toastType = ToastType.SUCCESS
+            showToast = true
+        }
     }
 
     Surface(
@@ -164,9 +182,9 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Error message from API
-            if (uiState.error != null) {
+            if (state.error != null) {
                 Text(
-                    text = uiState.error ?: "",
+                    text = state.error ?: "",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -180,9 +198,9 @@ fun LoginScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !state.isLoading
             ) {
-                if (uiState.isLoading) {
+                if (state.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary
@@ -204,18 +222,25 @@ fun LoginScreen(
         }
     }
 
-    // Handle success state
-    LaunchedEffect(uiState.success) {
-        if (uiState.success) {
+    LaunchedEffect(state.success) {
+        if (state.success) {
             onLoginClick()
         }
     }
 
-    // Handle existing token
-    LaunchedEffect(viewModel.token.collectAsStateWithLifecycle().value) {
-        if (!viewModel.token.value.isNullOrEmpty()) {
+    LaunchedEffect(state.token) {
+        if (!state.token.isNullOrEmpty()) {
             onLoginClick()
         }
+    }
+
+    if (showToast) {
+        SehatinToast(
+            message = toastMessage,
+            type = toastType,
+            duration = 2000L,
+            onDismiss = { showToast = false }
+        )
     }
 }
 

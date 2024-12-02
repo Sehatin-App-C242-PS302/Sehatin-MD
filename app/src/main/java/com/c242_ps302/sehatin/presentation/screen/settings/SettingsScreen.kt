@@ -5,7 +5,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,8 +28,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,14 +42,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
-import com.c242_ps302.sehatin.data.repository.Result
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.components.settings_item.Language
 import com.c242_ps302.sehatin.presentation.components.settings_item.LanguageSettingsItem
 import com.c242_ps302.sehatin.presentation.components.settings_item.SettingsItem
 import com.c242_ps302.sehatin.presentation.components.settings_item.SwitchSettingsItem
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 
@@ -55,20 +62,31 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
     onLogoutSuccess: () -> Unit
 ) {
-    val context = LocalContext.current
-    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
-    val isNotificationEnabled by viewModel.isNotificationEnabled.collectAsState()
-    val userState by viewModel.userState.collectAsState()
+    val state by viewModel.settingsState.collectAsStateWithLifecycle()
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
 
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+        } else if (state.success && state.user != null) {
+            toastMessage = "User data loaded successfully!"
+            toastType = ToastType.SUCCESS
+            showToast = true
+        }
+    }
+
+    val context = LocalContext.current
+    val isDarkTheme = state.isDarkTheme
+    val isNotificationEnabled = state.isNotificationEnabled
 
     val languagesList = listOf(
         Language("en", "English", R.drawable.uk_flag),
         Language("in", "Indonesia", R.drawable.indo_flag)
     )
-
-    val onCurrentLanguageChange: (String) -> Unit = { languageCode ->
-        languageChangeHelper.changeLanguage(context, languageCode)
-    }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -103,89 +121,115 @@ fun SettingsScreen(
         }
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
     ) {
-        SehatinAppBar()
-        Spacer(modifier = Modifier.height(40.dp))
-        Icon(
-            imageVector = Icons.Default.Person,
-            contentDescription = "Person Icon",
-            modifier = Modifier
-                .padding(20.dp)
-                .size(160.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.inversePrimary)
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        when (userState) {
-            is Result.Loading -> {
-                CircularProgressIndicator()
-            }
-            is Result.Success -> {
-                val user = (userState as Result.Success<UserEntity>).data
-                Text(
-                    text = user.name,
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.primary
+        AnimatedVisibility(visible = state.isLoading) {
+            CircularProgressIndicator()
+        }
+
+        AnimatedVisibility(visible = state.error != null) {
+            Text(
+                text = state.error ?: "Unknown error",
+                color = MaterialTheme.colorScheme.error,
+                maxLines = 2
+            )
+        }
+
+        AnimatedVisibility(visible = !state.isLoading && state.error == null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                SehatinAppBar()
+                Spacer(modifier = Modifier.height(40.dp))
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Person Icon",
+                    modifier = Modifier
+                        .padding(20.dp)
+                        .size(160.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.inversePrimary)
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = user.email,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
+
+                when (val userState = state.user) {
+                    is UserEntity -> {
+                        Text(
+                            text = userState.name,
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = userState.email,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    null -> {
+                        Text(
+                            text = "User  not found",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                SettingsItem(
+                    leadingIcon = Icons.Default.Person,
+                    text = stringResource(R.string.account),
                 )
-            }
-            is Result.Error -> {
-                Text(
-                    text = (userState as Result.Error).error,
-                    color = MaterialTheme.colorScheme.error
+                HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+                SettingsItem(
+                    leadingIcon = Icons.Default.Security,
+                    text = stringResource(R.string.privacy_security),
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+                SwitchSettingsItem(
+                    leadingIcon = Icons.Default.DarkMode,
+                    text = stringResource(R.string.dark_theme),
+                    checked = isDarkTheme,
+                    onCheckedChange = { viewModel.toggleDarkTheme() }
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+                SwitchSettingsItem(
+                    leadingIcon = Icons.Default.Notifications,
+                    text = stringResource(R.string.notification),
+                    checked = isNotificationEnabled,
+                    onCheckedChange = { enabled -> handleNotificationPermission(enabled) }
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+                LanguageSettingsItem(
+                    leadingIcon = Icons.Default.Language,
+                    languagesList = languagesList,
+                    text = stringResource(R.string.language),
+                    onCurrentLanguageChange = { languageCode ->
+                        languageChangeHelper.changeLanguage(context, languageCode)
+                    },
+                    languageChangeHelper = languageChangeHelper
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+                SettingsItem(
+                    leadingIcon = Icons.AutoMirrored.Filled.Logout,
+                    text = stringResource(R.string.logout),
+                    onClick = { viewModel.logout(onLogoutSuccess) }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        SettingsItem(
-            leadingIcon = Icons.Default.Person,
-            text = stringResource(R.string.account),
-        )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        SettingsItem(
-            leadingIcon = Icons.Default.Security,
-            text = stringResource(R.string.privacy_security),
-        )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        SwitchSettingsItem(
-            leadingIcon = Icons.Default.DarkMode,
-            text = stringResource(R.string.dark_theme),
-            checked = isDarkTheme,
-            onCheckedChange = { viewModel.toggleDarkTheme() }
-        )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        SwitchSettingsItem(
-            leadingIcon = Icons.Default.Notifications,
-            text = stringResource(R.string.notification),
-            checked = isNotificationEnabled,
-            onCheckedChange = { enabled -> handleNotificationPermission(enabled) }
-        )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        LanguageSettingsItem(
-            leadingIcon = Icons.Default.Language,
-            languagesList = languagesList,
-            text = stringResource(R.string.language),
-            onCurrentLanguageChange = onCurrentLanguageChange,
-            languageChangeHelper = languageChangeHelper
-        )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        SettingsItem(
-            leadingIcon = Icons.AutoMirrored.Filled.Logout,
-            text = stringResource(R.string.logout),
-            onClick = { viewModel.logout(onLogoutSuccess) }
-        )
+        if (showToast) {
+            SehatinToast(
+                message = toastMessage,
+                type = toastType,
+                duration = 2000L,
+                onDismiss = { showToast = false }
+            )
+        }
     }
 }
 

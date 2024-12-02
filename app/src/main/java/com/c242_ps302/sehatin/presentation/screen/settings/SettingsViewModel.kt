@@ -8,65 +8,86 @@ import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.data.repository.AuthRepository
 import com.c242_ps302.sehatin.data.repository.Result
 import com.c242_ps302.sehatin.presentation.notification.DailyReminderWorker
+import com.c242_ps302.sehatin.presentation.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val preferences: SehatinAppPreferences,
-    private val authRepository: AuthRepository,
-    private val workManager: WorkManager
+    private val repository: AuthRepository,
+    private val workManager: WorkManager,
 ) : ViewModel() {
-    private val _isDarkTheme = MutableStateFlow(false)
-    val isDarkTheme = _isDarkTheme.asStateFlow()
-
-    private val _isNotificationEnabled = MutableStateFlow(false)
-    val isNotificationEnabled = _isNotificationEnabled.asStateFlow()
-
-    private val _userState = MutableStateFlow<Result<UserEntity>>(Result.Loading)
-    val userState = _userState.asStateFlow()
+    private val _settingsState = MutableStateFlow(SettingsScreenUIState())
+    val settingsState = _settingsState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            _isDarkTheme.value = preferences.getDarkTheme()
-            _isNotificationEnabled.value = preferences.getNotificationEnable()
-            getUserData()
-        }
+        getUserData()
     }
 
-    private fun getUserData() {
-        viewModelScope.launch {
-            authRepository.getUser().collect { result ->
-                _userState.value = result
+    private fun getUserData() = viewModelScope.launch {
+        repository.getUser().collectAndHandle(
+            onError = { error ->
+                _settingsState.update {
+                    it.copy(isLoading = false, error = error)
+                }
+            },
+            onLoading = {
+                _settingsState.update {
+                    it.copy(isLoading = true, error = null)
+                }
+            }
+        ) { user ->
+            _settingsState.update {
+                it.copy(isLoading = false, user = user, error = null)
             }
         }
     }
 
     fun logout(onLogoutSuccess: () -> Unit) {
         viewModelScope.launch {
-            when (authRepository.logout()) {
-                is Result.Success -> onLogoutSuccess()
-                is Result.Error -> {} // Handle error if needed
-                Result.Loading -> {} // Handle loading if needed
+            when (repository.logout()) {
+                is Result.Success -> {
+                    _settingsState.update {
+                        it.copy(user = null, error = null, isLoading = false, success = true)
+                    }
+                }
+
+                is Result.Error -> {
+                    _settingsState.update {
+                        it.copy(error = "Failed to logout", isLoading = false)
+                    }
+                }
+
+                Result.Loading -> {
+                    _settingsState.update {
+                        it.copy(isLoading = true, error = null)
+                    }
+                }
             }
         }
     }
 
     fun toggleDarkTheme() {
         viewModelScope.launch {
-            val newValue = !_isDarkTheme.value
+            val newValue = !_settingsState.value.isDarkTheme
             preferences.setDarkTheme(newValue)
-            _isDarkTheme.value = newValue
+            _settingsState.update { currentState ->
+                currentState.copy(isDarkTheme = newValue)
+            }
         }
     }
 
     fun toggleNotification(isNotificationEnabled: Boolean) {
         viewModelScope.launch {
             preferences.setNotificationEnable(isNotificationEnabled)
-            _isNotificationEnabled.value = isNotificationEnabled
+            _settingsState.update { currentState ->
+                currentState.copy(isNotificationEnabled = isNotificationEnabled)
+            }
 
             if (isNotificationEnabled) {
                 DailyReminderWorker.scheduleDaily(workManager)
@@ -77,3 +98,13 @@ class SettingsViewModel @Inject constructor(
         }
     }
 }
+
+
+data class SettingsScreenUIState(
+    val user: UserEntity? = null,
+    val isDarkTheme: Boolean = false,
+    val isNotificationEnabled: Boolean = false,
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val success: Boolean = false,
+)

@@ -35,12 +35,12 @@ fun OnboardingScreen(
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
     onAuthenticated: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val viewModel: LoginViewModel = hiltViewModel()
-    val token by viewModel.token.collectAsStateWithLifecycle()
+    val state by viewModel.loginState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(token) {
-        if (!token.isNullOrEmpty()) {
+    LaunchedEffect(state.token) {
+        if (!state.token.isNullOrEmpty()) {
             onAuthenticated()
         }
     }
