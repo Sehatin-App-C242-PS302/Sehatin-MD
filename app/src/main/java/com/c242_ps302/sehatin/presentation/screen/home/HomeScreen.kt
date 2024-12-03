@@ -42,7 +42,7 @@ import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 fun HomeScreen(
     onFabClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.homeState.collectAsStateWithLifecycle()
 

@@ -14,8 +14,10 @@ import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.data.remote.AuthApiService
 import com.c242_ps302.sehatin.data.remote.NewsApiService
 import com.c242_ps302.sehatin.data.remote.RecommendationApiService
+import com.c242_ps302.sehatin.data.repository.AndroidConnectivityObserver
 import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.utils.Constants
+import com.c242_ps302.sehatin.domain.ConnectivityObserver
 import com.c242_ps302.sehatin.presentation.notification.NotificationHelper
 import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 import dagger.Module
@@ -48,6 +50,12 @@ object AppModule {
     @Singleton
     fun provideLanguageChangeHelper(): LanguageChangeHelper {
         return LanguageChangeHelper()
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectivityObserver(context: Context): ConnectivityObserver {
+        return AndroidConnectivityObserver(context)
     }
 
     @Provides
@@ -157,7 +165,7 @@ object AppModule {
     @Singleton
     fun provideNotificationHelper(
         context: Context,
-        preferences: SehatinAppPreferences
+        preferences: SehatinAppPreferences,
     ): NotificationHelper {
         return NotificationHelper(context, preferences)
     }
@@ -165,7 +173,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideWorkManagerConfiguration(
-        workerFactory: HiltWorkerFactory
+        workerFactory: HiltWorkerFactory,
     ): Configuration {
         return Configuration.Builder()
             .setWorkerFactory(workerFactory)
