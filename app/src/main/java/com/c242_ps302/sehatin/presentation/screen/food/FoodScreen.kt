@@ -1,11 +1,18 @@
 package com.c242_ps302.sehatin.presentation.screen.food
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +32,18 @@ fun FoodScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    // Create the launcher for picking an image from the gallery
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        // Handle the selected image URI (you can update state, navigate, etc.)
+        uri?.let {
+            // Do something with the selected image URI (e.g., display the image)
+            // For now, it just logs the selected URI.
+            Log.d("FoodScreen", "Selected image URI: $uri")
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -65,6 +84,14 @@ fun FoodScreen(
                             .padding(horizontal = 20.dp)
                             .weight(1f)
                             .height(150.dp)
+                            .clickable {
+                                // Launch the photo picker
+                                photoPickerLauncher.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                )
+                            },
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,7 +128,6 @@ fun FoodScreen(
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(20.dp))
                 Column(
                     modifier = Modifier
