@@ -9,12 +9,18 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +28,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
+import com.c242_ps302.sehatin.presentation.screen.connectivity.ConnectivityViewModel
+import com.c242_ps302.sehatin.presentation.screen.connectivity.NetworkStatusBar
 import com.c242_ps302.sehatin.presentation.screen.food.FoodScreen
 import com.c242_ps302.sehatin.presentation.screen.health.input.HealthInputScreen
 import com.c242_ps302.sehatin.presentation.screen.health.result.HealthResultScreen
@@ -31,6 +39,8 @@ import com.c242_ps302.sehatin.presentation.screen.news.NewsDetailScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsScreen
 import com.c242_ps302.sehatin.presentation.screen.onboarding.OnboardingScreen
 import com.c242_ps302.sehatin.presentation.screen.settings.SettingsScreen
+import com.c242_ps302.sehatin.presentation.theme.customGreen
+import kotlinx.coroutines.delay
 
 @Composable
 fun NavGraphSetup(
@@ -109,10 +119,41 @@ fun NavGraphSetup(
 @Composable
 fun MainScreenContent(
     navController: NavHostController,
+    connectivityObserver: ConnectivityViewModel = hiltViewModel(),
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
+
+    val status by connectivityObserver.isConnected.collectAsState()
+    var showMessageBar by rememberSaveable { mutableStateOf(false) }
+    var message by rememberSaveable { mutableStateOf("") }
+    var backgroundColor by remember { mutableStateOf(Color.Red) }
+
+    LaunchedEffect(key1 = status) {
+        when (status) {
+            true -> {
+                message = "Connected to internet"
+                backgroundColor = customGreen
+                delay(2000)
+                showMessageBar = false
+            }
+
+            false -> {
+                showMessageBar = true
+                message = "No internet connection"
+                backgroundColor = Color.Red
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = {
+            NetworkStatusBar(
+                showMessageBar = showMessageBar,
+                message = message,
+                backgroundColor = backgroundColor
+            )
+        },
         bottomBar = {
             NavigationBar {
                 bottomNavigationItems.forEachIndexed { index, navItem ->
@@ -145,6 +186,7 @@ fun MainScreenContent(
         )
     }
 }
+
 
 @Composable
 fun ContentScreen(
