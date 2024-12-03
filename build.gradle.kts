@@ -15,5 +15,6 @@ buildscript {
     }
     dependencies {
         classpath(libs.symbol.processing.api)
+
     }
 }

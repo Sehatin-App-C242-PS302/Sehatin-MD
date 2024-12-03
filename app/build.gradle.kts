@@ -61,6 +61,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.leanback)
+    implementation(libs.glide)
+    implementation(libs.androidx.espresso.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -98,4 +101,25 @@ dependencies {
     implementation(libs.androidx.room.paging)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.core.splashscreen)
+
+    val cameraxVersion = "1.3.0-rc01"
+
+    implementation("androidx.camera:camera-core:$cameraxVersion")
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-video:$cameraxVersion")
+
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
+
+    implementation (libs.camera.core)
+    implementation (libs.camera.lifecycle)
+    implementation (libs.camera.view)
+    implementation (libs.accompanist.permissions)
+
+    implementation (libs.androidx.camera.core.v123)
+    implementation (libs.camera.camera2)
+    implementation (libs.androidx.camera.lifecycle.v123)
+    implementation (libs.camera.view)
+    implementation (libs.camera.extensions)
 }

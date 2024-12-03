@@ -29,4 +29,6 @@ sealed class Routes {
     // Child Routes
     @Serializable
     data object HealthInputScreen : Routes()
+    @Serializable
+    data object CameraScreen : Routes()
 }

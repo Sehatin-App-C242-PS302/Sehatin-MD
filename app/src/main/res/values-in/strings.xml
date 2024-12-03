@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Sehatin</string>
     <string name="home">Beranda</string>
@@ -6,15 +5,15 @@
     <string name="history">Riwayat</string>
     <string name="news">Berita</string>
     <string name="settings">Pengaturan</string>
-    <string name="welcome_to">Selamat Datang di</string>
-    <string name="onboarding_image">Gambar Pengenalan</string>
+    <string name="welcome_to">Selamat Datang</string>
+    <string name="onboarding_image">Gambar Orientasi</string>
     <string name="login">Masuk</string>
     <string name="register">Daftar</string>
     <string name="email">Email</string>
     <string name="password">Kata Sandi</string>
-    <string name="don_t_have_an_account">Belum memiliki akun?</string>
-    <string name="register_now">Daftar sekarang</string>
-    <string name="already_have_an_account">Sudah memiliki akun?</string>
+    <string name="don_t_have_an_account">Belum Punya akun?</string>
+    <string name="register_now">Daftar Sekarang</string>
+    <string name="already_have_an_account">Sudah Punya Akun?</string>
     <string name="name">Nama</string>
     <string name="searchbar_text">Cari...</string>
     <string name="search">Cari</string>
@@ -22,8 +21,20 @@
     <string name="language">Bahasa</string>
     <string name="dark_theme">Tema Gelap</string>
     <string name="notification">Notifikasi</string>
-    <string name="privacy_security"><![CDATA[Privasi & Keamanan]]></string>
-    <string name="logout">Keluar dari Akun</string>
+    <string name="privacy_security"><![CDATA[Privacy & Security]]></string>
+    <string name="logout">Keluar</string>
     <string name="daily_indicator">Indikator Harian</string>
     <string name="daily_step_recommendation">Rekomendasi Langkah Harian</string>
+    <string name="email_field_is_required">Kolom Email Harus Diisi</string>
+    <string name="current_data">Data Sekarang</string>
+    <string name="current_bmi">BMI Sekarang</string>
+    <string name="gender">Jenis Kelamin</string>
+    <string name="masukkan_data_kamu_yuk">Masukkan Data Kamu</string>
+    <string name="male">Laki-Laki</string>
+    <string name="female">Perempuan</string>
+    <string name="user_not_found">Pengguna Tidak Ditemukan</string>
+    <string name="name_field_is_required">Kolom nama harus diisi</string>
+    <string name="password_field_is_required">Kolom Kata Sandi Harus Diisi</string>
+    <string name="email_format_is_invalid">Format Email Salah</string>
+    <string name="password_must_be_at_least_6_characters">Kata sandi minimal harus terdiri dari 6 karakter</string>
 </resources>

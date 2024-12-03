@@ -1,9 +1,11 @@
 package com.c242_ps302.sehatin.presentation.navigation
 
+import MainScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.c242_ps302.sehatin.presentation.navigation.Routes.MainScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
 import com.c242_ps302.sehatin.presentation.screen.onboarding.OnboardingScreen
@@ -52,7 +54,7 @@ fun NavGraphSetup(
         }
 
         composable<Routes.MainScreen> {
-            MainScreen(navController = navController)
+            MainScreen()
         }
     }
 }

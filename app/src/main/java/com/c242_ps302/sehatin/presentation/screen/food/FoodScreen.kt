@@ -2,16 +2,8 @@ package com.c242_ps302.sehatin.presentation.screen.food
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -22,14 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
-import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
+import com.c242_ps302.sehatin.presentation.navigation.Routes
 
 @Composable
 fun FoodScreen(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -80,7 +73,7 @@ fun FoodScreen(
                                 .padding(16.dp)
                         ) {
                             Image(
-                                modifier = Modifier.size(230.dp),
+                                modifier = Modifier.aspectRatio(1f),
                                 painter = painterResource(id = R.drawable.baseline_add_photo_alternate_24),
                                 contentDescription = "add photo"
                             )
@@ -92,6 +85,7 @@ fun FoodScreen(
                             .padding(horizontal = 20.dp)
                             .weight(1f)
                             .height(150.dp)
+                            .clickable { navController.navigate(Routes.CameraScreen) }
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,6 +101,7 @@ fun FoodScreen(
                         }
                     }
                 }
+
                 Spacer(modifier = Modifier.height(20.dp))
                 Column(
                     modifier = Modifier
@@ -121,6 +116,7 @@ fun FoodScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Left
                     )
+                    // Example for the recent food list - You can repeat this for multiple items
                     Spacer(modifier = Modifier.height(20.dp))
                     ElevatedCard(
                         elevation = CardDefaults.cardElevation(
@@ -190,83 +186,7 @@ fun FoodScreen(
                                         textAlign = TextAlign.Left
                                     )
                                     Text(
-                                        text = "1,6g",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Left
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    ElevatedCard(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ),
-                        modifier = Modifier
-                            .size(342.dp, 134.dp)
-                            .padding(20.dp)
-                            .fillMaxWidth(0.95f)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Image(
-                                modifier = Modifier.size(114.dp),
-                                painter = painterResource(id = R.drawable.baseline_add_a_photo_24),
-                                contentDescription = "take photo"
-                            )
-                            Column {
-                                Text(
-                                    text = "Camera",
-                                    fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    textAlign = TextAlign.Left,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Text(
-                                    text = "Feb 27, 2023",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    textAlign = TextAlign.Left
-                                )
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = "Fat",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Left,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = "Carbs",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Left,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = "Protein",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Left,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = "0.8g",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Left
-                                    )
-                                    Text(
-                                        text = "2.4g",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Left
-                                    )
-                                    Text(
-                                        text = "1,6g",
+                                        text = "1.6g",
                                         style = MaterialTheme.typography.bodyMedium,
                                         textAlign = TextAlign.Left
                                     )
@@ -277,13 +197,5 @@ fun FoodScreen(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun FoodScreenPreview() {
-    SehatinTheme {
-        FoodScreen()
     }
 }
