@@ -2,13 +2,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.c242_ps302.sehatin.presentation.navigation.Routes
-import com.c242_ps302.sehatin.presentation.navigation.Routes.HealthInputScreen
 import com.c242_ps302.sehatin.presentation.navigation.SehatinBottomNavigation
 import com.c242_ps302.sehatin.presentation.screen.food.CameraScreen
+import com.c242_ps302.sehatin.presentation.screen.food.FoodDetailScreen
 import com.c242_ps302.sehatin.presentation.screen.food.FoodScreen
 import com.c242_ps302.sehatin.presentation.screen.health_input.HealthInputScreen
 import com.c242_ps302.sehatin.presentation.screen.history.HistoryScreen
@@ -54,8 +55,11 @@ fun MainScreen() { // Remove navController parameter
             composable<Routes.HealthInputScreen> {
                 HealthInputScreen()
             }
-            composable<Routes.CameraScreen> {
-                CameraScreen(mainNavController)
+            composable <Routes.CameraScreen> {
+                CameraScreen(mainNavController, sharedViewModel = viewModel())
+            }
+            composable<Routes.FoodDetailScreen> {
+                FoodDetailScreen(sharedViewModel = viewModel())
             }
         }
     }

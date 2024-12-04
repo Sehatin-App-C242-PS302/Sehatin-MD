@@ -31,4 +31,7 @@ sealed class Routes {
     data object HealthInputScreen : Routes()
     @Serializable
     data object CameraScreen : Routes()
+    @Serializable
+    data object FoodDetailScreen : Routes()
+
 }

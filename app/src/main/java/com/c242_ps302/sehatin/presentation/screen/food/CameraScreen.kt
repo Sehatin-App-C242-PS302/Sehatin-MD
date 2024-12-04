@@ -7,6 +7,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -24,25 +26,29 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.camera.core.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import com.c242_ps302.sehatin.presentation.navigation.Routes
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraScreenWrapper(navController: NavHostController) {
+fun CameraScreenWrapper(navController: NavHostController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
 
-    CameraContent(navController, cameraPermissionState.status.isGranted)
+    CameraContent(navController, cameraPermissionState.status.isGranted, sharedViewModel)
 
     if (cameraPermissionState.status.shouldShowRationale) {
-        // If the user has denied the permission but not permanently, show a rationale
+        // Show rationale for camera permission
         AlertDialog(
             onDismissRequest = { /* Do nothing */ },
             title = { Text("Camera Permission Required") },
@@ -62,9 +68,9 @@ fun CameraScreenWrapper(navController: NavHostController) {
 }
 
 @Composable
-fun CameraContent(navController: NavHostController, isGranted: Boolean) {
+fun CameraContent(navController: NavHostController, isGranted: Boolean, sharedViewModel: SharedViewModel) {
     if (isGranted) {
-        CameraScreen(navController)
+        CameraScreen(navController, sharedViewModel)
     } else {
         CameraPermissionRequest()
     }
@@ -88,7 +94,7 @@ fun CameraPermissionRequest() {
 }
 
 @Composable
-fun CameraScreen(navController: NavHostController) {
+fun CameraScreen(navController: NavHostController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var lensFacing by remember { mutableStateOf(CameraSelector.LENS_FACING_BACK) }
@@ -105,7 +111,6 @@ fun CameraScreen(navController: NavHostController) {
                 previewUseCase.setSurfaceProvider(previewView.surfaceProvider)
             }
 
-            // Image capture use case
             imageCapture = ImageCapture.Builder().build()
 
             try {
@@ -121,7 +126,6 @@ fun CameraScreen(navController: NavHostController) {
             }
         }, ContextCompat.getMainExecutor(context))
     }
-
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -150,7 +154,11 @@ fun CameraScreen(navController: NavHostController) {
         IconButton(
             onClick = {
                 takePhoto(context, imageCapture) { bitmap ->
-                    capturedImage = bitmap
+                    sharedViewModel.updateCapturedImage(bitmap)
+                    println("Captured image before navigating: ${bitmap.width}x${bitmap.height}")
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        navController.navigate(Routes.FoodDetailScreen)
+                    }, 300)
                 }
             },
             modifier = Modifier
@@ -162,24 +170,9 @@ fun CameraScreen(navController: NavHostController) {
                 contentDescription = "Take Photo"
             )
         }
-
-        capturedImage?.let { bitmap ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center)
-            ) {
-                Image(
-                    bitmap = bitmap.asImageBitmap(),
-                    contentDescription = "Captured Photo",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center)
-                )
-            }
-        }
     }
 }
+
 
 private fun takePhoto(context: Context, imageCapture: ImageCapture?, onPhotoTaken: (Bitmap) -> Unit) {
     imageCapture?.takePicture(
@@ -187,13 +180,27 @@ private fun takePhoto(context: Context, imageCapture: ImageCapture?, onPhotoTake
         object : ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 super.onCaptureSuccess(image)
-                val rotation = Matrix().apply {
-                    postRotate(image.imageInfo.rotationDegrees.toFloat())
+
+                val bitmap = image.toBitmap()?.let { originalBitmap ->
+                    val matrix = Matrix().apply {
+                        postRotate(image.imageInfo.rotationDegrees.toFloat())
+                    }
+                    Bitmap.createBitmap(
+                        originalBitmap,
+                        0,
+                        0,
+                        originalBitmap.width,
+                        originalBitmap.height,
+                        matrix,
+                        true
+                    )
                 }
-                val bitmap = image.toBitmap()?.let {
-                    Bitmap.createBitmap(it, 0, 0, image.width, image.height, rotation, true)
+                if (bitmap != null) {
+                    Log.d("CameraScreen", "Bitmap captured successfully: ${bitmap.width}x${bitmap.height}")
+                    onPhotoTaken(bitmap)
+                } else {
+                    Log.e("CameraScreen", "Bitmap conversion failed!")
                 }
-                bitmap?.let(onPhotoTaken)
                 image.close()
             }
 
@@ -210,5 +217,6 @@ private fun ImageProxy.toBitmap(): Bitmap? {
     buffer.get(bytes)
     return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 }
+
 
 

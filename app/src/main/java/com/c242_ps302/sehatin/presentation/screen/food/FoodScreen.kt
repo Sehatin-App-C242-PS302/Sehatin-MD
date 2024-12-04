@@ -32,14 +32,10 @@ fun FoodScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    // Create the launcher for picking an image from the gallery
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        // Handle the selected image URI (you can update state, navigate, etc.)
         uri?.let {
-            // Do something with the selected image URI (e.g., display the image)
-            // For now, it just logs the selected URI.
             Log.d("FoodScreen", "Selected image URI: $uri")
         }
     }
