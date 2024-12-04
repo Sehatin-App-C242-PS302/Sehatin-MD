@@ -59,8 +59,9 @@ import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     languageChangeHelper: LanguageChangeHelper = hiltViewModel(),
+    onLogoutSuccess: () -> Unit,
+    onProfileClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
-    onLogoutSuccess: () -> Unit
 ) {
     val state by viewModel.settingsState.collectAsStateWithLifecycle()
     var toastMessage by remember { mutableStateOf("") }
@@ -109,9 +110,11 @@ fun SettingsScreen(
                 ContextCompat.checkSelfPermission(
                     context,
                     Manifest.permission.POST_NOTIFICATIONS
-                ) -> {
+                ),
+                    -> {
                     viewModel.toggleNotification(true)
                 }
+
                 else -> {
                     permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
@@ -170,6 +173,7 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
+
                     null -> {
                         Text(
                             text = "User  not found",
@@ -183,6 +187,7 @@ fun SettingsScreen(
                 SettingsItem(
                     leadingIcon = Icons.Default.Person,
                     text = stringResource(R.string.account),
+                    onClick = { onProfileClick() }
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
                 SettingsItem(
@@ -238,7 +243,8 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     SehatinTheme {
         SettingsScreen(
-            onLogoutSuccess = {}
+            onLogoutSuccess = {},
+            onProfileClick = {}
         )
     }
 }

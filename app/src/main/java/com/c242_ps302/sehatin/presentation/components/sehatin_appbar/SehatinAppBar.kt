@@ -1,7 +1,11 @@
 package com.c242_ps302.sehatin.presentation.components.sehatin_appbar
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -12,16 +16,17 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import com.c242_ps302.sehatin.R
+import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SehatinAppBar(
     modifier: Modifier = Modifier,
-//    scrollBehavior: TopAppBarScrollBehavior,
     title: String = stringResource(id = R.string.app_name),
-//    onSearchClick: () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {}
+    navigationIcon: Boolean = false,
+    onNavigateUp: () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
         modifier = modifier,
@@ -43,69 +48,30 @@ fun SehatinAppBar(
                 fontWeight = FontWeight.ExtraBold
             )
         },
-//        actions = {
-//            IconButton(onClick = {  }) {
-//                Icon(imageVector = Icons.Filled.Search, contentDescription = "Search")
-//            }
-//        },
+        navigationIcon = {
+            if (navigationIcon) {
+                IconButton(
+                    onClick = {
+                        onNavigateUp()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            }
+        },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             scrolledContainerColor = MaterialTheme.colorScheme.background
         ),
-        navigationIcon = navigationIcon
     )
 }
 
-//@Composable
-//fun FullImageViewTopBar(
-//    modifier: Modifier = Modifier,
-//    image: UnsplashImage?,
-//    onBackClick: () -> Unit,
-//    onPhotographerNameClick: (String) -> Unit,
-//    onDownloadImgClick: () -> Unit,
-//    isVisible: Boolean,
-//) {
-//    AnimatedVisibility(
-//        visible = isVisible,
-//        enter = fadeIn() + slideInVertically(),
-//        exit = fadeOut() + slideOutVertically()
-//    ) {
-//        Row(
-//            modifier = modifier,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            IconButton(
-//                onClick = { onBackClick() }
-//            ) {
-//                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go Back")
-//            }
-//            AsyncImage(
-//                modifier = Modifier.size(30.dp).clip(CircleShape),
-//                model = image?.photographerProfileImgUrl,
-//                contentDescription = null
-//            )
-//            Spacer(modifier = Modifier.width(10.dp))
-//            Column(
-//                modifier = Modifier.clickable {
-//                    image?.let {
-//                        onPhotographerNameClick(it.photographerProfileLink)
-//                    }
-//                }
-//            ) {
-//                Text(
-//                    text = image?.photographerName ?: "",
-//                    style = MaterialTheme.typography.bodySmall
-//                )
-//            }
-//            Spacer(modifier = Modifier.weight(1f))
-//            IconButton(
-//                onClick = { onDownloadImgClick() }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_download),
-//                    contentDescription = "Download the image",
-//                    tint = MaterialTheme.colorScheme.onBackground
-//                )
-//            }
-//        }
-//    }
-//}
+@Preview
+@Composable
+private fun SehatinAppBarPreview() {
+    SehatinTheme {
+        SehatinAppBar()
+    }
+}
