@@ -37,4 +37,6 @@
     <string name="password_field_is_required">Password field is required</string>
     <string name="email_format_is_invalid">Email format is invalid</string>
     <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
 </resources>

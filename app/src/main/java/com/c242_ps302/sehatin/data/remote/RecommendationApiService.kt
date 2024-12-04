@@ -8,8 +8,9 @@ import retrofit2.http.POST
 interface RecommendationApiService {
 
     @FormUrlEncoded
-    @POST("calculate_bmi")
-    suspend fun getRecommendation(
+    @POST("process-data")
+    suspend fun postRecommendation(
+        @Field("user_id") userId: Int,
         @Field("gender") gender: String,
         @Field("age") age: Int,
         @Field("height") height: Double,

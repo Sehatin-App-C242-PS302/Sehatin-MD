@@ -13,6 +13,7 @@ class RecommendationRepository @Inject constructor(
     private val recommendationApiService: RecommendationApiService,
 ) {
     fun postRecommendationAndSave(
+        userId: Int,
         gender: String,
         age: Int,
         height: Double,
@@ -20,7 +21,8 @@ class RecommendationRepository @Inject constructor(
     ): Flow<Result<RecommendationEntity>> = flow {
         emit(Result.Loading)
         try {
-            val response = recommendationApiService.getRecommendation(
+            val response = recommendationApiService.postRecommendation(
+                userId = userId,
                 gender = gender,
                 age = age,
                 height = height,

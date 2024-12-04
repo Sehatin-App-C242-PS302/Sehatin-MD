@@ -19,9 +19,9 @@ class RecommendationViewModel @Inject constructor(
     private val _healthInputState = MutableStateFlow(HealthInputScreenUIState())
     val healthInputState = _healthInputState.asStateFlow()
 
-    fun postRecommendation(gender: String, age: Int, height: Double, weight: Double) =
+    fun postRecommendation(userId: Int, gender: String, age: Int, height: Double, weight: Double) =
         viewModelScope.launch {
-            repository.postRecommendationAndSave(gender, age, height, weight).collectAndHandle(
+            repository.postRecommendationAndSave(userId, gender, age, height, weight).collectAndHandle(
                 onError = { error ->
                     _healthInputState.update {
                         it.copy(isLoading = false, error = error)
