@@ -3,26 +3,37 @@ package com.c242_ps302.sehatin.data.remote.response
 import com.google.gson.annotations.SerializedName
 
 data class RecommendationResponse(
-    val id: Int = 0,
 
-    @field:SerializedName("gender")
-    val gender: String? = null,
+	@field:SerializedName("success")
+	val success: Boolean? = null,
 
-    @field:SerializedName("age")
-    val age: Int? = null,
+	@field:SerializedName("message")
+	val message: String? = null,
 
-    @field:SerializedName("height_cm")
-    val heightCm: Double? = null,
+	@field:SerializedName("data")
+	val data: Data? = null,
+)
 
-    @field:SerializedName("weight_kg")
-    val weightKg: Double? = null,
+data class Data(
 
-    @field:SerializedName("bmi")
-    val bmi: Double? = null,
+	@field:SerializedName("user_id")
+	val userId: Int? = null,
 
-    @field:SerializedName("category")
-    val category: String? = null,
+	@field:SerializedName("gender")
+	val gender: String? = null,
 
-    @field:SerializedName("daily_step_recommendation")
-    val dailyStepRecommendation: String? = null,
+	@field:SerializedName("age")
+	val age: Int? = null,
+
+	@field:SerializedName("height")
+	val height: Double? = null,
+
+	@field:SerializedName("weight")
+	val weight: Double? = null,
+
+	@field:SerializedName("bmi")
+	val bmi: Double? = null,
+
+	@field:SerializedName("recommended_steps")
+	val recommendedSteps: Int? = null,
 )

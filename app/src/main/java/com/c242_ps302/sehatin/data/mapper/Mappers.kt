@@ -21,17 +21,31 @@ fun ArticlesItem.toNews(): News {
     )
 }
 
-fun RecommendationResponse.toEntity(): RecommendationEntity {
-    return RecommendationEntity(
-        gender = this.gender.orEmpty(),
-        weightKg = this.weightKg ?: 0.0,
-        heightCm = this.heightCm ?: 0.0,
-        category = this.category.orEmpty(),
-        age = this.age ?: 0,
-        bmi = this.bmi ?: 0.0,
-        dailyStepRecommendation = this.dailyStepRecommendation.orEmpty(),
-        createdAt = System.currentTimeMillis().toString()
-    )
+fun RecommendationResponse.toEntity(): List<RecommendationEntity> {
+    return data?.let { dataItem ->
+        listOf(
+            RecommendationEntity(
+                gender = dataItem.gender,
+                age = dataItem.age,
+                heightCm = dataItem.height ?: 0.0,
+                weightKg = dataItem.weight ?: 0.0,
+                bmi = dataItem.bmi ?: 0.0,
+                category = determineBMICategory(dataItem.bmi ?: 0.0),
+                dailyStepRecommendation = dataItem.recommendedSteps?.toString(),
+                createdAt = System.currentTimeMillis().toString() // Ensure createdAt is set here
+            )
+        ) ?: emptyList()
+    } ?: emptyList()
+}
+
+fun determineBMICategory(bmi: Double): String {
+    return when {
+        bmi < 18.5 -> "Underweight"
+        bmi in 18.5..24.9 -> "Normal weight"
+        bmi in 25.0..29.9 -> "Overweight"
+        bmi >= 30.0 -> "Obese"
+        else -> "Unknown"
+    }
 }
 
 fun User.toEntity(): UserEntity {
