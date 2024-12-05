@@ -41,7 +41,7 @@ fun MainScreen() { // Remove navController parameter
                 )
             }
             composable<Routes.FoodScreen> {
-                FoodScreen(mainNavController) // Pass mainNavController here
+                FoodScreen(mainNavController)
             }
             composable<Routes.HistoryScreen> {
                 HistoryScreen()
@@ -55,11 +55,11 @@ fun MainScreen() { // Remove navController parameter
             composable<Routes.HealthInputScreen> {
                 HealthInputScreen()
             }
-            composable <Routes.CameraScreen> {
-                CameraScreen(mainNavController, sharedViewModel = viewModel())
+            composable<Routes.CameraScreen> {
+                CameraScreen(mainNavController, cameraViewModel = viewModel())
             }
             composable<Routes.FoodDetailScreen> {
-                FoodDetailScreen(sharedViewModel = viewModel())
+                FoodDetailScreen(cameraViewModel = viewModel())
             }
         }
     }

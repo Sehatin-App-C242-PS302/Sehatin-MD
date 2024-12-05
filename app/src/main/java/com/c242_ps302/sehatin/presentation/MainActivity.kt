@@ -16,8 +16,9 @@ import androidx.navigation.compose.rememberNavController
 import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.presentation.navigation.NavGraphSetup
 import com.c242_ps302.sehatin.presentation.screen.food.CameraScreen
+import com.c242_ps302.sehatin.presentation.screen.food.CameraViewModel
+import com.c242_ps302.sehatin.presentation.screen.food.FoodDetailScreen
 import com.c242_ps302.sehatin.presentation.screen.food.FoodScreen
-import com.c242_ps302.sehatin.presentation.screen.food.SharedViewModel
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
             SehatinTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
-                val sharedViewModel : SharedViewModel = viewModel()
+                val cameraViewModel : CameraViewModel = viewModel()
                 NavGraphSetup(
                     navController = navController
 
@@ -52,7 +53,11 @@ class MainActivity : ComponentActivity() {
 
         NavHost(navController = navController, startDestination = "food_screen") {
             composable("food_screen") { FoodScreen(navController = navController) }
-            composable("camera_screen") { CameraScreen(navController = navController, sharedViewModel = SharedViewModel()) }
+            composable("camera_screen") { CameraScreen(navController = navController, CameraViewModel()) }
+            composable("foodDetailScreen") {
+                val cameraViewModel = viewModel<CameraViewModel>()
+                FoodDetailScreen(navController, cameraViewModel)
+            }
         }
     }
 
