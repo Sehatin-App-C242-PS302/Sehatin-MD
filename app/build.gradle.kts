@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     implementation(libs.coil.compose)
+    implementation(libs.coil3.coil.network.okhttp)
     implementation(libs.cloudy)
 
     implementation(libs.kotlinx.coroutines.core)

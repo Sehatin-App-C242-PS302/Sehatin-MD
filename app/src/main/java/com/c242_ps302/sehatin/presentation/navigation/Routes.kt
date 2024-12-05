@@ -19,6 +19,8 @@ import kotlinx.serialization.Serializable
 @Serializable object HealthInputScreen
 @Serializable object HealthResultScreen
 @Serializable object ProfileScreen
+@Serializable object CameraScreen
+@Serializable object FoodResultScreen
 
 @Serializable
 data class NewsDetailScreen(val newsLink: String)
