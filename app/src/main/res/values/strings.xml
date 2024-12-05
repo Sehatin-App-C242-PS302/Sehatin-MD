@@ -37,4 +37,19 @@
     <string name="password_field_is_required">Password field is required</string>
     <string name="email_format_is_invalid">Email format is invalid</string>
     <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="underweight">Underweight</string>
+    <string name="normal_weight">Normal weight</string>
+    <string name="overweight">Overweight</string>
+    <string name="obese">Obese</string>
+    <string name="unknown">Unknown</string>
+    <string name="no_health_data">No Health Data Found</string>
+    <string name="add_first_health_data">Let\'s add your first health data to get personalized recommendations</string>
+    <string name="add_health_data">Add Health Data</string>
+    <string name="age">Age</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="height_with_unit">%1$s cm</string>
+    <string name="weight_with_unit">%1$s kg</string>
 </resources>

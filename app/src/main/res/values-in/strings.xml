@@ -28,7 +28,7 @@
     <string name="daily_step_recommendation">Rekomendasi Langkah Harian</string>
     <string name="current_data">Data Saat Ini</string>
     <string name="current_bmi">BMI Saat Ini</string>
-    <string name="gender">Jenis Kelamin</string>
+    <string name="gender">Gender</string>
     <string name="masukkan_data_kamu_yuk">Masukkan Data Kamu, Yuk!</string>
     <string name="male">Laki-Laki</string>
     <string name="female">Perempuan</string>
@@ -38,4 +38,19 @@
     <string name="password_field_is_required">Kolom kata sandi wajib diisi</string>
     <string name="email_format_is_invalid">Format email tidak valid</string>
     <string name="password_must_be_at_least_6_characters">Kata sandi harus terdiri dari minimal 6 karakter</string>
+    <string name="hide_password">Sembunyikan kata sandi</string>
+    <string name="show_password">Tampilkan kata sandi</string>
+    <string name="underweight">Berat badan kurang</string>
+    <string name="normal_weight">Berat badan normal</string>
+    <string name="overweight">Berat badan berlebih</string>
+    <string name="obese">Obesitas</string>
+    <string name="unknown">Tidak diketahui</string>
+    <string name="no_health_data">Tidak Ada Data Kesehatan Ditemukan</string>
+    <string name="add_first_health_data">Ayo tambahkan data kesehatan pertama Anda untuk mendapatkan rekomendasi personal</string>
+    <string name="add_health_data">Tambah Data Kesehatan</string>
+    <string name="age">Umur</string>
+    <string name="height">Tinggi</string>
+    <string name="weight">Berat</string>
+    <string name="height_with_unit">%1$s cm</string>
+    <string name="weight_with_unit">%1$s kg</string>
 </resources>

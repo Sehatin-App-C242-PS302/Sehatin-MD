@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.Scale
@@ -25,7 +24,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -54,7 +52,7 @@ import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 @Composable
 fun HealthInputScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+    onNavigateUp: () -> Unit,
     onSuccess: () -> Unit,
     recommendationViewModel: RecommendationViewModel = hiltViewModel()
 ) {
@@ -105,11 +103,8 @@ fun HealthInputScreen(
                     .padding(horizontal = 20.dp)
             ) {
                 SehatinAppBar(
-                    navigationIcon = {
-                        IconButton(onClick = { onBackClick() }) {
-                            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                        }
-                    }
+                    navigationIcon = true,
+                    onNavigateUp = onNavigateUp
                 )
                 Spacer(modifier = Modifier.height(40.dp))
                 Text(
@@ -174,7 +169,7 @@ fun HealthInputScreen(
                         val weightDouble = weight.toDoubleOrNull() ?: 0.0
 
                         if (selectedGender.isNotEmpty() && ageInt > 0 && heightDouble > 0.0 && weightDouble > 0.0) {
-                            val genderApi = if (selectedGender.lowercase() == "male") "male" else "female"
+                            val genderApi = if (selectedGender.lowercase() == "male" || selectedGender.lowercase() == "laki-laki") "Male" else "Female"
                             recommendationViewModel.postRecommendation(
                                 gender = genderApi,
                                 age = ageInt,
@@ -233,8 +228,8 @@ fun InputRow(icon: ImageVector, label: String, value: String, onValueChange: (St
 fun HealthInputScreenPreview() {
     SehatinTheme {
         HealthInputScreen(
-            onBackClick = {},
             onSuccess = {},
+            onNavigateUp = {}
         )
     }
 }

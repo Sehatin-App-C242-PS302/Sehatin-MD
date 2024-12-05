@@ -50,22 +50,25 @@ class SettingsViewModel @Inject constructor(
 
     fun logout(onLogoutSuccess: () -> Unit) {
         viewModelScope.launch {
-            when (repository.logout()) {
+            when (val result = repository.logout()) {
                 is Result.Success -> {
-                    _settingsState.update {
-                        it.copy(user = null, error = null, isLoading = false, success = true)
-                    }
+                    // Logout successful
+                    onLogoutSuccess()
                 }
 
                 is Result.Error -> {
+                    // Log the error, but still proceed with logout
                     _settingsState.update {
-                        it.copy(error = "Failed to logout", isLoading = false)
+                        it.copy(
+                            error = result.error ?: "Logout failed"
+                        )
                     }
+                    onLogoutSuccess()
                 }
 
-                Result.Loading -> {
+                is Result.Loading -> {
                     _settingsState.update {
-                        it.copy(isLoading = true, error = null)
+                        it.copy(isLoading = true)
                     }
                 }
             }

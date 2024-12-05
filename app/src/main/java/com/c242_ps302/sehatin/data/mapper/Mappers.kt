@@ -1,9 +1,11 @@
 package com.c242_ps302.sehatin.data.mapper
 
+import android.content.Context
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
 import com.c242_ps302.sehatin.data.remote.response.ArticlesItem
-import com.c242_ps302.sehatin.data.remote.response.RecommendationResponse
+import com.c242_ps302.sehatin.data.remote.response.HealthResponse
 import com.c242_ps302.sehatin.data.remote.response.User
 import com.c242_ps302.sehatin.data.utils.formatCardDate
 import com.c242_ps302.sehatin.domain.model.News
@@ -21,17 +23,31 @@ fun ArticlesItem.toNews(): News {
     )
 }
 
-fun RecommendationResponse.toEntity(): RecommendationEntity {
-    return RecommendationEntity(
-        gender = this.gender.orEmpty(),
-        weightKg = this.weightKg ?: 0.0,
-        heightCm = this.heightCm ?: 0.0,
-        category = this.category.orEmpty(),
-        age = this.age ?: 0,
-        bmi = this.bmi ?: 0.0,
-        dailyStepRecommendation = this.dailyStepRecommendation.orEmpty(),
-        createdAt = System.currentTimeMillis().toString()
-    )
+fun HealthResponse.toEntity(context: Context): List<RecommendationEntity> {
+    return data?.mapNotNull { dataItem ->
+        dataItem?.let {
+            RecommendationEntity(
+                gender = it.gender ?: "",
+                age = it.age ?: 0,
+                heightCm = it.height?.toDouble() ?: 0.0,
+                weightKg = it.weight?.toDouble() ?: 0.0,
+                bmi = (it.bmi as? Number)?.toDouble() ?: 0.0,
+                category = determineBMICategory(context, (it.bmi as? Number)?.toDouble() ?: 0.0),
+                dailyStepRecommendation = it.recommendedSteps?.toString(),
+                createdAt = it.createdAt ?: System.currentTimeMillis().toString()
+            )
+        }
+    } ?: emptyList()
+}
+
+fun determineBMICategory(context: Context, bmi: Double): String {
+    return when {
+        bmi < 18.5 -> context.getString(R.string.underweight)
+        bmi in 18.5..24.9 -> context.getString(R.string.normal_weight)
+        bmi in 25.0..29.9 -> context.getString(R.string.overweight)
+        bmi >= 30.0 -> context.getString(R.string.obese)
+        else -> context.getString(R.string.unknown)
+    }
 }
 
 fun User.toEntity(): UserEntity {

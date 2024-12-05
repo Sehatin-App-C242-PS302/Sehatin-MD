@@ -10,8 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -29,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,7 +53,7 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
-    viewModel: RegisterViewModel = hiltViewModel()
+    viewModel: RegisterViewModel = hiltViewModel(),
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
@@ -55,6 +64,8 @@ fun RegisterScreen(
     var nameError by remember { mutableStateOf<Int?>(null) }
     var emailError by remember { mutableStateOf<Int?>(null) }
     var passwordError by remember { mutableStateOf<Int?>(null) }
+
+    var showPassword by remember { mutableStateOf(false) }
 
     fun validateEmptyFields(): Boolean {
         return if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -144,6 +155,13 @@ fun RegisterScreen(
                     name = it
                     nameError = null
                 },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
                 label = { Text(text = stringResource(R.string.name)) },
                 isError = nameError != null,
                 modifier = Modifier.fillMaxWidth()
@@ -165,6 +183,13 @@ fun RegisterScreen(
                 onValueChange = {
                     email = it
                     emailError = null
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.MailOutline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 },
                 label = { Text(text = stringResource(R.string.email)) },
                 isError = emailError != null,
@@ -189,8 +214,33 @@ fun RegisterScreen(
                     passwordError = null
                 },
                 label = { Text(text = stringResource(R.string.password)) },
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (showPassword)
+                    VisualTransformation.None
+                else
+                    PasswordVisualTransformation(),
                 isError = passwordError != null,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { showPassword = !showPassword }) {
+                        Icon(
+                            imageVector = if (showPassword)
+                                Icons.Default.Visibility
+                            else
+                                Icons.Default.VisibilityOff,
+                            contentDescription = if (showPassword)
+                                stringResource(R.string.hide_password)
+                            else
+                                stringResource(R.string.show_password),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             passwordError?.let {

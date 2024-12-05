@@ -51,8 +51,8 @@ fun SettingsItem(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
             .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .padding(horizontal = 10.dp),
     ) {
         Icon(
             imageVector = leadingIcon,

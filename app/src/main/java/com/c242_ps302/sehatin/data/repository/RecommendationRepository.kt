@@ -1,59 +1,42 @@
 package com.c242_ps302.sehatin.data.repository
 
-import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
-import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
-import com.c242_ps302.sehatin.data.mapper.toEntity
+import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.remote.RecommendationApiService
+import com.c242_ps302.sehatin.data.remote.response.RecommendationResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class RecommendationRepository @Inject constructor(
-    private val recommendationDao: RecommendationDao,
     private val recommendationApiService: RecommendationApiService,
+    private val userDao: UserDao,
 ) {
     fun postRecommendationAndSave(
         gender: String,
         age: Int,
         height: Double,
         weight: Double,
-    ): Flow<Result<RecommendationEntity>> = flow {
+    ): Flow<Result<RecommendationResponse>> = flow {
         emit(Result.Loading)
         try {
-            val response = recommendationApiService.getRecommendation(
+            val userId = userDao.getUserData().id
+
+            val response = recommendationApiService.postRecommendation(
+                userId = userId,
                 gender = gender,
                 age = age,
                 height = height,
                 weight = weight
             )
-
-            val recommendationEntity = response.toEntity()
-
-            recommendationDao.insertRecommendation(recommendationEntity)
-
-            emit(Result.Success(recommendationEntity))
+            if (response.success == true) {
+                emit(Result.Success(response))
+            } else {
+                emit(Result.Error(response.message ?: "An error occurred"))
+            }
         } catch (e: Exception) {
             emit(Result.Error(e.message ?: "An error occurred"))
         }
     }
 
-    fun getLatestRecommendation(): Flow<Result<RecommendationEntity>> = flow {
-        emit(Result.Loading)
-        try {
-            val recommendationEntity = recommendationDao.getCurrentRecommendation()
-            emit(Result.Success(recommendationEntity))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "An error occurred"))
-        }
-    }
 
-    fun getAllRecommendation(): Flow<Result<List<RecommendationEntity>>> = flow {
-        emit(Result.Loading)
-        try {
-            val recommendationsList = recommendationDao.getAllRecommendations()
-            emit(Result.Success(recommendationsList))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "An error occurred"))
-        }
-    }
 }
