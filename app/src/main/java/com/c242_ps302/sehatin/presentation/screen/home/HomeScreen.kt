@@ -52,24 +52,59 @@ fun HomeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        // Loading State
         AnimatedVisibility(
             visible = state.isLoading,
             enter = fadeIn() + expandVertically()
         ) {
             CircularProgressIndicator(
+                modifier = Modifier.size(48.dp)
+            )
+        }
+
+        // No Data State
+        AnimatedVisibility(
+            visible = !state.isLoading &&
+                    state.latestRecommendation == null &&
+                    state.error != null
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .size(48.dp)
-            )
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.no_health_data),
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.add_first_health_data),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                FloatingActionButton(
+                    onClick = { onFabClick() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.add_health_data)
+                    )
+                }
+            }
         }
-        AnimatedVisibility(visible = state.error != null) {
-            Text(
-                text = state.error ?: "Unknown error",
-                color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-        AnimatedVisibility(visible = !state.isLoading && state.error == null) {
+
+        // Data Available State
+        AnimatedVisibility(
+            visible = !state.isLoading &&
+                    state.latestRecommendation != null
+        ) {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -146,33 +181,68 @@ fun HomeScreen(
                             )
                             val recommendation = state.latestRecommendation
                             Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                modifier = Modifier.fillMaxWidth()
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth(.8f)
                             ) {
-                                Text(text = "Gender", fontWeight = FontWeight.SemiBold)
-                                Text(text = recommendation?.gender ?: "N/A", fontWeight = FontWeight.SemiBold)
+                                Text(
+                                    text = stringResource(R.string.gender),
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = when (recommendation?.gender) {
+                                        "Male" -> stringResource(R.string.male)
+                                        "Female" -> stringResource(R.string.female)
+                                        else -> "N/A"
+                                    },
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
                             Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                modifier = Modifier.fillMaxWidth()
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth(.8f)
                             ) {
-                                Text(text = "Age", fontWeight = FontWeight.SemiBold)
-                                Text(text = "${recommendation?.age ?: "N/A"}", fontWeight = FontWeight.SemiBold)
+                                Text(
+                                    text = stringResource(R.string.age),
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = "${recommendation?.age ?: "N/A"}",
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
                             Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                modifier = Modifier.fillMaxWidth()
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth(.8f)
                             ) {
-                                Text(text = "Height", fontWeight = FontWeight.SemiBold)
-                                Text(text = "${recommendation?.heightCm ?: "N/A"}", fontWeight = FontWeight.SemiBold)
+                                Text(
+                                    text = stringResource(R.string.height),
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = stringResource(
+                                        R.string.height_with_unit,
+                                        recommendation?.heightCm ?: "N/A"
+                                    ),
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
                             Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                modifier = Modifier.fillMaxWidth()
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth(.8f)
                             ) {
-                                Text(text = "Weight", fontWeight = FontWeight.SemiBold)
-                                Text(text = "${recommendation?.weightKg ?: "N/A"}", fontWeight = FontWeight.SemiBold)
+                                Text(
+                                    text = stringResource(R.string.weight),
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = stringResource(
+                                        R.string.weight_with_unit,
+                                        recommendation?.weightKg ?: "N/A"
+                                    ),
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
+
                         }
                     }
                     ElevatedCard(

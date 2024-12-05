@@ -1,8 +1,6 @@
 package com.c242_ps302.sehatin.data.repository
 
 import android.content.Context
-import android.util.Log
-import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
 import com.c242_ps302.sehatin.data.mapper.toEntity
@@ -84,11 +82,7 @@ class AuthRepository @Inject constructor(
         emit(Result.Loading)
         try {
             val user = userDao.getUserData()
-            if (user != null) {
-                emit(Result.Success(user))
-            } else {
-                emit(Result.Error(context.getString(R.string.user_not_found)))
-            }
+            emit(Result.Success(user))
         } catch (e: Exception) {
             emit(Result.Error(e.message.toString()))
         }

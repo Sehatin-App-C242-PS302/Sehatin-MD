@@ -10,7 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,6 +38,7 @@ import com.c242_ps302.sehatin.presentation.screen.home.HomeScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsDetailScreen
 import com.c242_ps302.sehatin.presentation.screen.news.NewsScreen
 import com.c242_ps302.sehatin.presentation.screen.onboarding.OnboardingScreen
+import com.c242_ps302.sehatin.presentation.screen.profile.ProfileScreen
 import com.c242_ps302.sehatin.presentation.screen.settings.SettingsScreen
 import com.c242_ps302.sehatin.presentation.theme.customGreen
 import kotlinx.coroutines.delay
@@ -95,7 +96,7 @@ fun NavGraphSetup(
             composable<SettingsScreen> { MainScreenContent(navController) }
             composable<HealthInputScreen> {
                 HealthInputScreen(
-                    onBackClick = { navController.navigateUp() },
+                    onNavigateUp = { navController.navigateUp() },
                     onSuccess = { navController.navigate(HealthResultScreen) },
                 )
             }
@@ -112,6 +113,11 @@ fun NavGraphSetup(
                     onBackClick = { navController.navigate(HomeScreen) }
                 )
             }
+            composable<ProfileScreen> {
+                ProfileScreen(
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
         }
     }
 }
@@ -123,7 +129,7 @@ fun MainScreenContent(
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
 
-    val status by connectivityObserver.isConnected.collectAsState()
+    val status by connectivityObserver.isConnected.collectAsStateWithLifecycle()
     var showMessageBar by rememberSaveable { mutableStateOf(false) }
     var message by rememberSaveable { mutableStateOf("") }
     var backgroundColor by remember { mutableStateOf(Color.Red) }
@@ -222,6 +228,9 @@ fun ContentScreen(
                 navController.navigate(LoginScreen) {
                     popUpTo(MainScreen) { inclusive = true }
                 }
+            },
+            onProfileClick = {
+                navController.navigate(ProfileScreen)
             },
             modifier = modifier
         )

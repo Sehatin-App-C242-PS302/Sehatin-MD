@@ -2,27 +2,23 @@ package com.c242_ps302.sehatin.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 
-data class GetHealthResponse(
-	@field:SerializedName("GetHealthResponse")
-	val getHealthResponse: List<HealthResponseItem?>? = null
+data class HealthResponse(
+
+	@field:SerializedName("success")
+	val success: Boolean? = null,
+
+	@field:SerializedName("data")
+	val data: List<DataItem?>? = null,
+
 )
 
-data class HealthResponseItem(
+data class DataItem(
 
-	@field:SerializedName("createdAt")
-	val createdAt: String? = null,
+	@field:SerializedName("user_id")
+	val userId: Int? = null,
 
 	@field:SerializedName("gender")
 	val gender: String? = null,
-
-	@field:SerializedName("weight")
-	val weight: Int? = null,
-
-	@field:SerializedName("id")
-	val id: Int? = null,
-
-	@field:SerializedName("userId")
-	val userId: Int? = null,
 
 	@field:SerializedName("age")
 	val age: Int? = null,
@@ -30,10 +26,15 @@ data class HealthResponseItem(
 	@field:SerializedName("height")
 	val height: Int? = null,
 
+	@field:SerializedName("weight")
+	val weight: Int? = null,
+
 	@field:SerializedName("bmi")
 	val bmi: Any? = null,
 
-	@field:SerializedName("updatedAt")
-	val updatedAt: String? = null
-)
+	@field:SerializedName("recommended_steps")
+	val recommendedSteps: Int? = null,
 
+	@field:SerializedName("created_at")
+	val createdAt: String? = null,
+)

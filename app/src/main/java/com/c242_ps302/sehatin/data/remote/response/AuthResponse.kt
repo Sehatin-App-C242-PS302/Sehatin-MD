@@ -8,11 +8,9 @@ data class RegisterResponse(
 	val success: Boolean? = null,
 
 	@field:SerializedName("message")
-	val message: String? = null,
-
-	@field:SerializedName("user")
-	val user: User? = null
+	val message: String? = null
 )
+
 
 data class LoginResponse(
 
