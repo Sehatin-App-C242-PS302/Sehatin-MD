@@ -8,4 +8,5 @@ object Constants {
     const val SEHATIN_BASE_URL = "https://sehatin-cc.vercel.app/api/"
     const val RECOMMENDATION_BASE_URL = "https://model1-v1-90128625985.asia-southeast2.run.app/"
     const val SEHATIN_DATABASE_NAME = "sehatin_database"
+    const val ITEMS_PER_PAGE = 10
 }

@@ -11,6 +11,16 @@ interface NewsApiService {
         @Query("language") language: String = "en",
         @Query("sortBy") sortBy: String = "relevancy",
         @Query("searchIn") searchIn: String = "title",
-        @Query("q") query: String,
+        @Query("q") query: String = "health",
     ): NewsResponse
+
+//    @GET("everything")
+//    suspend fun getHeadlineNews(
+//        @Query("language") language: String = "en",
+//        @Query("sortBy") sortBy: String = "relevancy",
+//        @Query("searchIn") searchIn: String = "title",
+///       @Query("page") page: Int,
+//        @Query("pageSize") pageSize: Int,
+//        @Query("q") query: String = "health",
+//    ): NewsResponse
 }
