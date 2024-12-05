@@ -148,7 +148,7 @@ private fun MainContent(
             // BMI Result Section
             rec.bmi?.let { bmi ->
                 Text(
-                    text = "BMI Kamu ${getBMICategory(bmi)}",
+                    text = "BMI Kamu ${recommendation.category}",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     )

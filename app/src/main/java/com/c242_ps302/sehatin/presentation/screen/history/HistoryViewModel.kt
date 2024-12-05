@@ -3,7 +3,7 @@ package com.c242_ps302.sehatin.presentation.screen.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
-import com.c242_ps302.sehatin.data.repository.HistoryRepository
+import com.c242_ps302.sehatin.data.repository.HealthRepository
 import com.c242_ps302.sehatin.presentation.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val repository: HistoryRepository,
+    private val repository: HealthRepository,
 ) : ViewModel() {
     private val _historyState = MutableStateFlow(HistoryScreenUiState())
     val historyState = _historyState.asStateFlow()
@@ -24,7 +24,7 @@ class HistoryViewModel @Inject constructor(
     }
 
     private fun fetchAllHistory() = viewModelScope.launch {
-        repository.getAllRecommendation().collectAndHandle(
+        repository.getAllRecommendationByUserId().collectAndHandle(
             onError = { error ->
                 _historyState.update {
                     it.copy(isLoading = false, error = error)
