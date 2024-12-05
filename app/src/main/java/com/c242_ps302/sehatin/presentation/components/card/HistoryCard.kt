@@ -107,6 +107,10 @@ fun HistoryCard(
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
+                        text = "Age : ${recommendation.age ?: "Unknown"}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
                         text = "Weight : ${recommendation.weightKg ?: "Unknown"} kg",
                         style = MaterialTheme.typography.bodyMedium
                     )

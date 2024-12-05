@@ -199,8 +199,9 @@ object AppModule {
         healthApiService: HealthApiService,
         userDao: UserDao,
         recommendationDao: RecommendationDao,
+        context: Context,
     ): HealthRepository {
-        return HealthRepository(userDao, healthApiService, recommendationDao)
+        return HealthRepository(userDao, healthApiService, recommendationDao, context)
     }
 
     @Provides

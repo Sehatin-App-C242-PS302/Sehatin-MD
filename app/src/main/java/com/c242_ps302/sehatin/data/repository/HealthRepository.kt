@@ -1,5 +1,6 @@
 package com.c242_ps302.sehatin.data.repository
 
+import android.content.Context
 import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
@@ -12,36 +13,40 @@ import javax.inject.Inject
 class HealthRepository @Inject constructor(
     private val userDao: UserDao,
     private val healthApiService: HealthApiService,
-    private val recommendationDao: RecommendationDao
+    private val recommendationDao: RecommendationDao,
+    private val context: Context
 ) {
     fun getAllRecommendationByUserId(): Flow<Result<List<RecommendationEntity>>> = flow {
         emit(Result.Loading)
         try {
             val localData = recommendationDao.getAllRecommendations()
-            emit(Result.Success(localData.sortedByDescending { it.createdAt }))
 
-            try {
-                val userId = userDao.getUserData().id
-                val response = healthApiService.getRecommendationByUserId(userId)
+            val user = userDao.getUserData()
+            val userId = user.id
+            val response = healthApiService.getRecommendationByUserId(userId)
 
-                if (response.success == true) {
-                    val remoteData = response.toEntity()
+            if (response.success == true) {
+                val remoteData = response.toEntity(context)
 
-                    if (localData != remoteData) {
-                        recommendationDao.clearAllRecommendations()
-                        recommendationDao.insertAllRecommendations(remoteData)
-                        emit(Result.Success(remoteData))
-                    } else {
-                        emit(Result.Success(localData.sortedByDescending { it.createdAt }))
-                    }
+                if (localData != remoteData) {
+                    recommendationDao.clearAllRecommendations()
+                    recommendationDao.insertAllRecommendations(remoteData)
+                    emit(Result.Success(remoteData.sortedByDescending { it.createdAt }))
                 } else {
-                    emit(Result.Error("Failed to fetch recommendations"))
+                    emit(Result.Success(localData.sortedByDescending { it.createdAt }))
                 }
-            } catch (e: Exception) {
-                emit(Result.Error(e.message ?: "An error occurred while fetching remote data"))
+            } else {
+                emit(Result.Success(localData.sortedByDescending { it.createdAt }))
             }
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "An error occurred while fetching local data"))
+            val localData = recommendationDao.getAllRecommendations()
+            emit(
+                if (localData.isNotEmpty()) {
+                    Result.Success(localData.sortedByDescending { it.createdAt })
+                } else {
+                    Result.Error(e.message ?: "An error occurred")
+                }
+            )
         }
     }
 
@@ -53,29 +58,33 @@ class HealthRepository @Inject constructor(
 
             localData?.let { emit(Result.Success(it)) }
 
-            try {
-                val userId = userDao.getUserData().id
-                val response = healthApiService.getRecommendationByUserId(userId)
+            val user = userDao.getUserData()
+            val userId = user.id
+            val response = healthApiService.getRecommendationByUserId(userId)
 
-                if (response.success == true) {
-                    val remoteData = response.toEntity()
-                    val latestRemoteData = remoteData.maxByOrNull { it.createdAt }
+            if (response.success == true && response.data?.isNotEmpty() == true) {
+                val remoteData = response.toEntity(context)
+                val latestRemoteData = remoteData.maxByOrNull { it.createdAt }
 
-                    latestRemoteData?.let {
-                        if (localData == null || localData != latestRemoteData) {
-                            recommendationDao.clearAllRecommendations()
-                            recommendationDao.insertAllRecommendations(remoteData)
-                            emit(Result.Success(latestRemoteData))
-                        }
+                latestRemoteData?.let {
+                    if (localData == null || localData != latestRemoteData) {
+                        recommendationDao.clearAllRecommendations()
+                        recommendationDao.insertAllRecommendations(remoteData)
+                        emit(Result.Success(latestRemoteData))
                     }
-                } else {
-                    emit(Result.Error("Failed to fetch recommendations"))
                 }
-            } catch (e: Exception) {
-                emit(Result.Error(e.message ?: "An error occurred while fetching remote data"))
+            } else {
+                if (localData == null) {
+                    emit(Result.Error("No health data available"))
+                }
             }
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "An error occurred while fetching local data"))
+            val localRecommendations = recommendationDao.getAllRecommendations()
+            val localData = localRecommendations.maxByOrNull { it.createdAt }
+
+            localData?.let {
+                emit(Result.Success(it))
+            } ?: emit(Result.Error(e.message ?: "An error occurred"))
         }
     }
     

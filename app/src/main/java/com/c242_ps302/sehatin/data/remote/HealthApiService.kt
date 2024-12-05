@@ -1,12 +1,12 @@
 package com.c242_ps302.sehatin.data.remote
 
-import com.c242_ps302.sehatin.data.remote.response.RecommendationResponse
+import com.c242_ps302.sehatin.data.remote.response.HealthResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface HealthApiService {
-    @GET("predictions/user/{user_id}")
+    @GET("predictions/user/{userId}")
     suspend fun getRecommendationByUserId(
-        @Path("user_id") userId: Int
-    ) : RecommendationResponse
+        @Path("userId") userId: Int
+    ) : HealthResponse
 }

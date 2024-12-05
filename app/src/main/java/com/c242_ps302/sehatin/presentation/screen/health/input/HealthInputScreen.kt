@@ -169,9 +169,8 @@ fun HealthInputScreen(
                         val weightDouble = weight.toDoubleOrNull() ?: 0.0
 
                         if (selectedGender.isNotEmpty() && ageInt > 0 && heightDouble > 0.0 && weightDouble > 0.0) {
-                            val genderApi = if (selectedGender.lowercase() == "male") "male" else "female"
+                            val genderApi = if (selectedGender.lowercase() == "male" || selectedGender.lowercase() == "laki-laki") "Male" else "Female"
                             recommendationViewModel.postRecommendation(
-                                userId = 1,
                                 gender = genderApi,
                                 age = ageInt,
                                 height = heightDouble,

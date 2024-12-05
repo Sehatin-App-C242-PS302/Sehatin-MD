@@ -69,7 +69,7 @@ fun SettingsScreen(
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
-        if (state.error != null) {
+        if (state.error != null && state.error != "User not found") {
             toastMessage = state.error ?: "Unknown error"
             toastType = ToastType.ERROR
             showToast = true
