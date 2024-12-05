@@ -53,4 +53,5 @@
     <string name="weight">Berat</string>
     <string name="height_with_unit">%1$s cm</string>
     <string name="weight_with_unit">%1$s kg</string>
+    <string name="see_result">Lihat Hasil</string>
 </resources>
