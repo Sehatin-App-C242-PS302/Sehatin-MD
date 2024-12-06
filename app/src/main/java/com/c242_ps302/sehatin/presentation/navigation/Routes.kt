@@ -12,14 +12,13 @@ import kotlinx.serialization.Serializable
 
 // Routes inside nested graph
 @Serializable object HomeScreen
-@Serializable object FoodScreen
+@Serializable object FoodInputScreen
 @Serializable object HistoryScreen
 @Serializable object NewsScreen
 @Serializable object SettingsScreen
 @Serializable object HealthInputScreen
 @Serializable object HealthResultScreen
 @Serializable object ProfileScreen
-@Serializable object CameraScreen
 @Serializable object FoodResultScreen
 
 @Serializable

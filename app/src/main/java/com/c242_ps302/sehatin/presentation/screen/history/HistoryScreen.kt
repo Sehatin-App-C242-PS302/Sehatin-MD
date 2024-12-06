@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.c242_ps302.sehatin.presentation.components.card.FoodCard
 import com.c242_ps302.sehatin.presentation.components.card.HistoryCard
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
@@ -87,11 +88,20 @@ fun HistoryScreen(
                     item {
                         Text(
                             text = "Health Data History",
-                            style = MaterialTheme.typography.headlineLarge
+                            style = MaterialTheme.typography.headlineMedium
                         )
                     }
                     items(state.history) { recommendation ->
                         HistoryCard(recommendation = recommendation)
+                    }
+                    item {
+                        Text(
+                            text = "Food Recognition History",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    }
+                    items(state.foods) { food ->
+                        FoodCard(food = food)
                     }
                 }
             }
