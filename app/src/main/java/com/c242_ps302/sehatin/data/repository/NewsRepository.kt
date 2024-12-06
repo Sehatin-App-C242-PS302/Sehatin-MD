@@ -12,10 +12,10 @@ import javax.inject.Inject
 class NewsRepository @Inject constructor(
     private val newsApiService: NewsApiService,
 ) {
-    fun getSearchedNews(query: String = "health"): Flow<Result<List<News>>> = flow {
+    fun getSearchedNews(query: String): Flow<Result<List<News>>> = flow {
         emit(Result.Loading)
         try {
-            val response = newsApiService.getHeadlineNews(query = query)
+            val response = newsApiService.getHeadlineNews(query)
             val news = response.articles
 
             if (news.isNullOrEmpty()) {
