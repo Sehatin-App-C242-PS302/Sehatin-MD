@@ -3,20 +3,15 @@ package com.c242_ps302.sehatin.presentation.notification
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.c242_ps302.sehatin.data.repository.HealthRepository
 import dagger.hilt.android.EntryPointAccessors
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import javax.inject.Inject
 
 class DailyReminderWorker(
     context: Context,
-    params: WorkerParameters
+    params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
-
-    @Inject
-    lateinit var healthRepository: HealthRepository
 
     init {
         val appContext = context.applicationContext
@@ -26,11 +21,6 @@ class DailyReminderWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            val lastHealthData = healthRepository.getLastHealthData()
-            val lastCreatedAt = lastHealthData?.createdAt
-//            if (shouldShowNotification(lastCreatedAt)) {
-//                showNotification()
-//            }
             if (shouldShowNotification()) {
                 showNotification()
             }
@@ -40,21 +30,28 @@ class DailyReminderWorker(
             Result.failure()
         }
     }
+
     private fun shouldShowNotification(): Boolean {
         val zoneId = ZoneId.systemDefault()
 
+        // Waktu sekarang
         val now = ZonedDateTime.now(zoneId)
 
-        val todayNineAM = LocalDate.now(zoneId).atTime(8, 47).atZone(zoneId)
+        // Jadwal pukul 7 pagi hari ini
+        val todaySevenAM = LocalDate.now(zoneId).atTime(7, 0).atZone(zoneId)
 
-        val scheduledNineAM = if (now.isBefore(todayNineAM)) {
-            todayNineAM.minusDays(1)
+        // Jika sekarang sebelum 7 pagi, gunakan jadwal 7 pagi kemarin
+        val scheduledSevenAM = if (now.isBefore(todaySevenAM)) {
+            todaySevenAM.minusDays(1)
         } else {
-            todayNineAM
+            todaySevenAM
         }
 
-        return now.isAfter(scheduledNineAM.plusDays(1))
+        // Cek apakah sekarang berada dalam range waktu (misal, hingga jam 9 pagi)
+        val notificationWindowEnd = scheduledSevenAM.plusHours(2) // Hingga jam 9 pagi
+        return now.isAfter(scheduledSevenAM) && now.isBefore(notificationWindowEnd)
     }
+
 
 //    private fun shouldShowNotification(lastCreatedAt: String?): Boolean {
 //        if (lastCreatedAt == null) return true
