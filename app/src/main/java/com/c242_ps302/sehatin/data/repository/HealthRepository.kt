@@ -22,11 +22,12 @@ class HealthRepository @Inject constructor(
     fun getAllRecommendationsByUserId(): Flow<Result<List<RecommendationEntity>>> = flow {
         emit(Result.Loading)
         try {
-            val localData = recommendationDao.getAllRecommendations()
-
             val user = userDao.getUserData()
             val userId = user.id
+
             val response = healthApiService.getRecommendationByUserId(userId)
+
+            val localData = recommendationDao.getAllRecommendations()
 
             if (response.success == true) {
                 val remoteData = response.toEntity(context)
@@ -56,30 +57,34 @@ class HealthRepository @Inject constructor(
     fun getLatestRecommendationByUserId(): Flow<Result<RecommendationEntity>> = flow {
         emit(Result.Loading)
         try {
-            val localRecommendations = recommendationDao.getAllRecommendations()
-            val localData = localRecommendations.maxByOrNull { it.createdAt }
-
-            localData?.let { emit(Result.Success(it)) }
-
             val user = userDao.getUserData()
             val userId = user.id
+
             val response = healthApiService.getRecommendationByUserId(userId)
 
             if (response.success == true && response.data?.isNotEmpty() == true) {
                 val remoteData = response.toEntity(context)
                 val latestRemoteData = remoteData.maxByOrNull { it.createdAt }
 
+                val localRecommendations = recommendationDao.getAllRecommendations()
+                val localData = localRecommendations.maxByOrNull { it.createdAt }
+
                 latestRemoteData?.let {
                     if (localData == null || localData != latestRemoteData) {
                         recommendationDao.clearAllRecommendations()
                         recommendationDao.insertAllRecommendations(remoteData)
                         emit(Result.Success(latestRemoteData))
+                    } else {
+                        emit(Result.Success(localData))
                     }
-                }
+                } ?: emit(Result.Error("No health data available"))
             } else {
-                if (localData == null) {
-                    emit(Result.Error("No health data available"))
-                }
+                val localRecommendations = recommendationDao.getAllRecommendations()
+                val localData = localRecommendations.maxByOrNull { it.createdAt }
+
+                localData?.let {
+                    emit(Result.Success(it))
+                } ?: emit(Result.Error("No health data available"))
             }
         } catch (e: Exception) {
             val localRecommendations = recommendationDao.getAllRecommendations()

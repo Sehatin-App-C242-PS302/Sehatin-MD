@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.Scale
@@ -98,6 +99,7 @@ fun HealthInputScreen(
             enter = fadeIn() + expandVertically()
         ) {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
@@ -125,7 +127,8 @@ fun HealthInputScreen(
                             .clickable { expanded = !expanded }
                             .padding(16.dp)
                             .onGloballyPositioned { coordinates ->
-                                dropdownMenuHeight = with(localDensity) { coordinates.size.height.toDp() }
+                                dropdownMenuHeight =
+                                    with(localDensity) { coordinates.size.height.toDp() }
                             },
                         color = if (selectedGender.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant.copy(
                             alpha = 0.6f
@@ -178,7 +181,7 @@ fun HealthInputScreen(
                             )
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(0.95f)
+                    modifier = Modifier.fillMaxWidth(0.9f)
                 ) {
                     Text("Count BMI")
                 }
@@ -192,9 +195,13 @@ fun HealthInputScreen(
                 ) {
                     Button(
                         onClick = { onSuccess() },
-                        modifier = Modifier.fillMaxWidth(0.95f)
+                        modifier = Modifier.fillMaxWidth(0.9f)
                     ) {
                         Text("See Result")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = stringResource(R.string.see_result),
+                        )
                     }
                 }
             }
