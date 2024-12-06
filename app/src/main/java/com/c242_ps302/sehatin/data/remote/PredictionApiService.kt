@@ -8,7 +8,7 @@ import retrofit2.http.Part
 
 interface PredictionApiService {
     @Multipart
-    @POST("predict/image")
+    @POST("predict/image/")
     suspend fun postPrediction(
         @Part file: MultipartBody.Part
     ) : PostPredictionResponse
