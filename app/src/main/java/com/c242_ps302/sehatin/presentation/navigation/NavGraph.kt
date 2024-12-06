@@ -104,7 +104,7 @@ fun NavGraphSetup(
                 val newsLink = backStackEntry.toRoute<NewsDetailScreen>().newsLink
                 NewsDetailScreen(
                     newsLink = newsLink,
-                    onBackClick = { navController.navigate(NewsScreen) }
+                    onNavigateUp = { navController.navigateUp() }
                 )
             }
             composable<HealthResultScreen> {

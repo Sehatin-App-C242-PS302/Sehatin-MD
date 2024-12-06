@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
-import com.c242_ps302.sehatin.presentation.components.NewsVerticalColumn
+import com.c242_ps302.sehatin.presentation.components.news_vertical_column.NewsVerticalColumn
 import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
 import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.utils.searchKeywords

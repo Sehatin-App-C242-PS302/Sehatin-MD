@@ -2,9 +2,7 @@ package com.c242_ps302.sehatin.di
 
 import android.app.Application
 import android.content.Context
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.room.Room
-import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.c242_ps302.sehatin.BuildConfig
 import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
@@ -21,7 +19,6 @@ import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.repository.RecommendationRepository
 import com.c242_ps302.sehatin.data.utils.Constants
 import com.c242_ps302.sehatin.domain.ConnectivityObserver
-import com.c242_ps302.sehatin.presentation.notification.NotificationHelper
 import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
 import dagger.Module
 import dagger.Provides
@@ -45,6 +42,12 @@ object AppModule {
     @Singleton
     fun provideContext(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(context: Context): WorkManager {
+        return WorkManager.getInstance(context)
     }
 
     @Provides
@@ -219,30 +222,5 @@ object AppModule {
         newsApiService: NewsApiService,
     ): NewsRepository {
         return NewsRepository(newsApiService)
-    }
-
-    @Provides
-    @Singleton
-    fun provideWorkManager(application: Application): WorkManager {
-        return WorkManager.getInstance(application)
-    }
-
-    @Provides
-    @Singleton
-    fun provideNotificationHelper(
-        context: Context,
-        preferences: SehatinAppPreferences,
-    ): NotificationHelper {
-        return NotificationHelper(context, preferences)
-    }
-
-    @Provides
-    @Singleton
-    fun provideWorkManagerConfiguration(
-        workerFactory: HiltWorkerFactory,
-    ): Configuration {
-        return Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
     }
 }
