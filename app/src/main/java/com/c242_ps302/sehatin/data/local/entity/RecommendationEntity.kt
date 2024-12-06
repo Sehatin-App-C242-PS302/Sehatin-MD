@@ -14,5 +14,5 @@ data class RecommendationEntity(
     val bmi: Double? = null,
     val category: String? = null,
     val dailyStepRecommendation: String? = null,
-    val createdAt: String = System.currentTimeMillis().toString()
+    val createdAt: String? = null,
 )

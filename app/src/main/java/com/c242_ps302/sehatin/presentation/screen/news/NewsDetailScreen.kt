@@ -29,7 +29,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 @Composable
 fun NewsDetailScreen(
     newsLink: String,
-    onBackClick: () -> Unit,
+    onNavigateUp: () -> Unit,
 ) {
     val context = LocalContext.current
     var isLoading by rememberSaveable { mutableStateOf(true) }
@@ -41,7 +41,7 @@ fun NewsDetailScreen(
             title = { Text(text = "News Detail") },
             navigationIcon = {
                 IconButton(
-                    onClick = { onBackClick() },
+                    onClick = { onNavigateUp() },
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,

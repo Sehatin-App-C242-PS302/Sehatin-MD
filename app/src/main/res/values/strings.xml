@@ -20,7 +20,7 @@
     <string name="account">Account</string>
     <string name="language">Language</string>
     <string name="dark_theme">Dark Theme</string>
-    <string name="notification">Notification</string>
+    <string name="notification">Daily Reminder</string>
     <string name="privacy_security"><![CDATA[Privacy & Security]]></string>
     <string name="logout">Logout</string>
     <string name="daily_indicator">Daily Indicator</string>
@@ -52,4 +52,11 @@
     <string name="weight">Weight</string>
     <string name="height_with_unit">%1$s cm</string>
     <string name="weight_with_unit">%1$s kg</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="logout_confirmation">Logout Confirmation</string>
+    <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="daily_reminder_title_health">Daily Health Reminder</string>
+    <string name="daily_reminder_content_health">Don\'t forget to track your health today!</string>
+    <string name="see_result">See Result</string>
 </resources>

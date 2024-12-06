@@ -1,4 +1,4 @@
-package com.c242_ps302.sehatin.presentation.components
+package com.c242_ps302.sehatin.presentation.components.news_vertical_column
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
