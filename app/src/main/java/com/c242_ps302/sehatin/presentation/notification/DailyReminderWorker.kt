@@ -1,75 +1,79 @@
 package com.c242_ps302.sehatin.presentation.notification
 
 import android.content.Context
-import androidx.hilt.work.HiltWorker
-import androidx.work.Constraints
 import androidx.work.CoroutineWorker
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
-import java.util.Calendar
-import java.util.concurrent.TimeUnit
+import com.c242_ps302.sehatin.data.repository.HealthRepository
+import dagger.hilt.android.EntryPointAccessors
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import javax.inject.Inject
 
-@HiltWorker
-class DailyReminderWorker @AssistedInject constructor(
-    @Assisted context: Context,
-    @Assisted workerParams: WorkerParameters,
-    private val notificationHelper: NotificationHelper
-) : CoroutineWorker(context, workerParams) {
+class DailyReminderWorker(
+    context: Context,
+    params: WorkerParameters
+) : CoroutineWorker(context, params) {
 
-    override suspend fun doWork(): Result {
-        notificationHelper.sendDailyInputReminder()
-        return Result.success()
+    @Inject
+    lateinit var healthRepository: HealthRepository
+
+    init {
+        val appContext = context.applicationContext
+        EntryPointAccessors.fromApplication(appContext, DailyReminderWorkerEntryPoint::class.java)
+            .injectDailyReminderWorker(this)
     }
 
-    companion object {
-        fun scheduleDaily(workManager: WorkManager) {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-                .build()
-
-            val dailyWorkRequest = PeriodicWorkRequestBuilder<DailyReminderWorker>(
-                1, TimeUnit.DAYS
-            )
-                .setConstraints(constraints)
-                .setInitialDelay(
-                    calculateInitialDelay(),
-                    TimeUnit.MILLISECONDS
-                )
-                .build()
-
-            workManager.enqueueUniquePeriodicWork(
-                "daily_reminder",
-                ExistingPeriodicWorkPolicy.UPDATE,
-                dailyWorkRequest
-            )
-        }
-
-        private fun calculateInitialDelay(): Long {
-            val calendar = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 7)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
+    override suspend fun doWork(): Result {
+        return try {
+            val lastHealthData = healthRepository.getLastHealthData()
+            val lastCreatedAt = lastHealthData?.createdAt
+//            if (shouldShowNotification(lastCreatedAt)) {
+//                showNotification()
+//            }
+            if (shouldShowNotification()) {
+                showNotification()
             }
+            Result.success()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure()
+        }
+    }
+    private fun shouldShowNotification(): Boolean {
+        val zoneId = ZoneId.systemDefault()
 
-            if (calendar.timeInMillis <= System.currentTimeMillis()) {
-                calendar.add(Calendar.DAY_OF_MONTH, 1)
-            }
+        val now = ZonedDateTime.now(zoneId)
 
-            return calendar.timeInMillis - System.currentTimeMillis()
+        val todayNineAM = LocalDate.now(zoneId).atTime(8, 47).atZone(zoneId)
+
+        val scheduledNineAM = if (now.isBefore(todayNineAM)) {
+            todayNineAM.minusDays(1)
+        } else {
+            todayNineAM
         }
 
-        fun scheduleImmediateReminder(workManager: WorkManager) {
-            val immediateWorkRequest = OneTimeWorkRequestBuilder<DailyReminderWorker>()
-                .setInitialDelay(0, TimeUnit.SECONDS)
-                .build()
+        return now.isAfter(scheduledNineAM.plusDays(1))
+    }
 
-            workManager.enqueue(immediateWorkRequest)
-        }
+//    private fun shouldShowNotification(lastCreatedAt: String?): Boolean {
+//        if (lastCreatedAt == null) return true
+//
+//        val lastCreatedAtInstant = try {
+//            Instant.parse(lastCreatedAt)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            return true
+//        }
+//
+//        val currentInstant = Instant.now()
+//        val oneDayDuration = Duration.ofDays(1)
+//
+//        return Duration.between(lastCreatedAtInstant, currentInstant) >= oneDayDuration
+//    }
+
+    private fun showNotification() {
+        val notificationHelper = DailyReminderNotificationHelper(applicationContext)
+        notificationHelper.showDailyReminderNotification()
     }
 }

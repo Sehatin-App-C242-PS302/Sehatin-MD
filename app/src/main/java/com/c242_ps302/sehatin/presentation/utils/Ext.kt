@@ -3,6 +3,9 @@ package com.c242_ps302.sehatin.presentation.utils
 import android.util.Log
 import com.c242_ps302.sehatin.data.repository.Result
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 suspend fun <T> Flow<Result<T>>.collectAndHandle(
     onError: (String) -> Unit = { error ->
@@ -25,5 +28,19 @@ suspend fun <T> Flow<Result<T>>.collectAndHandle(
                 stateReducer(result.data)
             }
         }
+    }
+}
+
+fun String.formatHistoryCardDate(locale: Locale = Locale.getDefault()): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        val outputFormat = SimpleDateFormat("EEEE, dd MMM yyyy", locale)
+
+        val date = inputFormat.parse(this)
+        date?.let { outputFormat.format(it) } ?: "Invalid Date"
+    } catch (e: Exception) {
+        "Invalid Date"
     }
 }

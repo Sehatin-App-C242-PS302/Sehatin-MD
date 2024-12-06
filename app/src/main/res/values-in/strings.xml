@@ -21,7 +21,7 @@
     <string name="account">Akun</string>
     <string name="language">Bahasa</string>
     <string name="dark_theme">Tema Gelap</string>
-    <string name="notification">Notifikasi</string>
+    <string name="notification">Pengingat Harian</string>
     <string name="privacy_security"><![CDATA[Privasi & Keamanan]]></string>
     <string name="logout">Keluar dari Akun</string>
     <string name="daily_indicator">Indikator Harian</string>
@@ -53,4 +53,11 @@
     <string name="weight">Berat</string>
     <string name="height_with_unit">%1$s cm</string>
     <string name="weight_with_unit">%1$s kg</string>
+    <string name="yes">Ya</string>
+    <string name="cancel">Batal</string>
+    <string name="logout_confirmation">Konfirmasi Logout</string>
+    <string name="are_you_sure_you_want_to_logout">Apakah Anda yakin ingin keluar?</string>
+    <string name="daily_reminder_title_health">Pengingat Kesehatan Harian</string>
+    <string name="daily_reminder_content_health">Jangan lupa untuk mencatat kesehatanmu hari ini!</string>
+
 </resources>

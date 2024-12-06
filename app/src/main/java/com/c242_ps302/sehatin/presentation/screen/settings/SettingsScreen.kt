@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
+import com.c242_ps302.sehatin.presentation.components.dialog.CustomDialog
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.components.settings_item.Language
 import com.c242_ps302.sehatin.presentation.components.settings_item.LanguageSettingsItem
@@ -64,9 +65,12 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.settingsState.collectAsStateWithLifecycle()
+    val notificationsEnabled by viewModel.notificationsEnabled.collectAsStateWithLifecycle()
     var toastMessage by remember { mutableStateOf("") }
     var toastType by remember { mutableStateOf(ToastType.INFO) }
     var showToast by remember { mutableStateOf(false) }
+
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state.error != null && state.error != "User not found") {
@@ -93,34 +97,11 @@ fun SettingsScreen(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            viewModel.toggleNotification(true)
+            viewModel.setNotificationsEnabled(true, context)
         } else {
-            viewModel.toggleNotification(false)
-        }
-    }
-
-    fun handleNotificationPermission(enable: Boolean) {
-        if (!enable) {
-            viewModel.toggleNotification(false)
-            return
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            when (PackageManager.PERMISSION_GRANTED) {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ),
-                    -> {
-                    viewModel.toggleNotification(true)
-                }
-
-                else -> {
-                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-            }
-        } else {
-            viewModel.toggleNotification(true)
+            toastMessage = "Notification permission denied"
+            toastType = ToastType.ERROR
+            showToast = true
         }
     }
 
@@ -205,8 +186,28 @@ fun SettingsScreen(
                 SwitchSettingsItem(
                     leadingIcon = Icons.Default.Notifications,
                     text = stringResource(R.string.notification),
-                    checked = isNotificationEnabled,
-                    onCheckedChange = { enabled -> handleNotificationPermission(enabled) }
+                    checked = notificationsEnabled,
+                    onCheckedChange = { enabled ->
+                        if (enabled) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                when {
+                                    ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.POST_NOTIFICATIONS
+                                    ) == PackageManager.PERMISSION_GRANTED -> {
+                                        viewModel.setNotificationsEnabled(true, context)
+                                    }
+                                    else -> {
+                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                    }
+                                }
+                            } else {
+                                viewModel.setNotificationsEnabled(true, context)
+                            }
+                        } else {
+                            viewModel.setNotificationsEnabled(false, context)
+                        }
+                    }
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
                 LanguageSettingsItem(
@@ -222,9 +223,29 @@ fun SettingsScreen(
                 SettingsItem(
                     leadingIcon = Icons.AutoMirrored.Filled.Logout,
                     text = stringResource(R.string.logout),
-                    onClick = { viewModel.logout(onLogoutSuccess) }
+                    onClick = {
+                        showLogoutDialog = true
+                    }
                 )
             }
+        }
+
+        if (showLogoutDialog) {
+            CustomDialog(
+                dialogTitle = stringResource(R.string.logout_confirmation),
+                dialogMessage = stringResource(R.string.are_you_sure_you_want_to_logout),
+                iconColor = MaterialTheme.colorScheme.error,
+                confirmButtonColor = MaterialTheme.colorScheme.error,
+                onConfirm = {
+                    viewModel.logout {
+                        onLogoutSuccess()
+                        showLogoutDialog = false
+                    }
+                },
+                onDismiss = {
+                    showLogoutDialog = false
+                }
+            )
         }
 
         if (showToast) {

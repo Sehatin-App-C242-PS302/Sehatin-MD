@@ -1,13 +1,16 @@
 package com.c242_ps302.sehatin.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.data.mapper.toEntity
 import com.c242_ps302.sehatin.data.remote.HealthApiService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class HealthRepository @Inject constructor(
@@ -87,5 +90,16 @@ class HealthRepository @Inject constructor(
             } ?: emit(Result.Error(e.message ?: "An error occurred"))
         }
     }
-    
+
+
+    suspend fun getLastHealthData(): RecommendationEntity? {
+        return withContext(Dispatchers.IO) {
+            try {
+                recommendationDao.getCurrentRecommendation()
+            } catch (e: Exception) {
+                Log.d("NoteRepository", "Database error: ${e.message}")
+                null
+            }
+        }
+    }
 }
