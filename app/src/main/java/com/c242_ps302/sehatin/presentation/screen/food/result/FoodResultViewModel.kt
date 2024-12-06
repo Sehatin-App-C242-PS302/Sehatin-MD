@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.c242_ps302.sehatin.data.local.entity.PredictionEntity
 import com.c242_ps302.sehatin.data.repository.HealthRepository
 import com.c242_ps302.sehatin.presentation.utils.collectAndHandle
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class FoodResultViewModel @Inject constructor(
     private val repository: HealthRepository
 ) : ViewModel() {
