@@ -18,7 +18,7 @@ interface RecommendationDao {
     @Update
     suspend fun updateRecommendation(recommendation: RecommendationEntity)
 
-    @Query("SELECT * FROM recommendation_data ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM recommendation_data ORDER BY createdAt DESC LIMIT 1")
     suspend fun getCurrentRecommendation(): RecommendationEntity
 
     @Query("DELETE FROM recommendation_data")

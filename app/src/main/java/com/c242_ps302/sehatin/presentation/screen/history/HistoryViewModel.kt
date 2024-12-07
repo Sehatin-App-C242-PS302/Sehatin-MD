@@ -2,6 +2,7 @@ package com.c242_ps302.sehatin.presentation.screen.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.c242_ps302.sehatin.data.local.entity.PredictionEntity
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.data.repository.HealthRepository
 import com.c242_ps302.sehatin.presentation.utils.collectAndHandle
@@ -24,7 +25,7 @@ class HistoryViewModel @Inject constructor(
     }
 
     private fun fetchAllHistory() = viewModelScope.launch {
-        repository.getAllRecommendationByUserId().collectAndHandle(
+        repository.getAllRecommendationsByUserId().collectAndHandle(
             onError = { error ->
                 _historyState.update {
                     it.copy(isLoading = false, error = error)
@@ -41,10 +42,30 @@ class HistoryViewModel @Inject constructor(
             }
         }
     }
+
+    private fun fetchAllFoods() = viewModelScope.launch {
+        repository.getAllPredictions().collectAndHandle(
+            onError = { error ->
+                _historyState.update {
+                    it.copy(isLoading = false, error = error)
+                }
+            },
+            onLoading = {
+                _historyState.update {
+                    it.copy(isLoading = true, error = null)
+                }
+            }
+        ) { foods ->
+            _historyState.update {
+                it.copy(isLoading = false, error = null, foods = foods)
+            }
+        }
+    }
 }
 
 data class HistoryScreenUiState(
     val history: List<RecommendationEntity> = emptyList(),
+    val foods: List<PredictionEntity> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
 )

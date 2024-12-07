@@ -2,7 +2,7 @@ package com.c242_ps302.sehatin.data.repository
 
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.remote.RecommendationApiService
-import com.c242_ps302.sehatin.data.remote.response.RecommendationResponse
+import com.c242_ps302.sehatin.data.remote.response.PostRecommendationResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -16,7 +16,7 @@ class RecommendationRepository @Inject constructor(
         age: Int,
         height: Double,
         weight: Double,
-    ): Flow<Result<RecommendationResponse>> = flow {
+    ): Flow<Result<PostRecommendationResponse>> = flow {
         emit(Result.Loading)
         try {
             val userId = userDao.getUserData().id

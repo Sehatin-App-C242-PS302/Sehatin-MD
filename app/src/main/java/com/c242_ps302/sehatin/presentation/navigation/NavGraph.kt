@@ -30,7 +30,8 @@ import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
 import com.c242_ps302.sehatin.presentation.screen.connectivity.ConnectivityViewModel
 import com.c242_ps302.sehatin.presentation.screen.connectivity.NetworkStatusBar
-import com.c242_ps302.sehatin.presentation.screen.food.FoodScreen
+import com.c242_ps302.sehatin.presentation.screen.food.input.FoodInputScreen
+import com.c242_ps302.sehatin.presentation.screen.food.result.FoodResultScreen
 import com.c242_ps302.sehatin.presentation.screen.health.input.HealthInputScreen
 import com.c242_ps302.sehatin.presentation.screen.health.result.HealthResultScreen
 import com.c242_ps302.sehatin.presentation.screen.history.HistoryScreen
@@ -90,7 +91,7 @@ fun NavGraphSetup(
         }
         navigation<MainScreen>(startDestination = HomeScreen) {
             composable<HomeScreen> { MainScreenContent(navController) }
-            composable<FoodScreen> { MainScreenContent(navController) }
+            composable<FoodInputScreen> { MainScreenContent(navController) }
             composable<HistoryScreen> { MainScreenContent(navController) }
             composable<NewsScreen> { MainScreenContent(navController) }
             composable<SettingsScreen> { MainScreenContent(navController) }
@@ -116,6 +117,11 @@ fun NavGraphSetup(
             composable<ProfileScreen> {
                 ProfileScreen(
                     onNavigateUp = { navController.navigateUp() }
+                )
+            }
+            composable<FoodResultScreen> {
+                FoodResultScreen(
+                    onNavigateHome = { navController.navigate(HomeScreen) }
                 )
             }
         }
@@ -208,7 +214,10 @@ fun ContentScreen(
             modifier = modifier
         )
 
-        1 -> FoodScreen(
+        1 -> FoodInputScreen(
+            onNavigateToResult = {
+                navController.navigate(FoodResultScreen)
+            },
             modifier = modifier
         )
 
