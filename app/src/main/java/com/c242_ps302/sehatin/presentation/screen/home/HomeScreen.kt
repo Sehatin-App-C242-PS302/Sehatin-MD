@@ -64,9 +64,7 @@ fun HomeScreen(
 
         // No Data State
         AnimatedVisibility(
-            visible = !state.isLoading &&
-                    state.latestRecommendation == null &&
-                    state.error != null
+            visible = !state.isLoading && state.latestRecommendation == null && state.error != null
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -285,6 +283,7 @@ fun HomeScreen(
                 }
             }
         }
+
         FloatingActionButton(
             onClick = { onFabClick() },
             modifier = Modifier

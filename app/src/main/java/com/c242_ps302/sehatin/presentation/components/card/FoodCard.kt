@@ -1,5 +1,10 @@
 package com.c242_ps302.sehatin.presentation.components.card
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,116 +13,151 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.c242_ps302.sehatin.data.local.entity.PredictionEntity
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
 fun FoodCard(
     modifier: Modifier = Modifier,
+    food: PredictionEntity,
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+    val transition = updateTransition(
+        targetState = isExpanded,
+        label = "Expand Card"
+    )
+    val iconRotationDegree by transition.animateFloat(label = "") { expandedState ->
+        if (expandedState) 180f else 0f
+    }
+
     val imageRequest = ImageRequest.Builder(LocalContext.current)
-        .data("https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
+        .data(food.imageUrl ?: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
         .crossfade(true)
         .build()
 
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            // Gambar di kiri
-            AsyncImage(
-                model = imageRequest,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(64.dp) // Ukuran gambar
-                    .padding(16.dp) // Padding di sekitar gambar
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { isExpanded = !isExpanded }
             )
-
-            // Teks di kanan
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Camera",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Left,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "Feb 27, 2023",
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Left
-                )
-
-                Spacer(modifier = Modifier.height(8.dp)) // Spasi antara bagian atas dan bawah
-
-                // Nutrisi
+    ) {
+        Column {
+            // Collapsed State: Only show name and date
+            if (!isExpanded) {
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Fat",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Left,
-                        fontWeight = FontWeight.Bold
+                        text = food.predictedClass ?: "Unknown Food",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.weight(6f)
                     )
                     Text(
-                        text = "Carbs",
+                        text = food.createdAt,
                         style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Left,
-                        fontWeight = FontWeight.Bold
+                        modifier = Modifier.weight(4f)
                     )
-                    Text(
-                        text = "Protein",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Left,
-                        fontWeight = FontWeight.Bold
+                    Icon(
+                        modifier = Modifier.weight(1f).rotate(iconRotationDegree),
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Expand Card",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
+            }
 
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "0.8g",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Left
-                    )
-                    Text(
-                        text = "2.4g",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Left
-                    )
-                    Text(
-                        text = "1.6g",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Left
+            // Expanded State: Show image and nutrition details
+            AnimatedVisibility(visible = isExpanded) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        AsyncImage(
+                            model = imageRequest,
+                            contentDescription = food.predictedClass,
+                            modifier = Modifier
+                                .size(128.dp)
+                                .padding(16.dp)
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = food.predictedClass ?: "Unknown Food",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = food.createdAt,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                NutritionLabel("Calories")
+                                NutritionLabel("Protein")
+                                NutritionLabel("Fat")
+                                NutritionLabel("Carbs")
+                            }
+
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                NutritionValue(food.calories?.toString() ?: "0")
+                                NutritionValue(food.protein?.toString() ?: "0")
+                                NutritionValue(food.fat?.toString() ?: "0")
+                                NutritionValue(food.carbohydrates?.toString() ?: "0")
+                            }
+                        }
+                    }
+                    Icon(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .rotate(iconRotationDegree)
+                            .padding(8.dp),
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Collapse Card",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -125,10 +165,36 @@ fun FoodCard(
     }
 }
 
+@Composable
+private fun NutritionLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+private fun NutritionValue(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium
+    )
+}
+
 @Preview
 @Composable
 private fun FoodCardPreview() {
     SehatinTheme {
-        FoodCard()
+        FoodCard(
+            food = PredictionEntity(
+                predictedClass = "Nasi Goreng",
+                calories = 250.0,
+                protein = 8.5,
+                fat = 12.3,
+                carbohydrates = 30.0,
+                createdAt = "Feb 27, 2023"
+            )
+        )
     }
 }

@@ -2,9 +2,11 @@ package com.c242_ps302.sehatin.di
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import androidx.work.WorkManager
 import com.c242_ps302.sehatin.BuildConfig
+import com.c242_ps302.sehatin.data.local.dao.PredictionDao
 import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.local.room.SehatinDatabase
@@ -12,10 +14,12 @@ import com.c242_ps302.sehatin.data.preferences.SehatinAppPreferences
 import com.c242_ps302.sehatin.data.remote.AuthApiService
 import com.c242_ps302.sehatin.data.remote.HealthApiService
 import com.c242_ps302.sehatin.data.remote.NewsApiService
+import com.c242_ps302.sehatin.data.remote.PredictionApiService
 import com.c242_ps302.sehatin.data.remote.RecommendationApiService
 import com.c242_ps302.sehatin.data.repository.AndroidConnectivityObserver
 import com.c242_ps302.sehatin.data.repository.HealthRepository
 import com.c242_ps302.sehatin.data.repository.NewsRepository
+import com.c242_ps302.sehatin.data.repository.PredictionRepository
 import com.c242_ps302.sehatin.data.repository.RecommendationRepository
 import com.c242_ps302.sehatin.data.utils.Constants
 import com.c242_ps302.sehatin.domain.ConnectivityObserver
@@ -110,6 +114,45 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providePredictionApiService(
+        preferences: SehatinAppPreferences,
+    ): PredictionApiService {
+        val authInterceptor = Interceptor { chain ->
+            val originalRequest = chain.request()
+            val newRequest = runBlocking {
+                withContext(Dispatchers.IO) {
+                    val token = preferences.getToken().first()
+                    originalRequest.newBuilder()
+                        .apply {
+                            if (token.isNotEmpty()) {
+                                addHeader("Authorization", "Bearer $token")
+                            }
+                        }
+                        .build()
+                }
+            }
+            chain.proceed(newRequest)
+        }
+
+        val loggingInterceptor = HttpLoggingInterceptor().setLevel(
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+            else HttpLoggingInterceptor.Level.NONE
+        )
+        val client = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(Constants.PREDICTION_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(PredictionApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideHealthApiService(
         preferences: SehatinAppPreferences,
     ): HealthApiService {
@@ -186,6 +229,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providePredictionDao(sehatinDatabase: SehatinDatabase): PredictionDao {
+        return sehatinDatabase.predictionDao()
+    }
+
+    @Provides
+    @Singleton
     fun provideRecommendationDao(sehatinDatabase: SehatinDatabase): RecommendationDao {
         return sehatinDatabase.recommendationDao()
     }
@@ -202,9 +251,24 @@ object AppModule {
         healthApiService: HealthApiService,
         userDao: UserDao,
         recommendationDao: RecommendationDao,
+        predictionDao: PredictionDao,
         context: Context,
     ): HealthRepository {
-        return HealthRepository(userDao, healthApiService, recommendationDao, context)
+        return HealthRepository(
+            userDao,
+            healthApiService,
+            recommendationDao,
+            predictionDao,
+            context
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePredictionRepository(
+        predictionApiService: PredictionApiService,
+    ): PredictionRepository {
+        return PredictionRepository(predictionApiService)
     }
 
     @Provides

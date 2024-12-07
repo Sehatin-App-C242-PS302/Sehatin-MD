@@ -60,4 +60,9 @@
     <string name="daily_reminder_title_health">Pengingat Kesehatan Harian</string>
     <string name="daily_reminder_content_health">Jangan lupa untuk mencatat kesehatanmu hari ini!</string>
     <string name="see_result">Lihat Hasil</string>
+    <string name="fat">Lemak</string>
+    <string name="carbs">Karbohidrat</string>
+    <string name="protein">Protein</string>
+    <string name="calories">Kalori</string>
+
 </resources>

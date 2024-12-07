@@ -33,41 +33,27 @@ class DailyReminderWorker(
 
     private fun shouldShowNotification(): Boolean {
         val zoneId = ZoneId.systemDefault()
-
-        // Waktu sekarang
         val now = ZonedDateTime.now(zoneId)
 
-        // Jadwal pukul 7 pagi hari ini
-        val todaySevenAM = LocalDate.now(zoneId).atTime(7, 0).atZone(zoneId)
+        // Set notification window from 6 AM to 10 PM
+        val todaySixAM = LocalDate.now(zoneId).atTime(6, 0).atZone(zoneId)
+        val todayTenPM = LocalDate.now(zoneId).atTime(22, 0).atZone(zoneId)
 
-        // Jika sekarang sebelum 7 pagi, gunakan jadwal 7 pagi kemarin
-        val scheduledSevenAM = if (now.isBefore(todaySevenAM)) {
-            todaySevenAM.minusDays(1)
+        // Adjust times if current time is before 6 AM
+        val scheduledSixAM = if (now.isBefore(todaySixAM)) {
+            todaySixAM.minusDays(1)
         } else {
-            todaySevenAM
+            todaySixAM
         }
 
-        // Cek apakah sekarang berada dalam range waktu (misal, hingga jam 9 pagi)
-        val notificationWindowEnd = scheduledSevenAM.plusHours(2) // Hingga jam 9 pagi
-        return now.isAfter(scheduledSevenAM) && now.isBefore(notificationWindowEnd)
+        val scheduledTenPM = if (now.isBefore(todaySixAM)) {
+            todayTenPM.minusDays(1)
+        } else {
+            todayTenPM
+        }
+
+        return now.isAfter(scheduledSixAM) && now.isBefore(scheduledTenPM)
     }
-
-
-//    private fun shouldShowNotification(lastCreatedAt: String?): Boolean {
-//        if (lastCreatedAt == null) return true
-//
-//        val lastCreatedAtInstant = try {
-//            Instant.parse(lastCreatedAt)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            return true
-//        }
-//
-//        val currentInstant = Instant.now()
-//        val oneDayDuration = Duration.ofDays(1)
-//
-//        return Duration.between(lastCreatedAtInstant, currentInstant) >= oneDayDuration
-//    }
 
     private fun showNotification() {
         val notificationHelper = DailyReminderNotificationHelper(applicationContext)

@@ -2,10 +2,12 @@ package com.c242_ps302.sehatin.data.mapper
 
 import android.content.Context
 import com.c242_ps302.sehatin.R
+import com.c242_ps302.sehatin.data.local.entity.PredictionEntity
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
 import com.c242_ps302.sehatin.data.remote.response.ArticlesItem
-import com.c242_ps302.sehatin.data.remote.response.HealthResponse
+import com.c242_ps302.sehatin.data.remote.response.GetPredictionResponse
+import com.c242_ps302.sehatin.data.remote.response.GetRecommendationResponse
 import com.c242_ps302.sehatin.data.remote.response.User
 import com.c242_ps302.sehatin.data.utils.formatCardDate
 import com.c242_ps302.sehatin.domain.model.News
@@ -23,7 +25,23 @@ fun ArticlesItem.toNews(): News {
     )
 }
 
-fun HealthResponse.toEntity(context: Context): List<RecommendationEntity> {
+fun GetPredictionResponse.toEntity(): List<PredictionEntity> {
+    return data?.map { predictionData ->
+        PredictionEntity(
+            id = predictionData?.id,
+            userId = predictionData?.userId,
+            imageUrl = predictionData?.imageUrl,
+            predictedClass = predictionData?.predictedClass,
+            calories = predictionData?.calories,
+            protein = predictionData?.protein,
+            fat = predictionData?.fat,
+            carbohydrates = predictionData?.carbohydrates,
+            createdAt = predictionData?.createdAt ?: System.currentTimeMillis().toString()
+        )
+    } ?: emptyList()
+}
+
+fun GetRecommendationResponse.toEntity(context: Context): List<RecommendationEntity> {
     return data?.mapNotNull { dataItem ->
         dataItem?.let {
             RecommendationEntity(
