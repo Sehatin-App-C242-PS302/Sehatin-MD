@@ -87,14 +87,6 @@ fun HomeScreen(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
-                FloatingActionButton(
-                    onClick = { onFabClick() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.add_health_data)
-                    )
-                }
             }
         }
 
@@ -166,6 +158,7 @@ fun HomeScreen(
                             .height(170.dp)
                     ) {
                         Column(
+                            verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxSize(),
                         ) {
@@ -180,7 +173,7 @@ fun HomeScreen(
                             val recommendation = state.latestRecommendation
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.gender),
@@ -197,7 +190,7 @@ fun HomeScreen(
                             }
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.age),
@@ -210,7 +203,7 @@ fun HomeScreen(
                             }
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.height),
@@ -226,7 +219,7 @@ fun HomeScreen(
                             }
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.weight),
@@ -251,7 +244,8 @@ fun HomeScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxSize()
+                            verticalArrangement = Arrangement.Center, // Menempatkan konten di tengah
+                            modifier = Modifier.fillMaxSize() // Mengisi seluruh ruang yang tersedia
                         ) {
                             val recommendation = state.latestRecommendation
                             Text(
@@ -260,7 +254,9 @@ fun HomeScreen(
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(12.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth() // Memastikan teks menggunakan lebar penuh
+                                    .padding(horizontal = 12.dp) // Padding hanya horizontal agar simetris
                             )
                             Text(
                                 text = "${recommendation?.bmi ?: "N/A"}",
@@ -268,7 +264,9 @@ fun HomeScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(bottom = 5.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 5.dp) // Padding lebih kecil untuk menyesuaikan konten
                             )
                             Text(
                                 text = recommendation?.category ?: "N/A",
@@ -276,7 +274,9 @@ fun HomeScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(5.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 5.dp)
                             )
                         }
                     }

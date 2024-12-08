@@ -40,7 +40,7 @@
     <string name="hide_password">Hide password</string>
     <string name="show_password">Show password</string>
     <string name="underweight">Underweight</string>
-    <string name="normal_weight">Normal weight</string>
+    <string name="normal_weight">Normal Weight</string>
     <string name="overweight">Overweight</string>
     <string name="obese">Obese</string>
     <string name="unknown">Unknown</string>
@@ -63,4 +63,10 @@
     <string name="carbs">Carbs</string>
     <string name="protein">Protein</string>
     <string name="calories">Calories</string>
+    <string name="gender_hitory_card">Gender : %1$s</string>
+    <string name="age_history_card">Age : %1$s</string>
+    <string name="weight_kg_history_card">Weight : %1$s kg</string>
+    <string name="height_cm_history_card">Height : %1$s cm</string>
+    <string name="bmi_history_card">BMI : %1$s</string>
+    <string name="daily_step_recommendation_history_card">Daily Step Recommendation : %1$s</string>
 </resources>

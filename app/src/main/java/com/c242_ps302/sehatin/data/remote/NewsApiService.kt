@@ -11,7 +11,7 @@ interface NewsApiService {
         @Query("language") language: String = "en",
         @Query("sortBy") sortBy: String = "relevancy",
         @Query("searchIn") searchIn: String = "title",
-        @Query("q") query: String = "health",
+        @Query("q") query: String,
     ): NewsResponse
 
 //    @GET("everything")

@@ -22,6 +22,7 @@ class HistoryViewModel @Inject constructor(
 
     init {
         fetchAllHistory()
+        fetchAllFoods()
     }
 
     private fun fetchAllHistory() = viewModelScope.launch {

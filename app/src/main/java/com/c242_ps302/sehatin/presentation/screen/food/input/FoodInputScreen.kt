@@ -22,10 +22,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.bitmapToFile
@@ -103,154 +109,194 @@ fun FoodInputScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
     ) {
         AnimatedVisibility(
             visible = state.isLoading,
-            enter = fadeIn() + expandVertically()
+            enter = fadeIn() + expandVertically(),
         ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(48.dp)
-                    .align(Alignment.Center)
-            )
-        }
-
-        AnimatedVisibility(
-            visible = state.error != null,
-            enter = fadeIn() + expandVertically()
-        ) {
-            Text(
-                text = state.error ?: "Unknown error occurred",
-                color = MaterialTheme.colorScheme.error,
-                maxLines = 2
-            )
-        }
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            SehatinAppBar()
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                text = "Food Recognition",
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(30.dp))
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(20.dp),
-                contentAlignment = Alignment.TopCenter
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
             ) {
-                if (bitmapImage != null || imageUri != null) {
-                    if (imageUri != null) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(imageUri)
-                                .build(),
-                            contentDescription = "Camera Image",
-                            contentScale = ContentScale.Inside,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.8f)
-                        )
-                    }
+                CircularProgressIndicator()
+            }
+        }
 
-                    if (bitmapImage != null) {
-                        Image(
-                            bitmap = bitmapImage!!.asImageBitmap(),
-                            contentDescription = "Camera Image",
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.8f)
+        AnimatedVisibility(
+            visible = !state.isLoading,
+            enter = fadeIn() + expandVertically(),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                SehatinAppBar()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Food Recognition",
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (bitmapImage != null || imageUri != null) {
+                        if (imageUri != null) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(imageUri)
+                                    .build(),
+                                contentDescription = "Camera Image",
+                                contentScale = ContentScale.Inside,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.6f)
+                            )
+                        } else if (bitmapImage != null) {
+                            Image(
+                                bitmap = bitmapImage!!.asImageBitmap(),
+                                contentDescription = "Camera Image",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.6f)
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = "Please Select an Image from Gallery or Open Camera",
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
                         )
                     }
-                } else {
-                    Text(
-                        text = "Please Select an Image from Gallery or Open Camera",
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
-                    )
                 }
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(alignment = Alignment.BottomCenter),
+                        .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (imageUri == null && bitmapImage == null) {
-                        Button(onClick = {
-                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        }) {
+                        Button(
+                            onClick = {
+                                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Text(text = "Open Gallery")
                         }
-                        Button(onClick = {
-                            camPermission.launch(android.Manifest.permission.CAMERA)
-                        }) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Button(
+                            onClick = {
+                                camPermission.launch(android.Manifest.permission.CAMERA)
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Text(text = "Open Camera")
                         }
                     } else {
-                        Button(onClick = {
-                            try {
-                                val foodImagePart = when {
-                                    imageUri != null -> {
-                                        val file = uriToFile(imageUri!!, context)
-                                        val fileCompressed = file.compressImageSize()
-                                        val requestFile = fileCompressed.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                                        MultipartBody.Part.createFormData("file", file.name, requestFile)
-                                    }
-                                    bitmapImage != null -> {
-                                        val file = bitmapToFile(bitmapImage!!, context)
-                                        val fileCompressed = file.compressImageSize()
-                                        val requestFile = fileCompressed.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                                        MultipartBody.Part.createFormData("file", file.name, requestFile)
-                                    }
-                                    else -> null
-                                }
+                        Button(
+                            onClick = {
+                                try {
+                                    val foodImagePart = when {
+                                        imageUri != null -> {
+                                            val file = uriToFile(imageUri!!, context)
+                                            val fileCompressed = file.compressImageSize()
+                                            val requestFile =
+                                                fileCompressed.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                                            MultipartBody.Part.createFormData(
+                                                "file",
+                                                file.name,
+                                                requestFile
+                                            )
+                                        }
 
-                                foodImagePart?.let {
-                                    Log.d("FoodInputScreen", "Sending prediction request")
-                                    viewModel.postPrediction(it)
-                                } ?: run {
-                                    Toast.makeText(context, "No image to predict", Toast.LENGTH_SHORT).show()
-                                }
-                            } catch (e: Exception) {
-                                Log.e("FoodInputScreen", "Error in prediction", e)
-                                Toast.makeText(context, "Error processing image: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
+                                        bitmapImage != null -> {
+                                            val file = bitmapToFile(bitmapImage!!, context)
+                                            val fileCompressed = file.compressImageSize()
+                                            val requestFile =
+                                                fileCompressed.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                                            MultipartBody.Part.createFormData(
+                                                "file",
+                                                file.name,
+                                                requestFile
+                                            )
+                                        }
 
-                        }) {
+                                        else -> null
+                                    }
+
+                                    foodImagePart?.let {
+                                        Log.d("FoodInputScreen", "Sending prediction request")
+                                        viewModel.postPrediction(it)
+                                    } ?: run {
+                                        Toast.makeText(
+                                            context,
+                                            "No image to predict",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("FoodInputScreen", "Error in prediction", e)
+                                    Toast.makeText(
+                                        context,
+                                        "Error processing image: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Text(text = "Predict")
                         }
-                        Button(onClick = { resetImage() }) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        OutlinedButton(
+                            onClick = { resetImage() },
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Text(text = "Retake Image")
                         }
                     }
+                }
 
-                    AnimatedVisibility(
-                        visible = !state.isLoading && state.success && state.error == null,
-                        enter = fadeIn() + expandVertically()
+
+                AnimatedVisibility(
+                    visible = !state.isLoading && state.success && state.error == null,
+                    enter = fadeIn() + expandVertically(),
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Button(
+                        onClick = { onNavigateToResult() },
+                        modifier = Modifier.fillMaxWidth(.9f)
                     ) {
-                        Button(
-                            onClick = { onNavigateToResult() },
-                            modifier = Modifier.padding(top = 16.dp)
-                        ) {
-                            Text(text = "See Result")
-                        }
+                        Text(text = stringResource(R.string.see_result))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                        )
                     }
                 }
             }
         }
     }
 }
+
 
 @Preview
 @Composable

@@ -76,7 +76,7 @@ fun HistoryScreen(
                 maxLines = 2
             )
         }
-        AnimatedVisibility(visible = !state.isLoading && state.error == null) {
+        AnimatedVisibility(visible = !state.isLoading && state.error == null ) {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {

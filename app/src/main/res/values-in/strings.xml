@@ -40,9 +40,9 @@
     <string name="password_must_be_at_least_6_characters">Kata sandi harus terdiri dari minimal 6 karakter</string>
     <string name="hide_password">Sembunyikan kata sandi</string>
     <string name="show_password">Tampilkan kata sandi</string>
-    <string name="underweight">Berat badan kurang</string>
-    <string name="normal_weight">Berat badan normal</string>
-    <string name="overweight">Berat badan berlebih</string>
+    <string name="underweight">Berat Badan Kurang</string>
+    <string name="normal_weight">Berat Badan Normal</string>
+    <string name="overweight">Berat Badan Berlebih</string>
     <string name="obese">Obesitas</string>
     <string name="unknown">Tidak diketahui</string>
     <string name="no_health_data">Tidak Ada Data Kesehatan Ditemukan</string>

@@ -15,7 +15,7 @@ class NewsRepository @Inject constructor(
     fun getSearchedNews(query: String): Flow<Result<List<News>>> = flow {
         emit(Result.Loading)
         try {
-            val response = newsApiService.getHeadlineNews(query)
+            val response = newsApiService.getHeadlineNews(query = query)
             val news = response.articles
 
             if (news.isNullOrEmpty()) {

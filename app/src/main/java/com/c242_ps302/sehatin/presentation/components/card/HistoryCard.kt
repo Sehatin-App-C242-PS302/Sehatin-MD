@@ -25,8 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.formatHistoryCardDate
@@ -103,27 +105,45 @@ fun HistoryCard(
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
                     Text(
-                        text = "Gender : ${recommendation.gender ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.gender_hitory_card,
+                            recommendation.gender ?: "Unknown"
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Age : ${recommendation.age ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.age_history_card,
+                            recommendation.age ?: "Unknown"
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Weight : ${recommendation.weightKg ?: "Unknown"} kg",
+                        text = stringResource(
+                            R.string.weight_kg_history_card,
+                            recommendation.weightKg ?: "Unknown"
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Height : ${recommendation.heightCm ?: "Unknown"} cm",
+                        text = stringResource(
+                            R.string.height_cm_history_card,
+                            recommendation.heightCm ?: "Unknown"
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "BMI : ${recommendation.bmi ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.bmi_history_card,
+                            recommendation.bmi ?: "Unknown"
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Daily Step Recommendation : ${recommendation.dailyStepRecommendation ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.daily_step_recommendation_history_card,
+                            recommendation.dailyStepRecommendation ?: "Unknown"
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
