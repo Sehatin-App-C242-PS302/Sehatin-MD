@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.bitmapToFile
 import com.c242_ps302.sehatin.presentation.utils.compressImageSize
@@ -104,6 +106,22 @@ fun FoodInputScreen(
     fun resetImage() {
         imageUri = null
         bitmapImage = null
+    }
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+        } else if (!state.isLoading && state.success) {
+            toastMessage = "Prediction uploaded successfully!"
+            toastType = ToastType.SUCCESS
+            showToast = true
+        }
     }
 
     Box(
