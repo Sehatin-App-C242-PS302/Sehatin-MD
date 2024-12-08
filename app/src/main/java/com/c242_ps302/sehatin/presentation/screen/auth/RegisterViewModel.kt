@@ -36,6 +36,18 @@ class RegisterViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearError() {
+        _registerState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _registerState.update {
+            it.copy(success = false)
+        }
+    }
 }
 
 data class RegisterScreenUIState(

@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -65,6 +64,9 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.settingsState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsStateWithLifecycle()
     var toastMessage by remember { mutableStateOf("") }
     var toastType by remember { mutableStateOf(ToastType.INFO) }
@@ -73,24 +75,28 @@ fun SettingsScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
-        if (state.error != null && state.error != "User not found") {
-            toastMessage = state.error ?: "Unknown error"
+        if (state.error != null && state.error != context.getString(R.string.user_not_found)) {
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
-        } else if (state.success && state.user != null) {
-            toastMessage = "User data loaded successfully!"
+            viewModel.clearError()
+        } else if (!state.isLoading && state.success && state.user != null) {
+            toastMessage = context.getString(R.string.user_data_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
+            viewModel.clearSuccess()
         }
     }
 
-    val context = LocalContext.current
+    LaunchedEffect(state.user) {
+        viewModel.getUserData()
+    }
+
     val isDarkTheme = state.isDarkTheme
-    val isNotificationEnabled = state.isNotificationEnabled
 
     val languagesList = listOf(
-        Language("en", "English", R.drawable.uk_flag),
-        Language("in", "Indonesia", R.drawable.indo_flag)
+        Language(stringResource(R.string.en), stringResource(R.string.english), R.drawable.uk_flag),
+        Language(stringResource(R.string.in_code), stringResource(R.string.indonesia), R.drawable.indo_flag)
     )
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -99,7 +105,7 @@ fun SettingsScreen(
         if (isGranted) {
             viewModel.setNotificationsEnabled(true, context)
         } else {
-            toastMessage = "Notification permission denied"
+            toastMessage = context.getString(R.string.notification_permission_denied)
             toastType = ToastType.ERROR
             showToast = true
         }
@@ -117,7 +123,7 @@ fun SettingsScreen(
 
         AnimatedVisibility(visible = state.error != null) {
             Text(
-                text = state.error ?: "Unknown error",
+                text = state.error ?: stringResource(R.string.unknown_error),
                 color = MaterialTheme.colorScheme.error,
                 maxLines = 2
             )
@@ -132,7 +138,7 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(40.dp))
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "Person Icon",
+                    contentDescription = stringResource(R.string.person_icon),
                     modifier = Modifier
                         .padding(20.dp)
                         .size(160.dp)
@@ -157,7 +163,7 @@ fun SettingsScreen(
 
                     null -> {
                         Text(
-                            text = "User  not found",
+                            text = stringResource(R.string.user_not_found),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -171,11 +177,11 @@ fun SettingsScreen(
                     onClick = { onProfileClick() }
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-                SettingsItem(
-                    leadingIcon = Icons.Default.Security,
-                    text = stringResource(R.string.privacy_security),
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+//                SettingsItem(
+//                    leadingIcon = Icons.Default.Security,
+//                    text = stringResource(R.string.privacy_security),
+//                )
+//                HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
                 SwitchSettingsItem(
                     leadingIcon = Icons.Default.DarkMode,
                     text = stringResource(R.string.dark_theme),

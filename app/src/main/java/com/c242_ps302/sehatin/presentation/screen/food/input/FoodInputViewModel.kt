@@ -39,6 +39,18 @@ class FoodInputViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearError() {
+        _foodInputState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _foodInputState.update {
+            it.copy(success = false)
+        }
+    }
 }
 
 data class FoodInputScreenUIState(

@@ -25,8 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.formatHistoryCardDate
@@ -36,10 +39,12 @@ fun HistoryCard(
     modifier: Modifier = Modifier,
     recommendation: RecommendationEntity
 ) {
+    val context = LocalContext.current
+
     var isExpanded by remember { mutableStateOf(false) }
     val transition = updateTransition(
         targetState = isExpanded,
-        label = "Expand Card"
+        label = stringResource(R.string.expand_card)
     )
     val iconRotationDegree by transition.animateFloat(label = "") { expandedState ->
         if (expandedState) 180f else 0f
@@ -72,7 +77,7 @@ fun HistoryCard(
                 // Category on the left
                 Text(
                     modifier = Modifier.weight(6f),
-                    text = recommendation.category ?: "No Category",
+                    text = recommendation.category ?: stringResource(R.string.no_category),
                     style = MaterialTheme.typography.titleMedium,
                     color = titleColor
                 )
@@ -91,7 +96,7 @@ fun HistoryCard(
                         .weight(1f)
                         .rotate(iconRotationDegree),
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Expand Card",
+                    contentDescription = stringResource(R.string.expand_card),
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = backgroundColorAlpha)
                 )
             }
@@ -103,27 +108,45 @@ fun HistoryCard(
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
                     Text(
-                        text = "Gender : ${recommendation.gender ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.gender_hitory_card,
+                            recommendation.gender ?: context.getString(R.string.unknown)
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Age : ${recommendation.age ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.age_history_card,
+                            recommendation.age ?: context.getString(R.string.unknown)
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Weight : ${recommendation.weightKg ?: "Unknown"} kg",
+                        text = stringResource(
+                            R.string.weight_kg_history_card,
+                            recommendation.weightKg ?: context.getString(R.string.unknown)
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Height : ${recommendation.heightCm ?: "Unknown"} cm",
+                        text = stringResource(
+                            R.string.height_cm_history_card,
+                            recommendation.heightCm ?: context.getString(R.string.unknown)
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "BMI : ${recommendation.bmi ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.bmi_history_card,
+                            recommendation.bmi ?: context.getString(R.string.unknown)
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = "Daily Step Recommendation : ${recommendation.dailyStepRecommendation ?: "Unknown"}",
+                        text = stringResource(
+                            R.string.daily_step_recommendation_history_card,
+                            recommendation.dailyStepRecommendation ?: context.getString(R.string.unknown)
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

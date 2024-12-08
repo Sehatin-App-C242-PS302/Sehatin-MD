@@ -39,6 +39,18 @@ class RecommendationViewModel @Inject constructor(
             }
         }
 
+
+    fun clearError() {
+        _healthInputState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _healthInputState.update {
+            it.copy(success = false)
+        }
+    }
 }
 
 data class HealthInputScreenUIState(

@@ -17,7 +17,7 @@ class HealthRepository @Inject constructor(
     private val healthApiService: HealthApiService,
     private val recommendationDao: RecommendationDao,
     private val predictionDao: PredictionDao,
-    private val context: Context
+    private val context: Context,
 ) {
     fun getAllRecommendationsByUserId(): Flow<Result<List<RecommendationEntity>>> = flow {
         emit(Result.Loading)
@@ -130,28 +130,31 @@ class HealthRepository @Inject constructor(
     fun getLatestPrediction(): Flow<Result<PredictionEntity>> = flow {
         emit(Result.Loading)
         try {
-            val localPredictions = predictionDao.getAllPredictions()
-            val localData = localPredictions.maxByOrNull { it.createdAt }
-
-            localData?.let { emit(Result.Success(it)) }
-
             val response = healthApiService.getPredictionByUser()
 
             if (response.success == true && response.data?.isNotEmpty() == true) {
                 val remoteData = response.toEntity()
                 val latestRemoteData = remoteData.maxByOrNull { it.createdAt }
 
+                val localPredictions = predictionDao.getAllPredictions()
+                val localData = localPredictions.maxByOrNull { it.createdAt }
+
                 latestRemoteData?.let {
                     if (localData == null || localData != latestRemoteData) {
                         predictionDao.clearAllPredictions()
                         predictionDao.insertAllPredictions(remoteData)
                         emit(Result.Success(latestRemoteData))
+                    } else {
+                        emit(Result.Success(localData))
                     }
-                }
+                } ?: emit(Result.Error("No prediction data available"))
             } else {
-                if (localData == null) {
-                    emit(Result.Error("No prediction data available"))
-                }
+                val localPredictions = predictionDao.getAllPredictions()
+                val localData = localPredictions.maxByOrNull { it.createdAt }
+
+                localData?.let {
+                    emit(Result.Success(it))
+                } ?: emit(Result.Error("No prediction data available"))
             }
         } catch (e: Exception) {
             val localPredictions = predictionDao.getAllPredictions()
@@ -162,4 +165,5 @@ class HealthRepository @Inject constructor(
             } ?: emit(Result.Error(e.message ?: "An error occurred"))
         }
     }
+
 }

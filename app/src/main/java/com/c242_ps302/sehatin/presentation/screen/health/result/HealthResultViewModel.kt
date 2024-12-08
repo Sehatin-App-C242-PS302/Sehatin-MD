@@ -38,15 +38,27 @@ class ResultViewModel @Inject constructor(
             }
         ) { result ->
             _healthResultState.update {
-                it.copy(isLoading = false, error = null, result = result)
+                it.copy(isLoading = false, error = null, result = result, success = true)
             }
         }
     }
 
+    fun clearError() {
+        _healthResultState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _healthResultState.update {
+            it.copy(result = null)
+        }
+    }
 }
 
 data class HealthResultScreenUIState(
     val result: RecommendationEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
+    val success: Boolean = false
 )

@@ -41,7 +41,7 @@ class NewsViewModel @Inject constructor(
             }
         ) { news ->
             _newsState.update {
-                it.copy(isLoading = false, error = null, news = news)
+                it.copy(isLoading = false, error = null, news = news, success = true)
             }
         }
     }
@@ -54,10 +54,23 @@ class NewsViewModel @Inject constructor(
     fun refreshNews() {
         fetchHeadlineNews()
     }
+
+    fun clearError() {
+        _newsState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _newsState.update {
+            it.copy(success = false)
+        }
+    }
 }
 
 data class NewsScreenUiState(
     val news: List<News> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
+    val success: Boolean = false,
 )

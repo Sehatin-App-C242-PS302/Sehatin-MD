@@ -24,9 +24,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
@@ -45,6 +52,26 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.homeState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
+            toastType = ToastType.ERROR
+            showToast = true
+            viewModel.clearError()
+        } else if (!state.isLoading && state.success) {
+            toastMessage = context.getString(R.string.data_loaded_successfully)
+            toastType = ToastType.SUCCESS
+            showToast = true
+            viewModel.clearSuccess()
+        }
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -87,14 +114,6 @@ fun HomeScreen(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
-                FloatingActionButton(
-                    onClick = { onFabClick() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.add_health_data)
-                    )
-                }
             }
         }
 
@@ -142,7 +161,7 @@ fun HomeScreen(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             Text(
-                                text = recommendation?.dailyStepRecommendation ?: "N/A",
+                                text = recommendation?.dailyStepRecommendation ?: stringResource(R.string.n_a),
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -166,6 +185,7 @@ fun HomeScreen(
                             .height(170.dp)
                     ) {
                         Column(
+                            verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxSize(),
                         ) {
@@ -180,7 +200,7 @@ fun HomeScreen(
                             val recommendation = state.latestRecommendation
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.gender),
@@ -190,27 +210,27 @@ fun HomeScreen(
                                     text = when (recommendation?.gender) {
                                         "Male" -> stringResource(R.string.male)
                                         "Female" -> stringResource(R.string.female)
-                                        else -> "N/A"
+                                        else -> stringResource(R.string.n_a)
                                     },
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.age),
                                     fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
-                                    text = "${recommendation?.age ?: "N/A"}",
+                                    text = recommendation?.age.toString(),
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.height),
@@ -219,14 +239,14 @@ fun HomeScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.height_with_unit,
-                                        recommendation?.heightCm ?: "N/A"
+                                        recommendation?.heightCm ?: stringResource(R.string.n_a)
                                     ),
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.8f)
+                                modifier = Modifier.fillMaxWidth(.9f)
                             ) {
                                 Text(
                                     text = stringResource(R.string.weight),
@@ -235,7 +255,7 @@ fun HomeScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.weight_with_unit,
-                                        recommendation?.weightKg ?: "N/A"
+                                        recommendation?.weightKg ?: stringResource(R.string.n_a)
                                     ),
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -251,6 +271,7 @@ fun HomeScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
                             modifier = Modifier.fillMaxSize()
                         ) {
                             val recommendation = state.latestRecommendation
@@ -260,23 +281,29 @@ fun HomeScreen(
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(12.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp)
                             )
                             Text(
-                                text = "${recommendation?.bmi ?: "N/A"}",
+                                text = recommendation?.bmi.toString(),
                                 style = MaterialTheme.typography.displaySmall,
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(bottom = 5.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 5.dp)
                             )
                             Text(
-                                text = recommendation?.category ?: "N/A",
+                                text = recommendation?.category ?: stringResource(R.string.n_a),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(5.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 5.dp)
                             )
                         }
                     }
@@ -292,10 +319,19 @@ fun HomeScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
+                contentDescription = stringResource(R.string.input_health_data),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
+    }
+
+    if (showToast) {
+        SehatinToast(
+            message = toastMessage,
+            type = toastType,
+            duration = 2000L,
+            onDismiss = { showToast = false }
+        )
     }
 }
 
