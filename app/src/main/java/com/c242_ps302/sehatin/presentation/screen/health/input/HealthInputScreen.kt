@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +50,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
@@ -58,6 +62,9 @@ fun HealthInputScreen(
     recommendationViewModel: RecommendationViewModel = hiltViewModel()
 ) {
     val state by recommendationViewModel.healthInputState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
     var expanded by remember { mutableStateOf(false) }
     var selectedGender by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -67,6 +74,24 @@ fun HealthInputScreen(
     val localDensity = LocalDensity.current
 
     val genders = listOf(stringResource(R.string.male), stringResource(R.string.female))
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
+            toastType = ToastType.ERROR
+            showToast = true
+            recommendationViewModel.clearError()
+        } else if (!state.isLoading && state.success) {
+            toastMessage = context.getString(R.string.health_data_uploaded_successfully)
+            toastType = ToastType.SUCCESS
+            showToast = true
+            recommendationViewModel.clearSuccess()
+        }
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -88,7 +113,7 @@ fun HealthInputScreen(
             enter = fadeIn() + expandVertically()
         ) {
             Text(
-                text = state.error ?: "Unknown error occurred",
+                text = state.error ?: stringResource(R.string.unknown_error),
                 color = MaterialTheme.colorScheme.error,
                 maxLines = 2
             )
@@ -117,7 +142,6 @@ fun HealthInputScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Gender dropdown
                 Column {
                     Text(
                         text = selectedGender.ifEmpty { stringResource(R.string.gender) },
@@ -157,11 +181,11 @@ fun HealthInputScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Input fields
-                InputRow(icon = Icons.Default.CalendarToday, label = "Age", value = age) { age = it }
+                InputRow(icon = Icons.Default.CalendarToday, label = stringResource(R.string.age), value = age) { age = it }
                 Spacer(modifier = Modifier.height(16.dp))
-                InputRow(icon = Icons.Default.Height, label = "Height (cm)", value = height) { height = it }
+                InputRow(icon = Icons.Default.Height, label = stringResource(R.string.height_cm), value = height) { height = it }
                 Spacer(modifier = Modifier.height(16.dp))
-                InputRow(icon = Icons.Default.Scale, label = "Weight (kg)", value = weight) { weight = it }
+                InputRow(icon = Icons.Default.Scale, label = stringResource(R.string.weight_kg), value = weight) { weight = it }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Submit button
@@ -183,7 +207,7 @@ fun HealthInputScreen(
                     },
                     modifier = Modifier.fillMaxWidth(0.9f)
                 ) {
-                    Text("Count BMI")
+                    Text(stringResource(R.string.count_my_bmi))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -197,7 +221,7 @@ fun HealthInputScreen(
                         onClick = { onSuccess() },
                         modifier = Modifier.fillMaxWidth(0.9f)
                     ) {
-                        Text("See Result")
+                        Text(stringResource(R.string.see_result))
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = stringResource(R.string.see_result),
@@ -206,6 +230,15 @@ fun HealthInputScreen(
                 }
             }
         }
+    }
+
+    if (showToast) {
+        SehatinToast(
+            message = toastMessage,
+            type = toastType,
+            duration = 2000L,
+            onDismiss = { showToast = false }
+        )
     }
 }
 

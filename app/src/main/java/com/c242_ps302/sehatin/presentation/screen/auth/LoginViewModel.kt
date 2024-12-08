@@ -48,6 +48,18 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearError() {
+        _loginState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _loginState.update {
+            it.copy(success = false)
+        }
+    }
 }
 
 data class LoginScreenUIState(

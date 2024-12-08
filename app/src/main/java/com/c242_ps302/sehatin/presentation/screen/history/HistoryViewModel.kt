@@ -22,6 +22,7 @@ class HistoryViewModel @Inject constructor(
 
     init {
         fetchAllHistory()
+        fetchAllFoods()
     }
 
     private fun fetchAllHistory() = viewModelScope.launch {
@@ -38,7 +39,7 @@ class HistoryViewModel @Inject constructor(
             }
         ) { history ->
             _historyState.update {
-                it.copy(isLoading = false, error = null, history = history)
+                it.copy(isLoading = false, error = null, history = history, success = true)
             }
         }
     }
@@ -57,8 +58,20 @@ class HistoryViewModel @Inject constructor(
             }
         ) { foods ->
             _historyState.update {
-                it.copy(isLoading = false, error = null, foods = foods)
+                it.copy(isLoading = false, error = null, foods = foods, success = true)
             }
+        }
+    }
+
+    fun clearSuccess() {
+        _historyState.update {
+            it.copy(success = false)
+        }
+    }
+
+    fun clearError() {
+        _historyState.update {
+            it.copy(error = null)
         }
     }
 }
@@ -67,5 +80,6 @@ data class HistoryScreenUiState(
     val history: List<RecommendationEntity> = emptyList(),
     val foods: List<PredictionEntity> = emptyList(),
     val isLoading: Boolean = false,
+    val success: Boolean = false,
     val error: String? = null,
 )

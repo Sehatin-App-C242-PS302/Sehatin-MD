@@ -40,7 +40,7 @@ class AuthRepository @Inject constructor(
                 response.user?.let { user ->
                     userDao.insertUser (user.toEntity())
                     emit(Result.Success(response))
-                } ?: emit(Result.Error("User data is null"))
+                }
             } else {
                 emit(Result.Error((response.message.toString())))
             }

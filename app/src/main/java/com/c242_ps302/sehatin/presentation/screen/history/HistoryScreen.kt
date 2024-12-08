@@ -23,9 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.card.FoodCard
 import com.c242_ps302.sehatin.presentation.components.card.HistoryCard
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
@@ -39,19 +42,23 @@ fun HistoryScreen(
 ) {
     val state by historyViewModel.historyState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     var toastMessage by remember { mutableStateOf("") }
     var toastType by remember { mutableStateOf(ToastType.INFO) }
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
-        } else if (!state.isLoading && state.history.isNotEmpty()) {
-            toastMessage = "History loaded successfully!"
+            historyViewModel.clearError()
+        } else if (!state.isLoading && state.history.isNotEmpty() && state.foods.isNotEmpty() && state.success) {
+            toastMessage = context.getString(R.string.history_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
+            historyViewModel.clearSuccess()
         }
     }
 
@@ -71,7 +78,7 @@ fun HistoryScreen(
         }
         AnimatedVisibility(visible = state.error != null) {
             Text(
-                text = state.error ?: "unknown error",
+                text = state.error ?: stringResource(id = R.string.unknown_error),
                 color = MaterialTheme.colorScheme.error,
                 maxLines = 2
             )
@@ -87,7 +94,7 @@ fun HistoryScreen(
                 ) {
                     item {
                         Text(
-                            text = "Health Data History",
+                            text = stringResource(R.string.health_data_history),
                             style = MaterialTheme.typography.headlineMedium
                         )
                     }
@@ -96,7 +103,7 @@ fun HistoryScreen(
                     }
                     item {
                         Text(
-                            text = "Food Recognition History",
+                            text = stringResource(R.string.food_recognition_history),
                             style = MaterialTheme.typography.headlineMedium
                         )
                     }

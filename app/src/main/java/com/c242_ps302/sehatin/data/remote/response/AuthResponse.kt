@@ -27,6 +27,18 @@ data class LoginResponse(
 	val user: User? = null,
 )
 
+data class EditProfileResponse(
+
+	@field:SerializedName("success")
+	val success: Boolean? = null,
+
+	@field:SerializedName("message")
+	val message: String? = null,
+
+	@field:SerializedName("data")
+	val data: User? = null,
+)
+
 data class User(
 
 	@field:SerializedName("id")

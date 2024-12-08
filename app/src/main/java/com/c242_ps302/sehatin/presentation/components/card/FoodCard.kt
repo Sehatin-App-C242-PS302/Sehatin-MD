@@ -37,6 +37,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.c242_ps302.sehatin.data.local.entity.PredictionEntity
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
+import com.c242_ps302.sehatin.presentation.utils.formatHistoryCardDate
+import java.util.Locale
 
 @Composable
 fun FoodCard(
@@ -53,14 +55,13 @@ fun FoodCard(
     }
 
     val imageRequest = ImageRequest.Builder(LocalContext.current)
-        .data(food.imageUrl ?: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
+        .data(food.imageUrl)
         .crossfade(true)
         .build()
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
-            .padding(20.dp)
             .fillMaxWidth()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -69,7 +70,6 @@ fun FoodCard(
             )
     ) {
         Column {
-            // Collapsed State: Only show name and date
             if (!isExpanded) {
                 Row(
                     modifier = Modifier
@@ -78,14 +78,19 @@ fun FoodCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = food.predictedClass ?: "Unknown Food",
+                        text = food.predictedClass?.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }
+                            ?: "Unknown Food",
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.weight(6f)
                     )
                     Text(
-                        text = food.createdAt,
-                        style = MaterialTheme.typography.bodyMedium,
+                        text = food.createdAt.formatHistoryCardDate(),
+                        style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.weight(4f)
                     )
                     Icon(
@@ -106,7 +111,7 @@ fun FoodCard(
                     ) {
                         AsyncImage(
                             model = imageRequest,
-                            contentDescription = food.predictedClass,
+                            contentDescription = null,
                             modifier = Modifier
                                 .size(128.dp)
                                 .padding(16.dp)
@@ -118,13 +123,18 @@ fun FoodCard(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = food.predictedClass ?: "Unknown Food",
+                                text = food.predictedClass?.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.getDefault()
+                                    ) else it.toString()
+                                }
+                                    ?: "Unknown Food",
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.titleLarge,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                text = food.createdAt,
+                                text = food.createdAt.formatHistoryCardDate(),
                                 style = MaterialTheme.typography.bodyMedium
                             )
 

@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +55,8 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state by viewModel.loginState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -108,13 +111,15 @@ fun LoginScreen(
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
+            viewModel.clearError()
         } else if (!state.isLoading && state.success) {
-            toastMessage = "Login success!"
+            toastMessage = context.getString(R.string.login_success)
             toastType = ToastType.SUCCESS
             showToast = true
+            viewModel.clearSuccess()
         }
     }
 
