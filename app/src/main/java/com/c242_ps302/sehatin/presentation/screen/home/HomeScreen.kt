@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
+import com.c242_ps302.sehatin.presentation.components.card.HomeFoodCard
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
 import com.c242_ps302.sehatin.presentation.components.toast.ToastType
@@ -126,7 +127,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 SehatinAppBar()
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(30.dp))
                 Text(
                     text = stringResource(R.string.daily_indicator),
                     style = MaterialTheme.typography.headlineLarge,
@@ -158,7 +159,7 @@ fun HomeScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier.padding(bottom = 4.dp)
                             )
                             Text(
                                 text = recommendation?.dailyStepRecommendation ?: stringResource(R.string.n_a),
@@ -174,8 +175,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth(0.95f)
                         .align(Alignment.CenterHorizontally)
-                        .padding(horizontal = 20.dp)
-                        .weight(1f),
+                        .padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     ElevatedCard(
@@ -307,6 +307,15 @@ fun HomeScreen(
                             )
                         }
                     }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                state.latestPrediction?.let {
+                    HomeFoodCard(
+                        prediction = it,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
                 }
             }
         }

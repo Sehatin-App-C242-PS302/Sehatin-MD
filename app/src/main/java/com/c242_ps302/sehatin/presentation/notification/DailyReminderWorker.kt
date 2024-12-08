@@ -35,9 +35,9 @@ class DailyReminderWorker(
         val zoneId = ZoneId.systemDefault()
         val now = ZonedDateTime.now(zoneId)
 
-        // Set notification window from 6 AM to 10 PM
+        // Set notification window from 6 AM to 11 PM
         val todaySixAM = LocalDate.now(zoneId).atTime(6, 0).atZone(zoneId)
-        val todayTenPM = LocalDate.now(zoneId).atTime(22, 0).atZone(zoneId)
+        val todayTenPM = LocalDate.now(zoneId).atTime(23, 0).atZone(zoneId)
 
         // Adjust times if current time is before 6 AM
         val scheduledSixAM = if (now.isBefore(todaySixAM)) {

@@ -2,6 +2,7 @@ package com.c242_ps302.sehatin.presentation.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.c242_ps302.sehatin.data.local.entity.PredictionEntity
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.data.repository.HealthRepository
 import com.c242_ps302.sehatin.presentation.utils.collectAndHandle
@@ -21,6 +22,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         fetchLatestRecommendation()
+        fetchLatestPrediction()
     }
 
     private fun fetchLatestRecommendation() = viewModelScope.launch {
@@ -42,6 +44,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun fetchLatestPrediction() = viewModelScope.launch {
+        repository.getLatestPrediction().collectAndHandle(
+            onError = { error ->
+                _homeState.update {
+                    it.copy(isLoading = false, error = error)
+                }
+            },
+            onLoading = {
+                _homeState.update {
+                    it.copy(isLoading = true, error = null)
+                }
+            }
+        ) { result ->
+            _homeState.update {
+                it.copy(isLoading = false, error = null, latestPrediction = result, success = true)
+            }
+        }
+    }
+
     fun clearError() {
         _homeState.update {
             it.copy(error = null)
@@ -57,6 +78,7 @@ class HomeViewModel @Inject constructor(
 
 data class HomeScreenUIState(
     val latestRecommendation: RecommendationEntity? = null,
+    val latestPrediction: PredictionEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
     val success: Boolean = false

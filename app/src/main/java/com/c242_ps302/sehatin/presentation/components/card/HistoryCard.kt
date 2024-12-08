@@ -110,10 +110,15 @@ fun HistoryCard(
                     Text(
                         text = stringResource(
                             R.string.gender_hitory_card,
-                            recommendation.gender ?: context.getString(R.string.unknown)
+                            when (recommendation.gender) {
+                                "Male" -> stringResource(R.string.male)
+                                "Female" -> stringResource(R.string.female)
+                                else -> stringResource(R.string.unknown)
+                            }
                         ),
                         style = MaterialTheme.typography.bodyMedium
                     )
+
                     Text(
                         text = stringResource(
                             R.string.age_history_card,
