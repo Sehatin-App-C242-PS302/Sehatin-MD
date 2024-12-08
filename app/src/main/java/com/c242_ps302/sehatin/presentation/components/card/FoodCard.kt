@@ -29,12 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.entity.PredictionEntity
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.formatHistoryCardDate
@@ -143,10 +145,10 @@ fun FoodCard(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                NutritionLabel("Calories")
-                                NutritionLabel("Protein")
-                                NutritionLabel("Fat")
-                                NutritionLabel("Carbs")
+                                NutritionLabel(stringResource(R.string.calories))
+                                NutritionLabel(stringResource(R.string.protein))
+                                NutritionLabel(stringResource(R.string.fat))
+                                NutritionLabel(stringResource(R.string.carbs))
                             }
 
                             Row(

@@ -126,4 +126,6 @@
     <string name="en">en</string>
     <string name="in_code">in</string>
     <string name="notification_permission_denied">Izin notifikasi ditolak</string>
+    <string name="connected_to_internet">Terhubung ke internet</string>
+    <string name="no_internet_connection">Tidak ada koneksi internet</string>
 </resources>

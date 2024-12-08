@@ -125,4 +125,6 @@
     <string name="en">en</string>
     <string name="in_code">in</string>
     <string name="notification_permission_denied">Notification permission denied</string>
+    <string name="connected_to_internet">Connected to internet</string>
+    <string name="no_internet_connection">No internet connection</string>
 </resources>

@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginScreen
 import com.c242_ps302.sehatin.presentation.screen.auth.RegisterScreen
 import com.c242_ps302.sehatin.presentation.screen.connectivity.ConnectivityViewModel
@@ -135,6 +137,8 @@ fun MainScreenContent(
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
 
+    val context = LocalContext.current
+
     val status by connectivityObserver.isConnected.collectAsStateWithLifecycle()
     var showMessageBar by rememberSaveable { mutableStateOf(false) }
     var message by rememberSaveable { mutableStateOf("") }
@@ -143,7 +147,7 @@ fun MainScreenContent(
     LaunchedEffect(key1 = status) {
         when (status) {
             true -> {
-                message = "Connected to internet"
+                message = context.getString(R.string.connected_to_internet)
                 backgroundColor = customGreen
                 delay(2000)
                 showMessageBar = false
@@ -151,7 +155,7 @@ fun MainScreenContent(
 
             false -> {
                 showMessageBar = true
-                message = "No internet connection"
+                message = context.getString(R.string.no_internet_connection)
                 backgroundColor = Color.Red
             }
         }
