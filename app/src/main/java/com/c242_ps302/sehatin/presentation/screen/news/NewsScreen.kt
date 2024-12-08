@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -63,6 +64,8 @@ fun NewsScreen(
     val state by viewModel.newsState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
+    val context = LocalContext.current
+
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -74,12 +77,12 @@ fun NewsScreen(
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
             viewModel.clearError()
         } else if (!state.isLoading && state.success && state.news.isNotEmpty()) {
-            toastMessage = "News loaded successfully!"
+            toastMessage = context.getString(R.string.news_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
             viewModel.clearSuccess()
@@ -123,7 +126,7 @@ fun NewsScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Close"
+                        contentDescription = stringResource(R.string.close)
                     )
                 }
             },
@@ -177,7 +180,7 @@ fun NewsScreen(
 
             androidx.compose.animation.AnimatedVisibility(visible = state.error != null) {
                 Text(
-                    text = state.error ?: "Unknown error",
+                    text = state.error ?: stringResource(R.string.unknown_error),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
@@ -193,7 +196,7 @@ fun NewsScreen(
 
             androidx.compose.animation.AnimatedVisibility(visible = !state.isLoading && state.error == null && state.news.isEmpty()) {
                 Text(
-                    text = "Tidak ada berita ditemukan",
+                    text = stringResource(R.string.news_not_found),
                     modifier = Modifier.padding(16.dp)
                 )
             }

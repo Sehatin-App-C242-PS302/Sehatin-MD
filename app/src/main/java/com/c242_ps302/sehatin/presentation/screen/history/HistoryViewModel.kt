@@ -29,17 +29,17 @@ class HistoryViewModel @Inject constructor(
         repository.getAllRecommendationsByUserId().collectAndHandle(
             onError = { error ->
                 _historyState.update {
-                    it.copy(historyIsLoading = false, historyError = error)
+                    it.copy(isLoading = false, error = error)
                 }
             },
             onLoading = {
                 _historyState.update {
-                    it.copy(historyIsLoading = true, historyError = null)
+                    it.copy(isLoading = true, error = null)
                 }
             }
         ) { history ->
             _historyState.update {
-                it.copy(historyIsLoading = false, historyError = null, history = history, historySuccess = true)
+                it.copy(isLoading = false, error = null, history = history, success = true)
             }
         }
     }
@@ -48,30 +48,30 @@ class HistoryViewModel @Inject constructor(
         repository.getAllPredictions().collectAndHandle(
             onError = { error ->
                 _historyState.update {
-                    it.copy(foodIsLoading = false, foodError = error)
+                    it.copy(isLoading = false, error = error)
                 }
             },
             onLoading = {
                 _historyState.update {
-                    it.copy(foodIsLoading = true, foodError = null)
+                    it.copy(isLoading = true, error = null)
                 }
             }
         ) { foods ->
             _historyState.update {
-                it.copy(foodIsLoading = false, foodError = null, foods = foods, foodSuccess = true)
+                it.copy(isLoading = false, error = null, foods = foods, success = true)
             }
-        }
-    }
-
-    fun clearError() {
-        _historyState.update {
-            it.copy(foodError = null, historyError = null)
         }
     }
 
     fun clearSuccess() {
         _historyState.update {
-            it.copy(foodSuccess = false, historySuccess = false)
+            it.copy(success = false)
+        }
+    }
+
+    fun clearError() {
+        _historyState.update {
+            it.copy(error = null)
         }
     }
 }
@@ -79,10 +79,7 @@ class HistoryViewModel @Inject constructor(
 data class HistoryScreenUiState(
     val history: List<RecommendationEntity> = emptyList(),
     val foods: List<PredictionEntity> = emptyList(),
-    val historyIsLoading: Boolean = false,
-    val foodIsLoading: Boolean = false,
-    val foodError: String? = null,
-    val historyError: String? = null,
-    val foodSuccess: Boolean = false,
-    val historySuccess: Boolean = false,
+    val isLoading: Boolean = false,
+    val success: Boolean = false,
+    val error: String? = null,
 )

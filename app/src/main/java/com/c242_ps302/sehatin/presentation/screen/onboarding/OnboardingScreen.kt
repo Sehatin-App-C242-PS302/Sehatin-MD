@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,18 +45,20 @@ fun OnboardingScreen(
 ) {
     val state by viewModel.loginState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     var toastMessage by remember { mutableStateOf("") }
     var toastType by remember { mutableStateOf(ToastType.INFO) }
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
             viewModel.clearError()
         } else if (!state.isLoading && state.success) {
-            toastMessage = "Welcome back!"
+            toastMessage = context.getString(R.string.welcome_back)
             toastType = ToastType.SUCCESS
             showToast = true
             viewModel.clearSuccess()

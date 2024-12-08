@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,18 +53,20 @@ fun HomeScreen(
 ) {
     val state by viewModel.homeState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     var toastMessage by remember { mutableStateOf("") }
     var toastType by remember { mutableStateOf(ToastType.INFO) }
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
             viewModel.clearError()
         } else if (!state.isLoading && state.success) {
-            toastMessage = "Data loaded successfully!"
+            toastMessage = context.getString(R.string.data_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
             viewModel.clearSuccess()
@@ -158,7 +161,7 @@ fun HomeScreen(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             Text(
-                                text = recommendation?.dailyStepRecommendation ?: "N/A",
+                                text = recommendation?.dailyStepRecommendation ?: stringResource(R.string.n_a),
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -207,7 +210,7 @@ fun HomeScreen(
                                     text = when (recommendation?.gender) {
                                         "Male" -> stringResource(R.string.male)
                                         "Female" -> stringResource(R.string.female)
-                                        else -> "N/A"
+                                        else -> stringResource(R.string.n_a)
                                     },
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -221,7 +224,7 @@ fun HomeScreen(
                                     fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
-                                    text = "${recommendation?.age ?: "N/A"}",
+                                    text = recommendation?.age.toString(),
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
@@ -236,7 +239,7 @@ fun HomeScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.height_with_unit,
-                                        recommendation?.heightCm ?: "N/A"
+                                        recommendation?.heightCm ?: stringResource(R.string.n_a)
                                     ),
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -252,7 +255,7 @@ fun HomeScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.weight_with_unit,
-                                        recommendation?.weightKg ?: "N/A"
+                                        recommendation?.weightKg ?: stringResource(R.string.n_a)
                                     ),
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -268,8 +271,8 @@ fun HomeScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center, // Menempatkan konten di tengah
-                            modifier = Modifier.fillMaxSize() // Mengisi seluruh ruang yang tersedia
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxSize()
                         ) {
                             val recommendation = state.latestRecommendation
                             Text(
@@ -279,21 +282,21 @@ fun HomeScreen(
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
-                                    .fillMaxWidth() // Memastikan teks menggunakan lebar penuh
-                                    .padding(horizontal = 12.dp) // Padding hanya horizontal agar simetris
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp)
                             )
                             Text(
-                                text = "${recommendation?.bmi ?: "N/A"}",
+                                text = recommendation?.bmi.toString(),
                                 style = MaterialTheme.typography.displaySmall,
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 5.dp) // Padding lebih kecil untuk menyesuaikan konten
+                                    .padding(horizontal = 5.dp)
                             )
                             Text(
-                                text = recommendation?.category ?: "N/A",
+                                text = recommendation?.category ?: stringResource(R.string.n_a),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
@@ -316,7 +319,7 @@ fun HomeScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
+                contentDescription = stringResource(R.string.input_health_data),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }

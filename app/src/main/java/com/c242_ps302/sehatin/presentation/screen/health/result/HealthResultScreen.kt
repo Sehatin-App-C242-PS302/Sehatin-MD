@@ -40,11 +40,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
 import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
@@ -59,18 +62,20 @@ fun HealthResultScreen(
 ) {
     val state by viewModel.healthResultState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     var toastMessage by remember { mutableStateOf("") }
     var toastType by remember { mutableStateOf(ToastType.INFO) }
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
             viewModel.clearError()
         } else if (!state.isLoading && state.success) {
-            toastMessage = "Health Recommendation loaded successfully!"
+            toastMessage = context.getString(R.string.health_recommendation_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
             viewModel.clearSuccess()
@@ -149,13 +154,13 @@ private fun ErrorContent(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Error: $error",
+            text = stringResource(R.string.error, error),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedButton(onClick = onBack) {
-            Text(text = "Kembali")
+            Text(text = stringResource(R.string.go_back))
         }
     }
 }
@@ -181,13 +186,13 @@ private fun MainContent(
             // BMI Result Section
             rec.bmi?.let { bmi ->
                 Text(
-                    text = "BMI Kamu ${recommendation.category}",
+                    text = stringResource(R.string.bmi_kamu, recommendation.category.toString()),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = "Dengan Point",
+                    text = stringResource(R.string.dengan_point),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -205,7 +210,7 @@ private fun MainContent(
 
             // Gender section
             rec.gender?.let { gender ->
-                Text(text = "Gender", style = MaterialTheme.typography.bodyLarge)
+                Text(text = stringResource(R.string.gender), style = MaterialTheme.typography.bodyLarge)
                 Icon(
                     imageVector = if (gender.lowercase() == "male")
                         Icons.Default.Male else Icons.Default.Female,
@@ -228,33 +233,29 @@ private fun MainContent(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Age: ${rec.age ?: "-"}",
+                        text = stringResource(R.string.age_health_result, rec.age ?: "-"),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Height: ${
-                            rec.heightCm?.let {
-                                String.format(
-                                    "%.1f cm",
-                                    it
-                                )
-                            } ?: "-"
-                        }",
+                        text = stringResource(R.string.height_health_result, rec.heightCm?.let {
+                            String.format(
+                                "%.1f cm",
+                                it
+                            )
+                        } ?: "-"),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Weight: ${
-                            rec.weightKg?.let {
-                                String.format(
-                                    "%.1f kg",
-                                    it
-                                )
-                            } ?: "-"
-                        }",
+                        text = stringResource(R.string.weight_health_result, rec.weightKg?.let {
+                            String.format(
+                                "%.1f kg",
+                                it
+                            )
+                        } ?: "-"),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -304,9 +305,9 @@ private fun MainContent(
             rec.category?.let { category ->
                 Text(
                     text = when (category.lowercase()) {
-                        "underweight" -> "Prioritaskan Asupan Nutrisi yang Seimbang"
-                        "overweight", "obese" -> "Prioritaskan Olahraga dan Diet Sehat"
-                        else -> "Pertahankan Pola Hidup Sehat"
+                        "underweight" -> stringResource(R.string.prioritaskan_asupan_nutrisi_yang_seimbang)
+                        "overweight", "obese" -> stringResource(R.string.prioritaskan_olahraga_dan_diet_sehat)
+                        else -> stringResource(R.string.pertahankan_pola_hidup_sehat)
                     },
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
@@ -322,7 +323,7 @@ private fun MainContent(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             ) {
-                Text(text = "Hitung Ulang BMI")
+                Text(text = stringResource(R.string.recount_bmi))
             }
 
             OutlinedButton(
@@ -331,20 +332,12 @@ private fun MainContent(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
             ) {
-                Text(text = "Kembali Ke Beranda")
+                Text(text = stringResource(R.string.go_back_to_home))
             }
         }
     }
 }
 
-private fun getBMICategory(bmi: Double): String {
-    return when {
-        bmi < 18.5 -> "Underweight"
-        bmi < 25.0 -> "Normal"
-        bmi < 30.0 -> "Overweight"
-        else -> "Obese"
-    }
-}
 
 
 

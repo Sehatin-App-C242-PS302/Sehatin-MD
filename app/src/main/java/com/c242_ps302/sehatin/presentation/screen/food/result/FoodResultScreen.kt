@@ -22,11 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.card.FoodResultCard
 import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
 import com.c242_ps302.sehatin.presentation.components.toast.ToastType
@@ -41,18 +44,20 @@ fun FoodResultScreen(
 ) {
     val state by viewModel.foodResultState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     var toastMessage by remember { mutableStateOf("") }
     var toastType by remember { mutableStateOf(ToastType.INFO) }
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
             viewModel.clearError()
         } else if (!state.isLoading && state.success) {
-            toastMessage = "Prediction loaded successfully!"
+            toastMessage = context.getString(R.string.prediction_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
             viewModel.clearSuccess()
@@ -72,7 +77,7 @@ fun FoodResultScreen(
                 )
             } else if (state.error != null) {
                 Text(
-                    text = state.error ?: "Unknown error",
+                    text = state.error ?: stringResource(id = R.string.unknown_error),
                     color = MaterialTheme.colorScheme.error,
                     maxLines = 2,
                     style = MaterialTheme.typography.bodyLarge,
@@ -89,7 +94,7 @@ fun FoodResultScreen(
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     Button(onClick = { onNavigateHome() }) {
-                        Text(text = "Back to Home")
+                        Text(text = stringResource(R.string.back_to_home))
                     }
                 }
             }

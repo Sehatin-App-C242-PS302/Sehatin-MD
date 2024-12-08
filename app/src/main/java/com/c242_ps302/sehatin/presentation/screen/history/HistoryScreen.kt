@@ -49,13 +49,12 @@ fun HistoryScreen(
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
-        if (state.foodError != null || state.historyError != null) {
-            toastMessage =
-                state.foodError ?: state.historyError ?: context.getString(R.string.unknown_error)
+        if (state.error != null) {
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
             historyViewModel.clearError()
-        } else if (state.foodSuccess || state.historySuccess && !state.historyIsLoading && !state.foodIsLoading) {
+        } else if (!state.isLoading && state.history.isNotEmpty() && state.foods.isNotEmpty() && state.success) {
             toastMessage = context.getString(R.string.history_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
@@ -70,22 +69,21 @@ fun HistoryScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         AnimatedVisibility(
-            visible = state.foodIsLoading || state.historyIsLoading,
+            visible = state.isLoading,
             enter = fadeIn() + expandVertically()
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(48.dp)
             )
         }
-        AnimatedVisibility(visible = state.foodError != null || state.historyError != null) {
+        AnimatedVisibility(visible = state.error != null) {
             Text(
-                text = state.foodError ?: state.historyError
-                ?: context.getString(R.string.unknown_error),
+                text = state.error ?: stringResource(id = R.string.unknown_error),
                 color = MaterialTheme.colorScheme.error,
                 maxLines = 2
             )
         }
-        AnimatedVisibility(visible = !state.foodIsLoading && !state.historyIsLoading && state.history.isNotEmpty() && state.foods.isNotEmpty() && state.historySuccess && state.foodSuccess) {
+        AnimatedVisibility(visible = !state.isLoading && state.error == null) {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {

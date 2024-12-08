@@ -100,7 +100,8 @@ fun FoodInputScreen(
             if (isGranted) {
                 cameraLauncher.launch(null)
             } else {
-                Toast.makeText(context, "Permission was not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    context.getString(R.string.permission_was_not_granted), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -115,12 +116,12 @@ fun FoodInputScreen(
 
     LaunchedEffect(state) {
         if (state.error != null) {
-            toastMessage = state.error ?: "Unknown error"
+            toastMessage = state.error ?: context.getString(R.string.unknown_error)
             toastType = ToastType.ERROR
             showToast = true
             viewModel.clearError()
         } else if (!state.isLoading && state.success) {
-            toastMessage = "Prediction uploaded successfully!"
+            toastMessage = context.getString(R.string.prediction_uploaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
             viewModel.clearSuccess()
@@ -161,7 +162,7 @@ fun FoodInputScreen(
                 SehatinAppBar()
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Food Recognition",
+                    text = stringResource(R.string.food_recognition),
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center
                 )
@@ -180,7 +181,7 @@ fun FoodInputScreen(
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(imageUri)
                                     .build(),
-                                contentDescription = "Camera Image",
+                                contentDescription = stringResource(R.string.camera_image),
                                 contentScale = ContentScale.Inside,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -189,7 +190,7 @@ fun FoodInputScreen(
                         } else if (bitmapImage != null) {
                             Image(
                                 bitmap = bitmapImage!!.asImageBitmap(),
-                                contentDescription = "Camera Image",
+                                contentDescription = stringResource(R.string.camera_image),
                                 contentScale = ContentScale.Fit,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -198,7 +199,7 @@ fun FoodInputScreen(
                         }
                     } else {
                         Text(
-                            text = "Please Select an Image from Gallery or Open Camera",
+                            text = stringResource(R.string.please_select_an_image_from_gallery_or_open_camera),
                             fontSize = 18.sp,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold
@@ -220,7 +221,7 @@ fun FoodInputScreen(
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = "Open Gallery")
+                            Text(text = stringResource(R.string.open_gallery))
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Button(
@@ -229,7 +230,7 @@ fun FoodInputScreen(
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = "Open Camera")
+                            Text(text = stringResource(R.string.open_camera))
                         }
                     } else {
                         Button(
@@ -269,7 +270,7 @@ fun FoodInputScreen(
                                     } ?: run {
                                         Toast.makeText(
                                             context,
-                                            "No image to predict",
+                                            context.getString(R.string.no_image_to_predict),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -277,21 +278,24 @@ fun FoodInputScreen(
                                     Log.e("FoodInputScreen", "Error in prediction", e)
                                     Toast.makeText(
                                         context,
-                                        "Error processing image: ${e.message}",
+                                        context.getString(
+                                            R.string.error_processing_image,
+                                            e.message
+                                        ),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = "Predict")
+                            Text(text = stringResource(R.string.predict))
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         OutlinedButton(
                             onClick = { resetImage() },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = "Retake Image")
+                            Text(text = stringResource(R.string.reselect_image))
                         }
                     }
                 }
