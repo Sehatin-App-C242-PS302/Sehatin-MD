@@ -77,16 +77,17 @@ fun SettingsScreen(
             toastMessage = state.error ?: "Unknown error"
             toastType = ToastType.ERROR
             showToast = true
+            viewModel.clearError()
         } else if (state.success && state.user != null) {
             toastMessage = "User data loaded successfully!"
             toastType = ToastType.SUCCESS
             showToast = true
+            viewModel.clearSuccess()
         }
     }
 
     val context = LocalContext.current
     val isDarkTheme = state.isDarkTheme
-    val isNotificationEnabled = state.isNotificationEnabled
 
     val languagesList = listOf(
         Language("en", "English", R.drawable.uk_flag),

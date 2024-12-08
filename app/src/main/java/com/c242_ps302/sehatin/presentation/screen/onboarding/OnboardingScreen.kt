@@ -16,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,6 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.display_text.SehatinDisplayText
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.screen.auth.LoginViewModel
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
@@ -38,6 +43,24 @@ fun OnboardingScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val state by viewModel.loginState.collectAsStateWithLifecycle()
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+            viewModel.clearError()
+        } else if (!state.isLoading && state.success) {
+            toastMessage = "Welcome back!"
+            toastType = ToastType.SUCCESS
+            showToast = true
+            viewModel.clearSuccess()
+        }
+    }
 
     LaunchedEffect(state.token) {
         if (!state.token.isNullOrEmpty()) {
@@ -89,6 +112,15 @@ fun OnboardingScreen(
                 )
             }
         }
+    }
+
+    if (showToast) {
+        SehatinToast(
+            message = toastMessage,
+            type = toastType,
+            duration = 2000L,
+            onDismiss = { showToast = false }
+        )
     }
 }
 

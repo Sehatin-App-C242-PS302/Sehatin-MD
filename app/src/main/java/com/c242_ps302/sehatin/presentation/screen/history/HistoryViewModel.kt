@@ -58,8 +58,20 @@ class HistoryViewModel @Inject constructor(
             }
         ) { foods ->
             _historyState.update {
-                it.copy(isLoading = false, error = null, foods = foods)
+                it.copy(isLoading = false, error = null, foods = foods, success = true)
             }
+        }
+    }
+
+    fun clearError() {
+        _historyState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _historyState.update {
+            it.copy(success = false)
         }
     }
 }
@@ -69,4 +81,5 @@ data class HistoryScreenUiState(
     val foods: List<PredictionEntity> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
+    val success: Boolean = false
 )

@@ -117,10 +117,12 @@ fun RegisterScreen(
             toastMessage = state.error ?: "Unknown error"
             toastType = ToastType.ERROR
             showToast = true
+            viewModel.clearError()
         } else if (!state.isLoading && state.success) {
             toastMessage = "Register success!"
             toastType = ToastType.SUCCESS
             showToast = true
+            viewModel.clearSuccess()
         }
     }
 

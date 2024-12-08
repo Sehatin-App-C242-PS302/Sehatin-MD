@@ -155,6 +155,18 @@ class SettingsViewModel @Inject constructor(
     private fun cancelReminder() {
         workManager.cancelUniqueWork(DAILY_REMINDER_WORK_NAME)
     }
+
+    fun clearError() {
+        _settingsState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _settingsState.update {
+            it.copy(success = false)
+        }
+    }
 }
 
 

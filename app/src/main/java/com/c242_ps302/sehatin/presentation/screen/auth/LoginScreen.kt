@@ -111,10 +111,12 @@ fun LoginScreen(
             toastMessage = state.error ?: "Unknown error"
             toastType = ToastType.ERROR
             showToast = true
+            viewModel.clearError()
         } else if (!state.isLoading && state.success) {
             toastMessage = "Login success!"
             toastType = ToastType.SUCCESS
             showToast = true
+            viewModel.clearSuccess()
         }
     }
 

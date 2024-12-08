@@ -37,8 +37,20 @@ class FoodResultViewModel @Inject constructor(
             }
         ) { result ->
             _foodResultState.update {
-                it.copy(isLoading = false, error = null, result = result)
+                it.copy(isLoading = false, error = null, result = result, success = true)
             }
+        }
+    }
+
+    fun clearError() {
+        _foodResultState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _foodResultState.update {
+            it.copy(result = null)
         }
     }
 }
@@ -47,4 +59,5 @@ data class FoodResultScreenUIState(
     val result: PredictionEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
+    val success: Boolean = false,
 )

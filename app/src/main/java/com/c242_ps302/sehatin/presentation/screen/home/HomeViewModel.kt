@@ -37,8 +37,20 @@ class HomeViewModel @Inject constructor(
             }
         ) { result ->
             _homeState.update {
-                it.copy(isLoading = false, error = null, latestRecommendation = result)
+                it.copy(isLoading = false, error = null, latestRecommendation = result, success = true)
             }
+        }
+    }
+
+    fun clearError() {
+        _homeState.update {
+            it.copy(error = null)
+        }
+    }
+
+    fun clearSuccess() {
+        _homeState.update {
+            it.copy(success = false)
         }
     }
 }
@@ -47,4 +59,5 @@ data class HomeScreenUIState(
     val latestRecommendation: RecommendationEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
+    val success: Boolean = false
 )

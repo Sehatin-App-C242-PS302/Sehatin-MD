@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 
 @Composable
@@ -67,6 +70,24 @@ fun HealthInputScreen(
     val localDensity = LocalDensity.current
 
     val genders = listOf(stringResource(R.string.male), stringResource(R.string.female))
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+            recommendationViewModel.clearError()
+        } else if (!state.isLoading && state.success) {
+            toastMessage = "Health input uploaded successfully"
+            toastType = ToastType.SUCCESS
+            showToast = true
+            recommendationViewModel.clearSuccess()
+        }
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -206,6 +227,15 @@ fun HealthInputScreen(
                 }
             }
         }
+    }
+
+    if (showToast) {
+        SehatinToast(
+            message = toastMessage,
+            type = toastType,
+            duration = 2000L,
+            onDismiss = { showToast = false }
+        )
     }
 }
 

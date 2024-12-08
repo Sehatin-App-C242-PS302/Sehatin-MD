@@ -30,7 +30,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +47,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.c242_ps302.sehatin.data.local.entity.RecommendationEntity
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
+import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -52,6 +58,24 @@ fun HealthResultScreen(
     viewModel: ResultViewModel = hiltViewModel()
 ) {
     val state by viewModel.healthResultState.collectAsStateWithLifecycle()
+
+    var toastMessage by remember { mutableStateOf("") }
+    var toastType by remember { mutableStateOf(ToastType.INFO) }
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state.error != null) {
+            toastMessage = state.error ?: "Unknown error"
+            toastType = ToastType.ERROR
+            showToast = true
+            viewModel.clearError()
+        } else if (!state.isLoading && state.success) {
+            toastMessage = "Health Recommendation loaded successfully!"
+            toastType = ToastType.SUCCESS
+            showToast = true
+            viewModel.clearSuccess()
+        }
+    }
 
     Scaffold {
         Box(
@@ -87,6 +111,15 @@ fun HealthResultScreen(
                     onBackClick = onBackClick
                 )
             }
+        }
+
+        if (showToast) {
+            SehatinToast(
+                message = toastMessage,
+                type = toastType,
+                duration = 2000L,
+                onDismiss = { showToast = false }
+            )
         }
     }
 }

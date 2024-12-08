@@ -48,10 +48,12 @@ fun HistoryScreen(
             toastMessage = state.error ?: "Unknown error"
             toastType = ToastType.ERROR
             showToast = true
+            historyViewModel.clearError()
         } else if (!state.isLoading && state.history.isNotEmpty()) {
             toastMessage = "History loaded successfully!"
             toastType = ToastType.SUCCESS
             showToast = true
+            historyViewModel.clearSuccess()
         }
     }
 

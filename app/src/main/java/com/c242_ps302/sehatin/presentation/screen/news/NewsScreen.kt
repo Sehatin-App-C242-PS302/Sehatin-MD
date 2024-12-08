@@ -77,10 +77,12 @@ fun NewsScreen(
             toastMessage = state.error ?: "Unknown error"
             toastType = ToastType.ERROR
             showToast = true
-        } else if (!state.isLoading && state.error == null && state.news.isNotEmpty()) {
+            viewModel.clearError()
+        } else if (!state.isLoading && state.success && state.news.isNotEmpty()) {
             toastMessage = "News loaded successfully!"
             toastType = ToastType.SUCCESS
             showToast = true
+            viewModel.clearSuccess()
         }
     }
 

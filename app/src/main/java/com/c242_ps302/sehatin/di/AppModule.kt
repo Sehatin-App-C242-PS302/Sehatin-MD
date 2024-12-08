@@ -2,7 +2,6 @@ package com.c242_ps302.sehatin.di
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import androidx.work.WorkManager
 import com.c242_ps302.sehatin.BuildConfig
@@ -16,11 +15,13 @@ import com.c242_ps302.sehatin.data.remote.HealthApiService
 import com.c242_ps302.sehatin.data.remote.NewsApiService
 import com.c242_ps302.sehatin.data.remote.PredictionApiService
 import com.c242_ps302.sehatin.data.remote.RecommendationApiService
+import com.c242_ps302.sehatin.data.remote.UserApiService
 import com.c242_ps302.sehatin.data.repository.AndroidConnectivityObserver
 import com.c242_ps302.sehatin.data.repository.HealthRepository
 import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.repository.PredictionRepository
 import com.c242_ps302.sehatin.data.repository.RecommendationRepository
+import com.c242_ps302.sehatin.data.repository.UserRepository
 import com.c242_ps302.sehatin.data.utils.Constants
 import com.c242_ps302.sehatin.domain.ConnectivityObserver
 import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
@@ -193,6 +194,46 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideUserApiService(
+        preferences: SehatinAppPreferences,
+    ): UserApiService {
+        val authInterceptor = Interceptor { chain ->
+            val originalRequest = chain.request()
+            val newRequest = runBlocking {
+                withContext(Dispatchers.IO) {
+                    val token = preferences.getToken().first()
+
+                    originalRequest.newBuilder()
+                        .apply {
+                            if (token.isNotEmpty()) {
+                                addHeader("Authorization", "Bearer $token")
+                            }
+                        }
+                        .build()
+                }
+            }
+            chain.proceed(newRequest)
+        }
+
+        val loggingInterceptor = HttpLoggingInterceptor().setLevel(
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+            else HttpLoggingInterceptor.Level.NONE
+        )
+        val client = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(Constants.SEHATIN_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(UserApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideNewsApiService(): NewsApiService {
         val authInterceptor = Interceptor { chain ->
             val newRequest = chain.request().newBuilder()
@@ -286,5 +327,14 @@ object AppModule {
         newsApiService: NewsApiService,
     ): NewsRepository {
         return NewsRepository(newsApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        userApiService: UserApiService,
+        userDao: UserDao,
+    ): UserRepository {
+        return UserRepository(userApiService, userDao)
     }
 }

@@ -54,6 +54,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.c242_ps302.sehatin.R
 import com.c242_ps302.sehatin.presentation.components.sehatin_appbar.SehatinAppBar
+import com.c242_ps302.sehatin.presentation.components.toast.SehatinToast
 import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 import com.c242_ps302.sehatin.presentation.theme.SehatinTheme
 import com.c242_ps302.sehatin.presentation.utils.bitmapToFile
@@ -117,10 +118,12 @@ fun FoodInputScreen(
             toastMessage = state.error ?: "Unknown error"
             toastType = ToastType.ERROR
             showToast = true
+            viewModel.clearError()
         } else if (!state.isLoading && state.success) {
             toastMessage = "Prediction uploaded successfully!"
             toastType = ToastType.SUCCESS
             showToast = true
+            viewModel.clearSuccess()
         }
     }
 
@@ -312,6 +315,15 @@ fun FoodInputScreen(
                 }
             }
         }
+    }
+
+    if (showToast) {
+        SehatinToast(
+            message = toastMessage,
+            type = toastType,
+            duration = 2000L,
+            onDismiss = { showToast = false }
+        )
     }
 }
 
