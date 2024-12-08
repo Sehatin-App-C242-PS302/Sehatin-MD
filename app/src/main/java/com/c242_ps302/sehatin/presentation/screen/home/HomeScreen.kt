@@ -62,7 +62,7 @@ fun HomeScreen(
             toastType = ToastType.ERROR
             showToast = true
             viewModel.clearError()
-        } else if (!state.isLoading && state.latestRecommendation != null) {
+        } else if (!state.isLoading && state.success) {
             toastMessage = "Data loaded successfully!"
             toastType = ToastType.SUCCESS
             showToast = true

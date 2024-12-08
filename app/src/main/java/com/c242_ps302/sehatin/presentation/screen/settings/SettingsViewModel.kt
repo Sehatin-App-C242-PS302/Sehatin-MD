@@ -88,7 +88,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun getUserData() = viewModelScope.launch {
+    fun getUserData() = viewModelScope.launch {
         repository.getUser().collectAndHandle(
             onError = { error ->
                 _settingsState.update {

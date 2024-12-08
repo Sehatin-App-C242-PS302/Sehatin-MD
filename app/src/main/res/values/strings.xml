@@ -69,4 +69,13 @@
     <string name="height_cm_history_card">Height : %1$s cm</string>
     <string name="bmi_history_card">BMI : %1$s</string>
     <string name="daily_step_recommendation_history_card">Daily Step Recommendation : %1$s</string>
+    <string name="person_icon">Person Icon</string>
+    <string name="save">Save</string>
+    <string name="edit_profile_confirmation">Edit Profile Confirmation</string>
+    <string name="are_you_sure_you_want_to_save_the_changes">Are you sure you want to save the changes?</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="profile_updated_successfully">Profile updated successfully!</string>
+    <string name="history_loaded_successfully">History loaded successfully!</string>
+    <string name="health_data_history">Health Data History</string>
+    <string name="food_recognition_history">Food Recognition History</string>
 </resources>

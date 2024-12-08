@@ -86,6 +86,10 @@ fun SettingsScreen(
         }
     }
 
+    LaunchedEffect(state.user) {
+        viewModel.getUserData()
+    }
+
     val context = LocalContext.current
     val isDarkTheme = state.isDarkTheme
 
