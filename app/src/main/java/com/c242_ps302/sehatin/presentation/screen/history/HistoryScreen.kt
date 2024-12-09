@@ -87,6 +87,7 @@ fun HistoryScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 SehatinAppBar()
+
                 LazyColumn(
                     contentPadding = PaddingValues(12.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -97,7 +98,9 @@ fun HistoryScreen(
                             style = MaterialTheme.typography.headlineMedium
                         )
                     }
-                    items(state.history) { recommendation ->
+                    items(state.history, key = { history ->
+                        history.createdAt
+                    }) { recommendation ->
                         HistoryCard(recommendation = recommendation)
                     }
                     item {
@@ -106,7 +109,9 @@ fun HistoryScreen(
                             style = MaterialTheme.typography.headlineMedium
                         )
                     }
-                    items(state.foods) { food ->
+                    items(state.foods, key = { food ->
+                        food.createdAt
+                    }) { food ->
                         FoodCard(food = food)
                     }
                 }

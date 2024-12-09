@@ -185,13 +185,13 @@ private fun MainContent(
             // BMI Result Section
             rec.bmi?.let { bmi ->
                 Text(
-                    text = "BMI Kamu ${recommendation.category}",
+                    text = stringResource(R.string.bmi_result, recommendation.category ?: "-"),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = "Dengan Point",
+                    text = stringResource(R.string.bmi_points),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -209,56 +209,60 @@ private fun MainContent(
 
             // Gender section
             rec.gender?.let { gender ->
-                Text(text = "Gender", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = stringResource(R.string.gender_label),
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Icon(
                     imageVector = if (gender.lowercase() == "male")
                         Icons.Default.Male else Icons.Default.Female,
-                    contentDescription = "$gender Gender",
+                    contentDescription = stringResource(R.string.gender_label, gender),
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = gender,
+                    text = when (gender) {
+                        "Male" -> stringResource(R.string.male)
+                        "Female" -> stringResource(R.string.female)
+                        else -> stringResource(R.string.unknown)
+                    },
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // User Info Row
+// User Info Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Age: ${rec.age ?: "-"}",
+                        text = stringResource(
+                            R.string.age_label,
+                            rec.age?.toString() ?: stringResource(R.string.unknown_value)
+                        ),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Height: ${
-                            rec.heightCm?.let {
-                                String.format(
-                                    "%.1f cm",
-                                    it
-                                )
-                            } ?: "-"
-                        }",
+                        text = stringResource(
+                            R.string.height_label,
+                            rec.heightCm?.let { String.format("%.1f", it) }
+                                ?: stringResource(R.string.unknown_value)
+                        ),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Weight: ${
-                            rec.weightKg?.let {
-                                String.format(
-                                    "%.1f kg",
-                                    it
-                                )
-                            } ?: "-"
-                        }",
+                        text = stringResource(
+                            R.string.weight_label,
+                            rec.weightKg?.let { String.format("%.1f", it) }
+                                ?: stringResource(R.string.unknown_value)
+                        ),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }

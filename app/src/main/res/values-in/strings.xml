@@ -128,4 +128,12 @@
     <string name="notification_permission_denied">Izin notifikasi ditolak</string>
     <string name="connected_to_internet">Terhubung ke internet</string>
     <string name="no_internet_connection">Tidak ada koneksi internet</string>
+    <string name="bmi_result">BMI Kamu %1$s</string>
+    <string name="bmi_points">Dengan Point</string>
+    <string name="bmi_category">Kategori: %1$s</string>
+    <string name="gender_label">Jenis Kelamin</string>
+    <string name="age_label">Umur: %1$s</string>
+    <string name="height_label">Tinggi: %1$s cm</string>
+    <string name="weight_label">Berat: %1$s kg</string>
+    <string name="unknown_value">-</string>
 </resources>
