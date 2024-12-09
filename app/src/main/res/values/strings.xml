@@ -127,4 +127,12 @@
     <string name="notification_permission_denied">Notification permission denied</string>
     <string name="connected_to_internet">Connected to internet</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="bmi_result">Your BMI is %1$s</string>
+    <string name="bmi_points">With Points</string>
+    <string name="bmi_category">Category: %1$s</string>
+    <string name="gender_label">Gender</string>
+    <string name="age_label">Age: %1$s</string>
+    <string name="height_label">Height: %1$s cm</string>
+    <string name="weight_label">Weight: %1$s kg</string>
+    <string name="unknown_value">-</string>
 </resources>
