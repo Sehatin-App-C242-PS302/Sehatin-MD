@@ -1,6 +1,8 @@
 package com.c242_ps302.sehatin.data.repository
 
 import android.content.Context
+import com.c242_ps302.sehatin.data.local.dao.PredictionDao
+import com.c242_ps302.sehatin.data.local.dao.RecommendationDao
 import com.c242_ps302.sehatin.data.local.dao.UserDao
 import com.c242_ps302.sehatin.data.local.entity.UserEntity
 import com.c242_ps302.sehatin.data.mapper.toEntity
@@ -20,6 +22,8 @@ class AuthRepository @Inject constructor(
     private val authApiService: AuthApiService,
     private val userDao: UserDao,
     private val preferences: SehatinAppPreferences,
+    private val predictionDao: PredictionDao,
+    private val recommendationDao: RecommendationDao
 ) {
     fun login(email: String, password: String): Flow<Result<LoginResponse>> = flow {
         emit(Result.Loading)
@@ -38,7 +42,7 @@ class AuthRepository @Inject constructor(
                 }
                 userDao.clearUserData()
                 response.user?.let { user ->
-                    userDao.insertUser (user.toEntity())
+                    userDao.insertUser(user.toEntity())
                     emit(Result.Success(response))
                 }
             } else {
@@ -68,6 +72,8 @@ class AuthRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             preferences.setToken("")
             userDao.clearUserData()
+            predictionDao.clearAllPredictions()
+            recommendationDao.clearAllRecommendations()
         }
     }.fold(
         onSuccess = { Result.Success(Unit) },

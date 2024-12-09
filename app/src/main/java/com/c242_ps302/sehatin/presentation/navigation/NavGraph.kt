@@ -52,90 +52,144 @@ fun NavGraphSetup(
 ) {
     NavHost(
         navController = navController,
-        startDestination = OnboardingScreen
+        startDestination = SubGraph.Auth
     ) {
-        composable<OnboardingScreen> {
-            OnboardingScreen(
-                onLoginClick = {
-                    navController.navigate(LoginScreen)
-                },
-                onRegisterClick = {
-                    navController.navigate(RegisterScreen)
-                },
-                onAuthenticated = {
-                    navController.navigate(MainScreen) {
-                        popUpTo(OnboardingScreen) { inclusive = true }
+        // Auth Navigation Graph
+        navigation<SubGraph.Auth>(startDestination = Dest.Onboarding) {
+            composable<Dest.Onboarding> {
+                OnboardingScreen(
+                    onLoginClick = {
+                        navController.navigate(Dest.Login)
+                    },
+                    onRegisterClick = {
+                        navController.navigate(Dest.Register)
+                    },
+                    onAuthenticated = {
+                        navController.navigate(SubGraph.Main) {
+                            popUpTo(Dest.Onboarding) { inclusive = true }
+                        }
                     }
-                }
-            )
-        }
-        composable<LoginScreen> {
-            LoginScreen(
-                onLoginClick = {
-                    navController.navigate(MainScreen) {
-                        popUpTo(LoginScreen) { inclusive = true }
-                    }
-                },
-                onRegisterClick = {
-                    navController.navigate(RegisterScreen)
-                }
-            )
-        }
-        composable<RegisterScreen> {
-            RegisterScreen(
-                onRegisterClick = {
-                    navController.navigate(LoginScreen)
-                },
-                onLoginClick = {
-                    navController.navigate(LoginScreen)
-                }
-            )
-        }
-        navigation<MainScreen>(startDestination = HomeScreen) {
-            composable<HomeScreen> { MainScreenContent(navController) }
-            composable<FoodInputScreen> { MainScreenContent(navController) }
-            composable<HistoryScreen> { MainScreenContent(navController) }
-            composable<NewsScreen> { MainScreenContent(navController) }
-            composable<SettingsScreen> { MainScreenContent(navController) }
-            composable<HealthInputScreen> {
-                HealthInputScreen(
-                    onNavigateUp = { navController.navigateUp() },
-                    onSuccess = { navController.navigate(HealthResultScreen) },
                 )
             }
-            composable<NewsDetailScreen> { backStackEntry ->
-                val newsLink = backStackEntry.toRoute<NewsDetailScreen>().newsLink
+
+            composable<Dest.Login> {
+                LoginScreen(
+                    onLoginClick = {
+                        navController.navigate(SubGraph.Main) {
+                            popUpTo(Dest.Login) { inclusive = true }
+                        }
+                    },
+                    onRegisterClick = {
+                        navController.navigate(Dest.Register)
+                    }
+                )
+            }
+
+            composable<Dest.Register> {
+                RegisterScreen(
+                    onRegisterClick = {
+                        navController.navigate(Dest.Login)
+                    },
+                    onLoginClick = {
+                        navController.navigate(Dest.Login)
+                    }
+                )
+            }
+        }
+
+        // Main Navigation Graph
+        navigation<SubGraph.Main>(startDestination = Dest.Home) {
+            composable<Dest.Home> {
+                MainScreenContent(
+                    navController = navController,
+                    startDestination = Dest.Home
+                )
+            }
+
+            composable<Dest.FoodInput> {
+                MainScreenContent(
+                    navController = navController,
+                    startDestination = Dest.FoodInput
+                )
+            }
+
+            composable<Dest.History> {
+                MainScreenContent(
+                    navController = navController,
+                    startDestination = Dest.History
+                )
+            }
+
+            composable<Dest.News> {
+                MainScreenContent(
+                    navController = navController,
+                    startDestination = Dest.News
+                )
+            }
+
+            composable<Dest.Settings> {
+                MainScreenContent(
+                    navController = navController,
+                    startDestination = Dest.Settings
+                )
+            }
+
+            composable<Dest.HealthInput> {
+                HealthInputScreen(
+                    onNavigateUp = { navController.navigate(Dest.Home) },
+                    onSuccess = { navController.navigate(Dest.HealthResult) }
+                )
+            }
+
+            composable<Dest.NewsDetail> { backStackEntry ->
+                val newsLink = backStackEntry.toRoute<Dest.NewsDetail>().newsLink
                 NewsDetailScreen(
                     newsLink = newsLink,
-                    onNavigateUp = { navController.navigateUp() }
+                    onNavigateUp = { navController.navigate(Dest.News) }
                 )
             }
-            composable<HealthResultScreen> {
+
+            composable<Dest.HealthResult> {
                 HealthResultScreen(
-                    onRecountClick = { navController.navigate(HealthInputScreen) },
-                    onBackClick = { navController.navigate(HomeScreen) }
+                    onRecountClick = { navController.navigate(Dest.HealthInput) },
+                    onBackClick = { navController.navigate(Dest.Home) }
                 )
             }
-            composable<ProfileScreen> {
+
+            composable<Dest.Profile> {
                 ProfileScreen(
-                    onNavigateUp = { navController.navigateUp() }
+                    onNavigateUp = { navController.navigate(Dest.Settings) }
                 )
             }
-            composable<FoodResultScreen> {
+
+            composable<Dest.FoodResult> {
                 FoodResultScreen(
-                    onNavigateHome = { navController.navigate(HomeScreen) }
+                    onNavigateHome = { navController.navigate(Dest.Home) }
                 )
             }
         }
     }
 }
 
+// Modifikasi MainScreenContent untuk menerima startDestination
 @Composable
 fun MainScreenContent(
     navController: NavHostController,
     connectivityObserver: ConnectivityViewModel = hiltViewModel(),
+    startDestination: Dest,
 ) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by remember {
+        mutableIntStateOf(
+            when (startDestination) {
+                Dest.Home -> 0
+                Dest.FoodInput -> 1
+                Dest.History -> 2
+                Dest.News -> 3
+                Dest.Settings -> 4
+                else -> 0
+            }
+        )
+    }
 
     val context = LocalContext.current
 
@@ -198,12 +252,12 @@ fun MainScreenContent(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
-            selectedIndex,
+            selectedIndex = selectedIndex,
         )
     }
 }
 
-
+// Modifikasi ContentScreen untuk menggunakan Dest
 @Composable
 fun ContentScreen(
     navController: NavHostController,
@@ -213,14 +267,14 @@ fun ContentScreen(
     when (selectedIndex) {
         0 -> HomeScreen(
             onFabClick = {
-                navController.navigate(HealthInputScreen)
+                navController.navigate(Dest.HealthInput)
             },
             modifier = modifier
         )
 
         1 -> FoodInputScreen(
             onNavigateToResult = {
-                navController.navigate(FoodResultScreen)
+                navController.navigate(Dest.FoodResult)
             },
             modifier = modifier
         )
@@ -231,19 +285,19 @@ fun ContentScreen(
 
         3 -> NewsScreen(
             onNewsClick = { newsLink ->
-                navController.navigate(NewsDetailScreen(newsLink))
+                navController.navigate(Dest.NewsDetail(newsLink))
             },
             modifier = modifier
         )
 
         4 -> SettingsScreen(
             onLogoutSuccess = {
-                navController.navigate(LoginScreen) {
-                    popUpTo(MainScreen) { inclusive = true }
+                navController.navigate(Dest.Login) {
+                    popUpTo(SubGraph.Main) { inclusive = true }
                 }
             },
             onProfileClick = {
-                navController.navigate(ProfileScreen)
+                navController.navigate(Dest.Profile)
             },
             modifier = modifier
         )

@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
-private const val MAXIMAL_SIZE = 2000000
+private const val MAXIMAL_SIZE = 5000000
 private val timeStamp: String =
     SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
@@ -79,7 +79,7 @@ fun bitmapToFile(bitmap: Bitmap, context: Context): File {
 fun File.compressImageSize(): File {
     val file = this
     val bitmap = getBitmapWithCorrectRotation(file.path)
-    var compressQuality = 60
+    var compressQuality = 100
     var streamLength: Int
     do {
         val bmpStream = ByteArrayOutputStream()
