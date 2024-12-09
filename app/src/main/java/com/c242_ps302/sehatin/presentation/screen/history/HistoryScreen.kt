@@ -58,7 +58,6 @@ fun HistoryScreen(
             toastMessage = context.getString(R.string.history_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
-            historyViewModel.clearSuccess()
         }
     }
 

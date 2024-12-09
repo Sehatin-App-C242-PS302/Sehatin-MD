@@ -78,7 +78,6 @@ fun HealthResultScreen(
             toastMessage = context.getString(R.string.health_recommendation_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
-            viewModel.clearSuccess()
         }
     }
 
@@ -186,13 +185,13 @@ private fun MainContent(
             // BMI Result Section
             rec.bmi?.let { bmi ->
                 Text(
-                    text = stringResource(R.string.bmi_kamu, recommendation.category.toString()),
+                    text = "BMI Kamu ${recommendation.category}",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = stringResource(R.string.dengan_point),
+                    text = "Dengan Point",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -210,7 +209,7 @@ private fun MainContent(
 
             // Gender section
             rec.gender?.let { gender ->
-                Text(text = stringResource(R.string.gender), style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Gender", style = MaterialTheme.typography.bodyLarge)
                 Icon(
                     imageVector = if (gender.lowercase() == "male")
                         Icons.Default.Male else Icons.Default.Female,
@@ -233,29 +232,33 @@ private fun MainContent(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = stringResource(R.string.age_health_result, rec.age ?: "-"),
+                        text = "Age: ${rec.age ?: "-"}",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = stringResource(R.string.height_health_result, rec.heightCm?.let {
-                            String.format(
-                                "%.1f cm",
-                                it
-                            )
-                        } ?: "-"),
+                        text = "Height: ${
+                            rec.heightCm?.let {
+                                String.format(
+                                    "%.1f cm",
+                                    it
+                                )
+                            } ?: "-"
+                        }",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = stringResource(R.string.weight_health_result, rec.weightKg?.let {
-                            String.format(
-                                "%.1f kg",
-                                it
-                            )
-                        } ?: "-"),
+                        text = "Weight: ${
+                            rec.weightKg?.let {
+                                String.format(
+                                    "%.1f kg",
+                                    it
+                                )
+                            } ?: "-"
+                        }",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -337,7 +340,3 @@ private fun MainContent(
         }
     }
 }
-
-
-
-

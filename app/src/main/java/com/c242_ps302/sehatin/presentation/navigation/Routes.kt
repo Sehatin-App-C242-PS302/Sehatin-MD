@@ -2,24 +2,54 @@ package com.c242_ps302.sehatin.presentation.navigation
 
 import kotlinx.serialization.Serializable
 
-// Routes
-@Serializable object OnboardingScreen
-@Serializable object RegisterScreen
-@Serializable object LoginScreen
+// SubGraph dan Routes
+sealed class SubGraph {
+    @Serializable
+    data object Auth : SubGraph()
 
-// Routes for nested graph
-@Serializable object MainScreen
+    @Serializable
+    data object Main : SubGraph()
+}
 
-// Routes inside nested graph
-@Serializable object HomeScreen
-@Serializable object FoodInputScreen
-@Serializable object HistoryScreen
-@Serializable object NewsScreen
-@Serializable object SettingsScreen
-@Serializable object HealthInputScreen
-@Serializable object HealthResultScreen
-@Serializable object ProfileScreen
-@Serializable object FoodResultScreen
+sealed class Dest {
+    // Auth Routes
+    @Serializable
+    data object Onboarding : Dest()
 
-@Serializable
-data class NewsDetailScreen(val newsLink: String)
+    @Serializable
+    data object Login : Dest()
+
+    @Serializable
+    data object Register : Dest()
+
+    // Main Routes
+    @Serializable
+    data object Home : Dest()
+
+    @Serializable
+    data object FoodInput : Dest()
+
+    @Serializable
+    data object FoodResult : Dest()
+
+    @Serializable
+    data object HealthInput : Dest()
+
+    @Serializable
+    data object HealthResult : Dest()
+
+    @Serializable
+    data object History : Dest()
+
+    @Serializable
+    data object News : Dest()
+
+    @Serializable
+    data class NewsDetail(val newsLink: String) : Dest()
+
+    @Serializable
+    data object Settings : Dest()
+
+    @Serializable
+    data object Profile : Dest()
+}

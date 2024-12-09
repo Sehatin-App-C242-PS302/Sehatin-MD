@@ -17,6 +17,7 @@ import com.c242_ps302.sehatin.data.remote.PredictionApiService
 import com.c242_ps302.sehatin.data.remote.RecommendationApiService
 import com.c242_ps302.sehatin.data.remote.UserApiService
 import com.c242_ps302.sehatin.data.repository.AndroidConnectivityObserver
+import com.c242_ps302.sehatin.data.repository.AuthRepository
 import com.c242_ps302.sehatin.data.repository.HealthRepository
 import com.c242_ps302.sehatin.data.repository.NewsRepository
 import com.c242_ps302.sehatin.data.repository.PredictionRepository
@@ -327,6 +328,26 @@ object AppModule {
         newsApiService: NewsApiService,
     ): NewsRepository {
         return NewsRepository(newsApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        context: Context,
+        authApiService: AuthApiService,
+        userDao: UserDao,
+        preferences: SehatinAppPreferences,
+        predictionDao: PredictionDao,
+        recommendationDao: RecommendationDao
+    ): AuthRepository {
+        return AuthRepository(
+            context,
+            authApiService,
+            userDao,
+            preferences,
+            predictionDao,
+            recommendationDao
+        )
     }
 
     @Provides

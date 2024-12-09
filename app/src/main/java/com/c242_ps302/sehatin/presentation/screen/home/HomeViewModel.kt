@@ -39,7 +39,12 @@ class HomeViewModel @Inject constructor(
             }
         ) { result ->
             _homeState.update {
-                it.copy(isLoading = false, error = null, latestRecommendation = result, success = true)
+                it.copy(
+                    isLoading = false,
+                    error = null,
+                    latestRecommendation = result,
+                    success = result != null
+                )
             }
         }
     }
@@ -58,10 +63,16 @@ class HomeViewModel @Inject constructor(
             }
         ) { result ->
             _homeState.update {
-                it.copy(isLoading = false, error = null, latestPrediction = result, success = true)
+                it.copy(
+                    isLoading = false,
+                    error = null,
+                    latestPrediction = result,
+                    success = result != null
+                )
             }
         }
     }
+
 
     fun clearError() {
         _homeState.update {

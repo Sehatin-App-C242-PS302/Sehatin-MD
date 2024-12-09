@@ -26,30 +26,30 @@ val bottomNavigationItems = listOf(
         titleResId = R.string.home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
-        route = HomeScreen
+        route = Dest.Home
     ),
     BottomNavigationItem(
         titleResId = R.string.food,
         selectedIcon = Icons.Filled.Fastfood,
         unselectedIcon = Icons.Outlined.Fastfood,
-        route = FoodInputScreen
+        route = Dest.FoodInput
     ),
     BottomNavigationItem(
         titleResId = R.string.history,
         selectedIcon = Icons.Filled.History,
         unselectedIcon = Icons.Outlined.History,
-        route = HistoryScreen
+        route = Dest.History
     ),
     BottomNavigationItem(
         titleResId = R.string.news,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
         unselectedIcon = Icons.AutoMirrored.Outlined.Article,
-        route = NewsScreen
+        route = Dest.News
     ),
     BottomNavigationItem(
         titleResId = R.string.settings,
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
-        route = SettingsScreen
+        route = Dest.Settings
     )
 )

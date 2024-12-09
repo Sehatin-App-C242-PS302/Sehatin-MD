@@ -124,7 +124,6 @@ fun FoodInputScreen(
             toastMessage = context.getString(R.string.prediction_uploaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
-            viewModel.clearSuccess()
         }
     }
 
@@ -325,7 +324,7 @@ fun FoodInputScreen(
         SehatinToast(
             message = toastMessage,
             type = toastType,
-            duration = 2000L,
+            duration = 1000L,
             onDismiss = { showToast = false }
         )
     }
