@@ -15,21 +15,23 @@ import com.c242_ps302.sehatin.presentation.components.card.NewsCard
 fun NewsVerticalColumn(
     modifier: Modifier = Modifier,
     newsList: List<News>,
-    onNewsClick: (String) -> Unit
+    onNewsClick: (String) -> Unit,
 ) {
+
     LazyColumn(
-        modifier = modifier,
         contentPadding = PaddingValues(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(count = newsList.size) { index ->
+        items(count = newsList.size, key = {
+            newsList[it].url
+        }) { index ->
             val news = newsList[index]
             NewsCard(
                 news = news,
                 modifier = Modifier
                     .fillParentMaxWidth()
-                    .clickable { news?.url?.let { onNewsClick(it) } }
+                    .clickable { onNewsClick(news.url) }
             )
         }
     }
