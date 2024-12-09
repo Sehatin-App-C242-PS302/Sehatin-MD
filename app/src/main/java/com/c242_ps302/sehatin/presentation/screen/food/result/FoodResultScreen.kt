@@ -60,7 +60,6 @@ fun FoodResultScreen(
             toastMessage = context.getString(R.string.prediction_loaded_successfully)
             toastType = ToastType.SUCCESS
             showToast = true
-            viewModel.clearSuccess()
         }
     }
 

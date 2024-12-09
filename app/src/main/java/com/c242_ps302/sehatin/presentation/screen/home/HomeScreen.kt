@@ -92,7 +92,7 @@ fun HomeScreen(
 
         // No Data State
         AnimatedVisibility(
-            visible = !state.isLoading && state.latestRecommendation == null && state.error != null
+            visible = !state.isLoading && state.latestRecommendation == null && state.error == null
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -123,199 +123,201 @@ fun HomeScreen(
             visible = !state.isLoading &&
                     state.latestRecommendation != null
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                SehatinAppBar()
-                Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    text = stringResource(R.string.daily_indicator),
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
+            state.latestRecommendation?.let {
                 Column(
-                    modifier = Modifier
-                        .padding(top = 20.dp, bottom = 10.dp)
-                        .fillMaxWidth(0.95f)
-                        .align(Alignment.CenterHorizontally),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    ElevatedCard(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                    SehatinAppBar()
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Text(
+                        text = stringResource(R.string.daily_indicator),
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                    Column(
                         modifier = Modifier
-                            .padding(horizontal = 20.dp)
+                            .padding(top = 20.dp, bottom = 10.dp)
                             .fillMaxWidth(0.95f)
+                            .align(Alignment.CenterHorizontally),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
+                        ElevatedCard(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .fillMaxWidth(0.95f)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                val recommendation = state.latestRecommendation
+                                Text(
+                                    text = stringResource(R.string.daily_step_recommendation),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                                Text(
+                                    text = recommendation?.dailyStepRecommendation ?: stringResource(R.string.n_a),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(0.95f)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        ElevatedCard(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(170.dp)
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxSize(),
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.current_data),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                                val recommendation = state.latestRecommendation
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth(.9f)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.gender),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = when (recommendation?.gender) {
+                                            "Male" -> stringResource(R.string.male)
+                                            "Female" -> stringResource(R.string.female)
+                                            else -> stringResource(R.string.n_a)
+                                        },
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth(.9f)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.age),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = recommendation?.age.toString(),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth(.9f)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.height),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = stringResource(
+                                            R.string.height_with_unit,
+                                            recommendation?.heightCm ?: stringResource(R.string.n_a)
+                                        ),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth(.9f)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.weight),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = stringResource(
+                                            R.string.weight_with_unit,
+                                            recommendation?.weightKg ?: stringResource(R.string.n_a)
+                                        ),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+
+                            }
+                        }
+                        ElevatedCard(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(170.dp)
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                val recommendation = state.latestRecommendation
+                                Text(
+                                    text = stringResource(R.string.current_bmi),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp)
+                                )
+                                Text(
+                                    text = recommendation?.bmi.toString(),
+                                    style = MaterialTheme.typography.displaySmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 5.dp)
+                                )
+                                Text(
+                                    text = recommendation?.category ?: stringResource(R.string.n_a),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 5.dp)
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    state.latestPrediction?.let {
+                        HomeFoodCard(
+                            prediction = it,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            val recommendation = state.latestRecommendation
-                            Text(
-                                text = stringResource(R.string.daily_step_recommendation),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(bottom = 4.dp)
-                            )
-                            Text(
-                                text = recommendation?.dailyStepRecommendation ?: stringResource(R.string.n_a),
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                                .padding(horizontal = 16.dp)
+                        )
                     }
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(0.95f)
-                        .align(Alignment.CenterHorizontally)
-                        .padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    ElevatedCard(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(170.dp)
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            Text(
-                                text = stringResource(R.string.current_data),
-                                style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(12.dp)
-                            )
-                            val recommendation = state.latestRecommendation
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.9f)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.gender),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = when (recommendation?.gender) {
-                                        "Male" -> stringResource(R.string.male)
-                                        "Female" -> stringResource(R.string.female)
-                                        else -> stringResource(R.string.n_a)
-                                    },
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.9f)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.age),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = recommendation?.age.toString(),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.9f)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.height),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = stringResource(
-                                        R.string.height_with_unit,
-                                        recommendation?.heightCm ?: stringResource(R.string.n_a)
-                                    ),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(.9f)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.weight),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = stringResource(
-                                        R.string.weight_with_unit,
-                                        recommendation?.weightKg ?: stringResource(R.string.n_a)
-                                    ),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-
-                        }
-                    }
-                    ElevatedCard(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(170.dp)
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            val recommendation = state.latestRecommendation
-                            Text(
-                                text = stringResource(R.string.current_bmi),
-                                style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp)
-                            )
-                            Text(
-                                text = recommendation?.bmi.toString(),
-                                style = MaterialTheme.typography.displaySmall,
-                                fontWeight = FontWeight.SemiBold,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 5.dp)
-                            )
-                            Text(
-                                text = recommendation?.category ?: stringResource(R.string.n_a),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 5.dp)
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                state.latestPrediction?.let {
-                    HomeFoodCard(
-                        prediction = it,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    )
                 }
             }
         }
