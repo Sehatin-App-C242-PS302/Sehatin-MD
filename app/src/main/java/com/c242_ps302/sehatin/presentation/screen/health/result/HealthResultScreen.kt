@@ -58,7 +58,7 @@ import com.c242_ps302.sehatin.presentation.components.toast.ToastType
 fun HealthResultScreen(
     onRecountClick: () -> Unit,
     onBackClick: () -> Unit,
-    viewModel: ResultViewModel = hiltViewModel()
+    viewModel: ResultViewModel = hiltViewModel(),
 ) {
     val state by viewModel.healthResultState.collectAsStateWithLifecycle()
 
@@ -232,7 +232,7 @@ private fun MainContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-// User Info Row
+            // User Info Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -272,6 +272,31 @@ private fun MainContent(
 
             // BMI Indicator
             rec.bmi?.let { bmi ->
+                val barWidth = 400f // Total panjang bar dalam dp
+                val bmiRanges = listOf(
+                    BmiCategory(0.0, 18.5, Color(0xFFFF6B6B)),     // Underweight
+                    BmiCategory(18.5, 24.9, Color(0xFF51CF66)),    // Normal
+                    BmiCategory(24.9, 29.9, Color(0xFFFFD43B)),    // Overweight
+                    BmiCategory(29.9, 40.0, Color(0xFFFF6B6B))     // Obese
+                )
+
+                // Fungsi untuk menghitung posisi indikator
+                fun calculateIndicatorPosition(currentBmi: Double): Double {
+                    return when {
+                        currentBmi <= 0.0 -> 0.0
+                        currentBmi > bmiRanges.last().end -> barWidth.toDouble()
+                        else -> {
+                            val category = bmiRanges.first { it.contains(currentBmi) }
+                            val categoryIndex = bmiRanges.indexOf(category)
+                            val categoryWidth = barWidth / bmiRanges.size
+
+                            val relativePosition =
+                                (currentBmi - category.start) / (category.end - category.start)
+                            categoryIndex * categoryWidth + relativePosition * categoryWidth
+                        }
+                    }
+                }
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -279,29 +304,15 @@ private fun MainContent(
                         .clip(RoundedCornerShape(12.dp))
                         .background(
                             brush = Brush.horizontalGradient(
-                                listOf(
-                                    Color(0xFFFF6B6B), // Underweight
-                                    Color(0xFFFFD43B), // Normal low
-                                    Color(0xFF51CF66), // Normal
-                                    Color(0xFFFFD43B), // Overweight
-                                    Color(0xFFFF6B6B)  // Obese
-                                )
+                                bmiRanges.map { it.color }
                             )
                         )
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(8.dp) // Sedikit lebih besar untuk lebih terlihat
-                            .offset(
-                                x = (bmi * 10).coerceIn(
-                                    0.0,
-                                    400.0
-                                ).dp
-                            ) // Membatasi pergerakan indicator
-                            .background(
-                                Color.Black,
-                                RoundedCornerShape(4.dp)
-                            ) // Tambahkan rounded corner
+                            .size(12.dp)
+                            .offset(x = calculateIndicatorPosition(bmi).dp)
+                            .background(Color.Black, RoundedCornerShape(6.dp))
                             .align(Alignment.CenterStart)
                     )
                 }
@@ -343,4 +354,12 @@ private fun MainContent(
             }
         }
     }
+}
+
+data class BmiCategory(
+    val start: Double,
+    val end: Double,
+    val color: Color
+) {
+    fun contains(bmi: Double): Boolean = bmi in start..end
 }
