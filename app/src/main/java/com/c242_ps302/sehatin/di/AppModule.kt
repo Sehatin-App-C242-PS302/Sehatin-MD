@@ -25,7 +25,7 @@ import com.c242_ps302.sehatin.data.repository.RecommendationRepository
 import com.c242_ps302.sehatin.data.repository.UserRepository
 import com.c242_ps302.sehatin.data.utils.Constants
 import com.c242_ps302.sehatin.domain.ConnectivityObserver
-import com.c242_ps302.sehatin.presentation.utils.LanguageChangeHelper
+import com.c242_ps302.sehatin.ui.utils.LanguageChangeHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
